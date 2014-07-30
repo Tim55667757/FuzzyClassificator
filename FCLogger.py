@@ -54,21 +54,39 @@ formatter = logging.Formatter(formatString)
 sys.stderr = sys.stdout
 
 
-def SetLevel(vLevel=2):
-    if vLevel >= 2:
-        FCLogger.setLevel(logging.DEBUG) 
+def SetLevel(vLevel='ERROR'):
+    """
+    This procedure setting up FCLogger verbosity level.
+    """
+    FCLogger.level = logging.NOTSET
+    FCLogger.parent.level = logging.NOTSET
 
-    elif vLevel == 1:
-        FCLogger.setLevel(logging.INFO)
+    if isinstance(vLevel, str):
+        if vLevel == '5' or vLevel.upper() == 'CRITICAL':
+            FCLogger.level = logging.CRITICAL
+            FCLogger.parent.level = logging.CRITICAL
 
-    elif vLevel <= 0:
-        FCLogger.setLevel(logging.CRITICAL)
+        elif vLevel == '4' or vLevel.upper() == 'ERROR':
+            FCLogger.level = logging.ERROR
+            FCLogger.parent.level = logging.ERROR
 
-    else:
-        FCLogger.setLevel(logging.DEBUG)
+        elif vLevel == '3' or vLevel.upper() == 'WARNING':
+            FCLogger.level = logging.WARNING
+            FCLogger.parent.level = logging.WARNING
+
+        elif vLevel == '2' or vLevel.upper() == 'INFO':
+            FCLogger.level = logging.INFO
+            FCLogger.parent.level = logging.INFO
+
+        elif vLevel == '1' or vLevel.upper() == 'DEBUG':
+            FCLogger.level = logging.DEBUG
+            FCLogger.parent.level = logging.DEBUG
 
 
 def EnableLogger(logFile, parentHandler=FCLogger, useFormat=formatter):
+    """
+    Adding new file logger.
+    """
     logHandler = logging.FileHandler(logFile)
 
     if useFormat:
@@ -83,6 +101,9 @@ def EnableLogger(logFile, parentHandler=FCLogger, useFormat=formatter):
 
 
 def DisableLogger(handler, parentHandler=FCLogger):
+    """
+    Disable given file logger.
+    """
     if handler:
         handler.flush()
         handler.close()
@@ -93,7 +114,7 @@ def DisableLogger(handler, parentHandler=FCLogger):
 
 # Main init:
 
-SetLevel(2)  # set up DEBUG verbosity level by default
+SetLevel('ERROR')  # set up ERROR verbosity level by default
 streamHandler = logging.StreamHandler()  # initialize Console FCLogger by default
 streamHandler.setFormatter(formatter)  # set formatter for console FCLogger
 if FCLogger.parent.handlers:
