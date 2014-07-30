@@ -852,7 +852,7 @@ if __name__ == "__main__":
         print('Fuzzy({:1.1f}, {}) = {}, {}'.format(xPar, uniFScale.name, res['name'], res['fSet']))
 
     ## Finding fuzzy level using GetLevelByName() function:
-    print('Finding level by name with exact matching search:')
+    print('Finding level by name with exact matching:')
 
     res = uniFScale.GetLevelByName('Min')
     print('GetLevelByName(Min, {}) = {}, {}'.format(uniFScale.name, res['name'] if res else 'None', res['fSet'] if res else 'None'))
@@ -863,16 +863,25 @@ if __name__ == "__main__":
     res = uniFScale.GetLevelByName('max')
     print('GetLevelByName(max, {}) = {}, {}'.format(uniFScale.name, res['name'] if res else 'None', res['fSet'] if res else 'None'))
 
-    print('Finding level by name with exact matching search:')
+    print('Finding level by name without exact matching:')
 
     res = uniFScale.GetLevelByName('mIn', exactMatching=False)
     print("GetLevelByName('mIn', {}) = {}, {}".format(uniFScale.name, res['name'] if res else 'None', res['fSet'] if res else 'None'))
+
     res = uniFScale.GetLevelByName('max', exactMatching=False)
     print("GetLevelByName('max', {}) = {}, {}".format(uniFScale.name, res['name'] if res else 'None', res['fSet'] if res else 'None'))
+
     res = uniFScale.GetLevelByName('Hig', exactMatching=False)
     print("GetLevelByName('Hig', {}) = {}, {}".format(uniFScale.name, res['name'] if res else 'None', res['fSet'] if res else 'None'))
+
+    res = uniFScale.GetLevelByName('LOw', exactMatching=False)
+    print("GetLevelByName('LOw', {}) = {}, {}".format(uniFScale.name, res['name'] if res else 'None', res['fSet'] if res else 'None'))
+
     res = uniFScale.GetLevelByName('eD', exactMatching=False)
     print("GetLevelByName('eD', {}) = {}, {}".format(uniFScale.name, res['name'] if res else 'None', res['fSet'] if res else 'None'))
+
+    res = uniFScale.GetLevelByName('Highest', exactMatching=False)
+    print("GetLevelByName('Highest', {}) = {}, {}".format(uniFScale.name, res['name'] if res else 'None', res['fSet'] if res else 'None'))
 
     ## --- Work with fuzzy logic operators:
     print('IsCorrectFuzzyNumberValue(0.5) =', IsCorrectFuzzyNumberValue(0.5))
