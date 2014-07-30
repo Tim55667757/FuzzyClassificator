@@ -46,7 +46,8 @@
 import math
 import copy
 import traceback
-from Logger import FCLogger
+
+from FCLogger import FCLogger
 
 
 def IsCorrectFuzzyNumberValue(value):
@@ -844,7 +845,7 @@ if __name__ == "__main__":
     print('Levels of Universal Fuzzy Scale:', uniFScale.levels)
     print('Printing scale:', uniFScale)
 
-    ## use Fuzzy() function to looking for level on Fuzzy Scale:
+    ## Use Fuzzy() function to looking for level on Fuzzy Scale:
     xPar = 0
     for i in range(0, 10, 1):
         xPar = (xPar + i) / 10
