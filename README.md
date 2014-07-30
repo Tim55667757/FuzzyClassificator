@@ -146,9 +146,9 @@ Work with program modules
 
 **FuzzyClassificator.py**
 
-This is main module which realizes user command-line interaction. Main methods are LearningMode() and ClassifyingMode() which provide similar program modes.
+This is main module which realizes user command-line interaction. Main methods are *LearningMode()* and *ClassifyingMode()* which provide similar program modes. The module provide user interface that implemented in PyBrainLearning.py.
 
-Learning mode contain steps in LearningMode():
+Learning mode contain steps in *LearningMode()*:
 
 1. Creating PyBrain network instance with pre-defined config parameters.
 2. Parsing raw data file with ethalons.
@@ -157,9 +157,9 @@ Learning mode contain steps in LearningMode():
 5. Creating PyBrain trainer.
 6. Starts learning and saving network configuration to file.
 
-The LearningMode() method takes a dictionary with the values of the initialization parameters for the neural network training.
+The *LearningMode()* method takes a dictionary with the values of the initialization parameters for the neural network training.
 
-Classifying mode contains steps in ClassifyingMode():
+Classifying mode contains steps in *ClassifyingMode()*:
 
 1. Creating PyBrain network instance.
 2. Parsing raw data file with candidates.
@@ -168,15 +168,26 @@ Classifying mode contains steps in ClassifyingMode():
 5. Activating network for all candidate input vectors.
 6. Interpreting results.
 
-The ClassifyingMode() method only runs calculations using the trained neural network.
+The *ClassifyingMode()* method only runs calculations using the trained neural network.
 
+What are the console keys used to control the module - see above.
 
 **PyBrainLearning.py**
 
 This is library for work with fuzzy neural networks. You can import and re-use module in your programm if you'd like to realize own work with networks.
 
-All routines to work with fuzzy neural networks realized in FuzzyNeuroNetwork() class.
+All routines to work with fuzzy neural networks realized in *FuzzyNeuroNetwork()* class. It contains next main methods:
 
+- *ParseRawDataFile()* - used for parsing file with text raw data,
+- *PrepareDataSet()* - used for converting parsed raw-data into PyBrain dataset format,
+- *CreateNetwork()* - used for creating PyBrain network,
+- *CreateTrainer()* - used for creating PyBrain trainer,
+- *SaveNetwork()* - used for saving network in PyBrain xml-format,
+- *LoadNetwork()* - used for loading network from PyBrain xml-format file,
+- *Train()* - realize network training mechanism,
+- *CreateReport()* - creating text report after classifies vector-candidates.
+
+You can import this class and use its methods in other projects.
 
 **FuzzyRoutines.py**
 
