@@ -10,17 +10,18 @@ How to use
 FuzzyClassificator uses ethalons.dat (default) as learning data and candidates.dat (default) for classifying data (See "Preparing data" chapter).
 Work contains two steps:
 
-    1. Learning. At this step program parses ethalon data, learning neural network on this data and then saves neural network configuration into file.
+1. Learning. At this step program parses ethalon data, learning neural network on this data and then saves neural network configuration into file.
 
-    2. Classifying. At this step program uses trained network for classification candidates from data file.
+2. Classifying. At this step program uses trained network for classification candidates from data file.
 
 
 **Presets:**
-    FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source computing environment, based on Python 3.3.2 and includes many scientific packages,
-    PyBrain library, http://pybrain.org - neural network routines.
+
+FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source computing environment, based on Python 3.3.2 and includes many scientific packages, PyBrain library, http://pybrain.org - neural network routines.
 
 
 **Usage:**
+
     python FuzzyClassificator.py [options] [learn [Network_Options**]]|[classify]
 
 
@@ -50,9 +51,12 @@ Work contains two steps:
 
 *Work modes:*
 
-    --learn [Network_Options**]
-        Start program in learning mode with options parameters, where Network_Options** is a dictionary which may contain:
-
+    Some keys:
+    
+    --learn [Network_Options]
+        Start program in learning mode with options parameters, where Network_Options** is a dictionary:
+        
+        {
         config=inputs,layer1,layer2,...,outputs
             where inputs is number of neurons in input layer,
             layer1..N are number of neurons in hidden layers,
@@ -66,6 +70,7 @@ Work contains two steps:
 
         momentum=<float_num>
             this is parameter of momentum of learning, float number in [0, 1]
+        }
 
     --classify
         Start program in classificator mode.
@@ -73,14 +78,15 @@ Work contains two steps:
 
 *Examples:*
 
-    - start learning with user's ethalon data file and neuronet options Config=<3,[3,2],2>, 10 epochs, 0.1 learning rate and 0.05 momentum:
+Start learning with user's ethalon data file and neuronet options Config=<3,[3,2],2>, 10 epochs, 0.1 learning rate and 0.05 momentum:
+
     python FuzzyClassificator.py --ethalons user_ethalons.dat --learn config=3,3,2,2 epochs=10 rate=0.1 momentum=0.05
 
-    - classify all candidates from file user_candidates.dat and show result in user_report.txt:
+Classify all candidates from file user_candidates.dat and show result in user_report.txt:
+
     python FuzzyClassificator.py --candidates user_candidates.dat --network user_network.xml --report user_report.txt --classify
 
 Where 'python' is Pyzo Python 3.3.2 interpreter.
-
 
 Preparing data
 --------------
@@ -89,56 +95,48 @@ Preparing data
 
 This is default file with ethalon data set. This file contains tab-delimited data that looks like this:
 
-first header line with column names
-and then some strings contains real or fuzzy values
-    - M input columns: 1st value tab ... tab M-th value
-    - N output columns: 1st value tab ... tab N-th value
+    <first header line with column names> 
+    and then some strings contains real or fuzzy values:
+    - M input columns: <1st value><tab>...<tab><M-th value>
+    - N output columns: <1st value><tab>...<tab><N-th value>
 For each input vector level of membership in the class characterized by the output vector.
 
 
 *Example:*
 
-input1	input2	input3	1st_class_output	2nd_class_output
+    input1  input2  input3  1st_class_output  2nd_class_output
+    0.1     0.2     Min     0                 Max
+    0.2     0.3     Low     0                 Max
+    0.3     0.4     Med     0                 Max
+    0.4     0.5     Med     Max               0
+    0.5     0.6     High    Max               0
+    0.6     0.7     Max     Max               0
 
-0.1		0.2		Min		0					Max
+For training on this data use --learn key with config parameter, for example:
 
-0.2		0.3		Low		0					Max
+    --learn config=3,3,2,2 
 
-0.3		0.4		Med		0					Max
-
-0.4		0.5		Med		Max					0
-
-0.5 	0.6		High	Max					0
-
-0.6 	0.7		Max 	Max					0
-
-For training on this data using --learn key, for example, --learn config=3,3,2,2
-where first config parameter mean that dimension of input vector is 3,
-last config parameter mean that dimension of output vector is 2,
-and the middle "3,2" parameters means that neural network must be created with two hidden layers, three neurons in 1st hidden layer and two neurons in 2nd.
+where first config parameter mean that dimension of input vector is 3, last config parameter mean that 
+dimension of output vector is 2, and the middle "3,2" parameters means that neural network must be created with two hidden layers, three neurons in 1st hidden layer and two neurons in 2nd.
 
 
 **candidates.dat**
 
 This is default file with data set for classifying. This file contains tab-delimited data that looks like this:
-<first header line with column names>
-and then some strings contains M input columns with real or fuzzy values:
-<1st value><tab>...<tab><M-th value>
+
+    <first header line with column names>
+    and then some strings contains real or fuzzy values:
+    -  M input columns: <1st value><tab>...<tab><M-th value>
 
 
 *Example:*
 
-input1	input2	input3
-
-0.12	0.32	Med
-
-0.32	0.35	Low
-
-0.54	0.57	Med
-
-0.65	0.68	High
-
-0.76	0.79	Min
+    input1  input2  input3
+    0.12    0.32    Med
+    0.32    0.35    Low
+    0.54    0.57    Med
+    0.65    0.68    High
+    0.76    0.79    Min
 
 To classify each of input vectors using --classify key. All columns are used as values of input vectors.
 
@@ -152,33 +150,23 @@ This is main module which realizes user command-line interaction. Main methods a
 
 Learning mode contain steps in LearningMode():
 
-    1. Creating PyBrain network instance with pre-defined config parameters.
+1. Creating PyBrain network instance with pre-defined config parameters.
+2. Parsing raw data file with ethalons.
+3. Preparing PyBrain dataset.
+4. Initialize empty PyBrain network for learning or reading network configuration from file.
+5. Creating PyBrain trainer.
+6. Starts learning and saving network configuration to file.
 
-    2. Parsing raw data file with ethalons.
-
-    3. Preparing PyBrain dataset.
-
-    4. Initialize empty PyBrain network for learning or reading network configuration from file.
-
-    5. Creating PyBrain trainer.
-
-    6. Starts learning and saving network configuration to file.
-
-The LearningMode() method takes a dictionary with the values ​​of the initialization parameters for the neural network training.
+The LearningMode() method takes a dictionary with the values of the initialization parameters for the neural network training.
 
 Classifying mode contains steps in ClassifyingMode():
 
-    1. Creating PyBrain network instance.
-
-    2. Parsing raw data file with candidates.
-
-    3. Preparing PyBrain dataset.
-
-    4. Loading trained network from network configuration file.
-
-    5. Activating network for all candidate input vectors.
-
-    6. Interpreting results.
+1. Creating PyBrain network instance.
+2. Parsing raw data file with candidates.
+3. Preparing PyBrain dataset.
+4. Loading trained network from network configuration file.
+5. Activating network for all candidate input vectors.
+6. Interpreting results.
 
 The ClassifyingMode() method only runs calculations using the trained neural network.
 
