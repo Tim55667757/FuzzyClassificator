@@ -114,7 +114,7 @@ def DisableLogger(handler, parentHandler=FCLogger):
 
 # Main init:
 
-SetLevel('ERROR')  # set up ERROR verbosity level by default
+SetLevel('INFO')  # set up INFO verbosity level by default for FCLogger
 streamHandler = logging.StreamHandler()  # initialize Console FCLogger by default
 streamHandler.setFormatter(formatter)  # set formatter for console FCLogger
 if FCLogger.parent.handlers:
@@ -125,7 +125,7 @@ else:
 
 # Constants and Global variables:
 
-mainLogFile = 'fc.log'  # file to logging by default
+mainLogFile = 'fc.log'  # file to full logging by default
 fileLogHandler = EnableLogger(logFile=mainLogFile, parentHandler=FCLogger, useFormat=formatter)  # add logging to file
 
 sepLong = '-' * 80  # long log separator

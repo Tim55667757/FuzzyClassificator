@@ -31,7 +31,7 @@ FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source comput
         Show help message and exit.
 
     -l <verbosity>, --debug-level <verbosity>
-        Use 0, 1, 2 debug info verbosity, 0 by default.
+        Use 1, 2, 3, 4, 5 or DEBUG, INFO, WARNING, ERROR, CRITICAL debug info verbosity, INFO (2) by default.
 
     -e <ethalon_filename>, --ethalons <ethalon_filename>
         File with ethalon data samples, ethalons.dat by default.
