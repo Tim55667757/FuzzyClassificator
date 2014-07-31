@@ -175,6 +175,7 @@ def TNormCompose(*fuzzyNumbers, normType='logic'):
 
     if len(fuzzyNumbers) >= 1:
         result = fuzzyNumbers[0]
+
         for f in fuzzyNumbers[1:]:
             result = TNorm(result, f, normType)
 
@@ -228,6 +229,7 @@ def SCoNormCompose(*fuzzyNumbers, normType='logic'):
 
     if len(fuzzyNumbers) >= 1:
         result = fuzzyNumbers[0]
+
         for f in fuzzyNumbers[1:]:
             result = SCoNorm(result, f, normType)
 
@@ -587,7 +589,7 @@ class FuzzySet():
 class FuzzyScale():
     """
     Routines for work with fuzzy scales. Fuzzy scale is an ordered set of linguistic variables.
-    Fuzzy scale is an object like this:
+    Fuzzy scale contains named levels and its MF. This object looks like this:
     S = [{'name': 'name_1', 'fSet': fuzzySet_1},
          {'name': 'name_2', 'fSet': fuzzySet_2}, ...]
         where name-key is a linguistic name of fuzzy set,
@@ -596,6 +598,7 @@ class FuzzyScale():
 
     def __init__(self):
         self._name = 'DefaultScale'  # default scale contains 3 level, DefaultScale = {Min, Med, High}:
+
         self._levels = [{'name': 'Min',
                          'fSet': FuzzySet(membershipFunction=MFunction('hyperbolic', **{'a': 7, 'b': 4, 'c': 0}),
                                           supportSet=(0., 1.),
@@ -712,12 +715,14 @@ class FuzzyScale():
 
 class UniversalFuzzyScale(FuzzyScale):
     """
-    Iniversal fuzzy scales S_f = {Min, Low, Med, High, Max}.
+    Iniversal fuzzy scale S_f = {Min, Low, Med, High, Max}.
     """
 
     def __init__(self):
         super().__init__()
+
         self._name = 'FuzzyScale'  # default scale contains 3 level, FuzzyScale = {Min, Med, High}:
+
         self._levels = [{'name': 'Min',
                          'fSet': FuzzySet(membershipFunction=MFunction('hyperbolic', **{'a': 8, 'b': 20, 'c': 0}),
                                           supportSet=(0., 0.23),
@@ -745,7 +750,7 @@ class UniversalFuzzyScale(FuzzyScale):
 
 
 if __name__ == "__main__":
-    ## Some examples (just run FuzzyRoutines):
+    ## Some examples (just run this FuzzyRoutines module):
 
     ## --- Usage of some membership functions (uncomment one of them):
 
@@ -775,6 +780,7 @@ if __name__ == "__main__":
     print('Printing Membership function parameters: ', funct)
 
     ## --- Calculating some function's values in [0, 1]:
+
     xPar = 0
     for i in range(0, 11, 1):
         xPar = (xPar + i) / 10
@@ -782,8 +788,9 @@ if __name__ == "__main__":
         print('{}({:1.1f}, {}) = {:1.4f}'.format(funct.name, xPar, funct.parameters, res))
 
     ## --- Work with fuzzy set:
+
     fuzzySet = FuzzySet(funct, (0., 1.))  # creating fuzzy set A = <mju_funct, support_set>
-    print('Printing fuzzy set after init before changes:', fuzzySet)
+    print('Printing fuzzy set after init and before changes:', fuzzySet)
     print('Defuz({}) = {:1.2f}'.format(fuzzySet.name, fuzzySet.Defuz()))
 
     changedMjuPars = copy.deepcopy(mjuPars)  # change parameters of membership function with deepcopy example:
@@ -806,6 +813,7 @@ if __name__ == "__main__":
     ##     where name is a linguistic name of fuzzy set,
     ##     fSet is a user define fuzzy set of FuzzySet type.
     scale = FuzzyScale()  # intialize new fuzzy scale with default levels
+
     print('Printing default fuzzy scale in human-readable:', scale)
 
     print('Defuz() of all default levels:')
@@ -839,13 +847,14 @@ if __name__ == "__main__":
         print('Defuz({}) = {:1.2f}'.format(item['name'], item['fSet'].Defuz()))
 
     ## --- Work with Universal Fuzzy Scale:
-
     ## Iniversal fuzzy scales S_f = {Min, Low, Med, High, Max} pre-defined in UniversalFuzzyScale() class.
+
     uniFScale = UniversalFuzzyScale()
     print('Levels of Universal Fuzzy Scale:', uniFScale.levels)
     print('Printing scale:', uniFScale)
 
     ## Use Fuzzy() function to looking for level on Fuzzy Scale:
+
     xPar = 0
     for i in range(0, 10, 1):
         xPar = (xPar + i) / 10
@@ -853,6 +862,7 @@ if __name__ == "__main__":
         print('Fuzzy({:1.1f}, {}) = {}, {}'.format(xPar, uniFScale.name, res['name'], res['fSet']))
 
     ## Finding fuzzy level using GetLevelByName() function:
+
     print('Finding level by name with exact matching:')
 
     res = uniFScale.GetLevelByName('Min')
@@ -885,6 +895,7 @@ if __name__ == "__main__":
     print("GetLevelByName('Highest', {}) = {}, {}".format(uniFScale.name, res['name'] if res else 'None', res['fSet'] if res else 'None'))
 
     ## --- Work with fuzzy logic operators:
+
     print('IsCorrectFuzzyNumberValue(0.5) =', IsCorrectFuzzyNumberValue(0.5))
     print('IsCorrectFuzzyNumberValue(1.1) =', IsCorrectFuzzyNumberValue(1.1))
 
