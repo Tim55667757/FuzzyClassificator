@@ -22,7 +22,7 @@ FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source comput
 
 **Usage:**
 
-    python FuzzyClassificator.py [options] [learn [Network_Options**]]|[classify]
+    python FuzzyClassificator.py [options] [--learn [Network_Options]] | [--classify [Network_Options]]
 
 
 *Optional arguments:*
@@ -45,6 +45,9 @@ FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source comput
     -r <report_filename>, --report <report_filename>
         File with Neuro Network configuration, report.txt by default.
 
+    --no-fuzzy
+        Do not show fuzzy results, only real. False by default.
+
     --reload
         Reload network from file before usage, False by default.
 
@@ -54,7 +57,7 @@ FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source comput
     Some keys:
     
     --learn [Network_Options]
-        Start program in learning mode with options parameters, where Network_Options** is a dictionary:
+        Start program in learning mode with options parameters, where Network_Options is a dictionary:
         
         {
         config=inputs,layer1,layer2,...,outputs
@@ -72,8 +75,15 @@ FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source comput
             this is parameter of momentum of learning, float number in [0, 1]
         }
 
-    --classify
-        Start program in classificator mode.
+    --classify [Network_Options]
+        Start program in classificator mode with options parameters, where Network_Options is a dictionary:
+
+        {
+        config=inputs,layer1,layer2,...,outputs
+            where inputs is number of neurons in input layer,
+            layer1..N are number of neurons in hidden layers,
+            and outputs is number of neurons in output layer
+        }
 
 
 *Examples:*
@@ -105,12 +115,12 @@ For each input vector level of membership in the class characterized by the outp
 *Example:*
 
     input1  input2  input3  1st_class_output  2nd_class_output
-    0.1     0.2     Min     0                 Max
-    0.2     0.3     Low     0                 Max
-    0.3     0.4     Med     0                 Max
-    0.4     0.5     Med     Max               0
-    0.5     0.6     High    Max               0
-    0.6     0.7     Max     Max               0
+    0.1     0.2     Min     Min               Max
+    0.2     0.3     Low     Min               Max
+    0.3     0.4     Med     Min               Max
+    0.4     0.5     Med     Max               Min
+    0.5     0.6     High    Max               Min
+    0.6     0.7     Max     Max               Min
 
 For training on this data use --learn key with config parameter, for example:
 
@@ -132,13 +142,40 @@ This is default file with data set for classifying. This file contains tab-delim
 *Example:*
 
     input1  input2  input3
-    0.12    0.32    Med
+    0.12    0.32    Min
     0.32    0.35    Low
     0.54    0.57    Med
     0.65    0.68    High
-    0.76    0.79    Min
+    0.76    0.79    Max
 
 To classify each of input vectors using --classify key. All columns are used as values of input vectors.
+
+If we train Neuronet with command:
+
+    python FuzzyClassificator.py --ethalons ethalons.dat --learn config=3,3,2,2 epochs=1000 rate=0.1 momentum=0.05
+
+And then trying to classificate candidates vectors with command:
+
+    python FuzzyClassificator.py --candidates candidates.dat --network network.xml --report report.txt --classify config=3,3,2,2
+
+Then we get *report.txt* file with next information:
+
+    Neuronet: C:\work\projects\FuzzyClassificator\network.xml
+
+    FuzzyScale = {Min, Low, Med, High, Max}
+        Min = <Hyperbolic(x, {'a': 8, 'c': 0, 'b': 20}), [0.0, 0.23]>
+        Low = <Bell(x, {'a': 0.17, 'c': 0.34, 'b': 0.23}), [0.17, 0.4]>
+        Med = <Bell(x, {'a': 0.34, 'c': 0.6, 'b': 0.4}), [0.34, 0.66]>
+        High = <Bell(x, {'a': 0.6, 'c': 0.77, 'b': 0.66}), [0.6, 0.83]>
+        Max = <Parabolic(x, {'a': 0.77, 'b': 0.95}), [0.77, 1.0]>
+
+    Classification results for candidates vectors:
+
+        Input: ['0.12', '0.32', 'Min']	Output: ['Min', 'Max']
+        Input: ['0.32', '0.35', 'Low']	Output: ['Low', 'High']
+        Input: ['0.54', '0.57', 'Med']	Output: ['Max', 'Min']
+        Input: ['0.65', '0.68', 'High']	Output: ['Max', 'Min']
+        Input: ['0.76', '0.79', 'Max']	Output: ['Max', 'Min']
 
 
 Work with program modules
@@ -163,10 +200,9 @@ Classifying mode contains steps in *ClassifyingMode()*:
 
 1. Creating PyBrain network instance.
 2. Parsing raw data file with candidates.
-3. Preparing PyBrain dataset.
-4. Loading trained network from network configuration file.
-5. Activating network for all candidate input vectors.
-6. Interpreting results.
+3. Loading trained network from network configuration file.
+4. Activating network for all candidate input vectors.
+5. Interpreting results.
 
 The *ClassifyingMode()* method only runs calculations using the trained neural network.
 
