@@ -135,7 +135,7 @@ def TNorm(aFuzzyNumber, bFuzzyNumber, normType='logic'):
         'logic' - result of fuzzy logic AND (min operator),
         'algebraic' - result of algebraic multiplication operation,
         'boundary' - result of boundary multiplication operation,
-        'drastic' - result of drastic multiplication operation,
+        'drastic' - result of drastic multiplication operation.
     """
     result = 0  # return 0 if errors
 
@@ -896,8 +896,12 @@ if __name__ == "__main__":
 
     ## --- Work with fuzzy logic operators:
 
+    ## Checks that number is in [0, 1]:
+
     print('IsCorrectFuzzyNumberValue(0.5) =', IsCorrectFuzzyNumberValue(0.5))
     print('IsCorrectFuzzyNumberValue(1.1) =', IsCorrectFuzzyNumberValue(1.1))
+
+    ## Calculates result of fuzzy NOT, fuzzy NOT with alpha parameter and parabolic fuzzy NOT operations:
 
     print('FNOT(0.25) =', FuzzyNOT(0.25))
     print('FNOT(0.25, alpha=0.25) =', FuzzyNOT(0.25, alpha=0.25))
@@ -907,23 +911,33 @@ if __name__ == "__main__":
     print('FNOTParabolic(0.25, alpha=0.25) =', FuzzyNOTParabolic(0.25, alpha=0.25))
     print('FNOTParabolic(0.25, alpha=0.75) =', FuzzyNOTParabolic(0.25, alpha=0.75))
 
+    ## Calculates result of fuzzy AND/OR operations:
+
     print('FuzzyAND(0.25, 0.5) =', FuzzyAND(0.25, 0.5))
     print('FuzzyOR(0.25, 0.5) =', FuzzyOR(0.25, 0.5))
+
+    ## Calculates result of T-Norm operations, where T-Norm is one of conjunctive operators - logic, algebraic, boundary, drastic:
 
     print("TNorm(0.25, 0.5, 'logic') =", TNorm(0.25, 0.5, normType='logic'))
     print("TNorm(0.25, 0.5, 'algebraic') =", TNorm(0.25, 0.5, normType='algebraic'))
     print("TNorm(0.25, 0.5, 'boundary') =", TNorm(0.25, 0.5, normType='boundary'))
     print("TNorm(0.25, 0.5, 'drastic') =", TNorm(0.25, 0.5, normType='drastic'))
 
+    ## Calculates result of S-coNorm operations, where S-coNorm is one of disjunctive operators - logic, algebraic, boundary, drastic:
+
     print("SCoNorm(0.25, 0.5, 'logic') =", SCoNorm(0.25, 0.5, normType='logic'))
     print("SCoNorm(0.25, 0.5, 'algebraic') =", SCoNorm(0.25, 0.5, normType='algebraic'))
     print("SCoNorm(0.25, 0.5, 'boundary') =", SCoNorm(0.25, 0.5, normType='boundary'))
     print("SCoNorm(0.25, 0.5, 'drastic') =", SCoNorm(0.25, 0.5, normType='drastic'))
 
+    ## Calculates result of T-Norm operations for N numbers, N > 2:
+
     print("TNormCompose(0.25, 0.5, 0.75, 'logic') =", TNormCompose(0.25, 0.5, 0.75, normType='logic'))
     print("TNormCompose(0.25, 0.5, 0.75, 'algebraic') =", TNormCompose(0.25, 0.5, 0.75, normType='algebraic'))
     print("TNormCompose(0.25, 0.5, 0.75, 'boundary') =", TNormCompose(0.25, 0.5, 0.75, normType='boundary'))
     print("TNormCompose(0.25, 0.5, 0.75, 'drastic') =", TNormCompose(0.25, 0.5, 0.75, normType='drastic'))
+
+    ## Calculates result of S-coNorm operations for N numbers, N > 2:
 
     print("SCoNormCompose(0.25, 0.5, 0.75, 'logic') =", SCoNormCompose(0.25, 0.5, 0.75, normType='logic'))
     print("SCoNormCompose(0.25, 0.5, 0.75, 'algebraic') =", SCoNormCompose(0.25, 0.5, 0.75, normType='algebraic'))
