@@ -54,7 +54,7 @@ FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source comput
 
 *Work modes:*
 
-    Some keys:
+Learning Mode:
     
     --learn [Network_Options]
         Start program in learning mode with options parameters, where Network_Options is a dictionary:
@@ -74,6 +74,8 @@ FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source comput
         momentum=<float_num>
             this is parameter of momentum of learning, float number in [0, 1]
         }
+
+Classifying Mode:
 
     --classify [Network_Options]
         Start program in classificator mode with options parameters, where Network_Options is a dictionary:
@@ -158,7 +160,7 @@ And then trying to classificate candidates vectors with command:
 
     python FuzzyClassificator.py --candidates candidates.dat --network network.xml --report report.txt --classify config=3,3,2,2
 
-Then we get *report.txt* file with next information:
+Then we get *report.text* file with information that looks like this:
 
     Neuronet: C:\work\projects\FuzzyClassificator\network.xml
 
@@ -185,7 +187,7 @@ Work with program modules
 
 This is main module which realizes user command-line interaction. Main methods are *LearningMode()* and *ClassifyingMode()* which provide similar program modes. The module provide user interface that implemented in PyBrainLearning.py.
 
-Learning mode contain steps in *LearningMode()*:
+Learning mode contain steps realized by *LearningMode()*:
 
 1. Creating PyBrain network instance with pre-defined config parameters.
 2. Parsing raw data file with ethalons.
@@ -196,7 +198,7 @@ Learning mode contain steps in *LearningMode()*:
 
 The *LearningMode()* method takes a dictionary with the values of the initialization parameters for the neural network training.
 
-Classifying mode contains steps in *ClassifyingMode()*:
+Classifying mode contains steps realized by *ClassifyingMode()*:
 
 1. Creating PyBrain network instance.
 2. Parsing raw data file with candidates.
@@ -221,7 +223,7 @@ All routines to work with fuzzy neural networks realized in *FuzzyNeuroNetwork()
 - *SaveNetwork()* - used for saving network in PyBrain xml-format,
 - *LoadNetwork()* - used for loading network from PyBrain xml-format file,
 - *Train()* - realize network training mechanism,
-- *CreateReport()* - creating text report after classifies vector-candidates.
+- *CreateReport()* - creates text report after classification vector-candidates.
 
 You can import this class and use its methods in other projects.
 
@@ -386,10 +388,12 @@ Finding fuzzy level using GetLevelByName() function without exact matching:
 
 *Work with fuzzy logic operators.*
 
-check that number is in [0. 1]:
+Checks that number is in [0, 1]:
 
     print('IsCorrectFuzzyNumberValue(0.5) =', IsCorrectFuzzyNumberValue(0.5))
     print('IsCorrectFuzzyNumberValue(1.1) =', IsCorrectFuzzyNumberValue(1.1))
+
+Calculates result of fuzzy NOT, fuzzy NOT with alpha parameter and parabolic fuzzy NOT operations:
 
     print('FNOT(0.25) =', FuzzyNOT(0.25))
     print('FNOT(0.25, alpha=0.25) =', FuzzyNOT(0.25, alpha=0.25))
@@ -399,25 +403,131 @@ check that number is in [0. 1]:
     print('FNOTParabolic(0.25, alpha=0.25) =', FuzzyNOTParabolic(0.25, alpha=0.25))
     print('FNOTParabolic(0.25, alpha=0.75) =', FuzzyNOTParabolic(0.25, alpha=0.75))
 
+Calculates result of fuzzy AND/OR operations:
+
     print('FuzzyAND(0.25, 0.5) =', FuzzyAND(0.25, 0.5))
     print('FuzzyOR(0.25, 0.5) =', FuzzyOR(0.25, 0.5))
+
+Calculates result of T-Norm operations, where T-Norm is one of conjunctive operators - logic, algebraic, boundary, drastic:
 
     print("TNorm(0.25, 0.5, 'logic') =", TNorm(0.25, 0.5, normType='logic'))
     print("TNorm(0.25, 0.5, 'algebraic') =", TNorm(0.25, 0.5, normType='algebraic'))
     print("TNorm(0.25, 0.5, 'boundary') =", TNorm(0.25, 0.5, normType='boundary'))
     print("TNorm(0.25, 0.5, 'drastic') =", TNorm(0.25, 0.5, normType='drastic'))
 
+Calculates result of S-coNorm operations, where S-coNorm is one of disjunctive operators - logic, algebraic, boundary, drastic:
+
     print("SCoNorm(0.25, 0.5, 'logic') =", SCoNorm(0.25, 0.5, normType='logic'))
     print("SCoNorm(0.25, 0.5, 'algebraic') =", SCoNorm(0.25, 0.5, normType='algebraic'))
     print("SCoNorm(0.25, 0.5, 'boundary') =", SCoNorm(0.25, 0.5, normType='boundary'))
     print("SCoNorm(0.25, 0.5, 'drastic') =", SCoNorm(0.25, 0.5, normType='drastic'))
+
+Calculates result of T-Norm operations for N numbers, N > 2:
 
     print("TNormCompose(0.25, 0.5, 0.75, 'logic') =", TNormCompose(0.25, 0.5, 0.75, normType='logic'))
     print("TNormCompose(0.25, 0.5, 0.75, 'algebraic') =", TNormCompose(0.25, 0.5, 0.75, normType='algebraic'))
     print("TNormCompose(0.25, 0.5, 0.75, 'boundary') =", TNormCompose(0.25, 0.5, 0.75, normType='boundary'))
     print("TNormCompose(0.25, 0.5, 0.75, 'drastic') =", TNormCompose(0.25, 0.5, 0.75, normType='drastic'))
 
+Calculates result of S-coNorm operations for N numbers, N > 2:
+
     print("SCoNormCompose(0.25, 0.5, 0.75, 'logic') =", SCoNormCompose(0.25, 0.5, 0.75, normType='logic'))
     print("SCoNormCompose(0.25, 0.5, 0.75, 'algebraic') =", SCoNormCompose(0.25, 0.5, 0.75, normType='algebraic'))
     print("SCoNormCompose(0.25, 0.5, 0.75, 'boundary') =", SCoNormCompose(0.25, 0.5, 0.75, normType='boundary'))
     print("SCoNormCompose(0.25, 0.5, 0.75, 'drastic') =", SCoNormCompose(0.25, 0.5, 0.75, normType='drastic'))
+
+If you run code above - you'll see next console output:
+
+    Printing Membership function parameters:  Trapezium(x, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8})
+    Trapezium(0.0, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8}) = 0.0000
+    Trapezium(0.1, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8}) = 0.0000
+    Trapezium(0.2, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8}) = 0.2750
+    Trapezium(0.3, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8}) = 0.5525
+    Trapezium(0.4, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8}) = 0.8302
+    Trapezium(0.5, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8}) = 1.0000
+    Trapezium(0.7, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8}) = 1.0000
+    Trapezium(0.8, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8}) = 1.0000
+    Trapezium(0.9, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8}) = 0.6173
+    Trapezium(1.0, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8}) = 0.0617
+    Trapezium(1.1, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8}) = 0.0000
+    Printing fuzzy set after init and before changes: FuzzySet = <Trapezium(x, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8}), [0.0, 1.0]>
+    Defuz(FuzzySet) = 0.59
+    New membership function parameters:  {'b': 1, 'c': 0.5, 'a': 0, 'd': 0.8}
+    New support set:  (0.5, 1)
+    New value of Defuz(Changed fuzzy set) = 0.70
+    Printing fuzzy set after changes: Changed fuzzy set = <Trapezium(x, {'b': 1, 'c': 0.5, 'a': 0, 'd': 0.8}), [0.5, 1]>
+    Printing default fuzzy scale in human-readable: DefaultScale = {Min, Med, High}
+        Minimum = <Hyperbolic(x, {'b': 4, 'c': 0, 'a': 7}), [0.0, 1.0]>
+        Medium = <Bell(x, {'b': 0.5, 'c': 0.6, 'a': 0.35}), [0.0, 1.0]>
+        High = <Triangle(x, {'b': 1, 'c': 1, 'a': 0.7}), [0.0, 1.0]>
+    Defuz() of all default levels:
+    Defuz(Min) = 0.10
+    Defuz(Med) = 0.55
+    Defuz(High) = 0.90
+    Define some new levels:
+    Printing Level 1 in human-readable: min = <Hyperbolic(x, {'b': 20, 'c': 0, 'a': 2}), [0.0, 0.5]>
+    Printing Level 2 in human-readable: med = <Bell(x, {'b': 0.55, 'c': 0.7, 'a': 0.4}), [0.25, 0.75]>
+    Printing Level 3 in human-readable: max = <Triangle(x, {'b': 1, 'c': 1, 'a': 0.65}), [0.7, 1.0]>
+    Changed List of levels as objects: [{'name': 'min', 'fSet': <__main__.FuzzySet object at 0x0000000002B67FD0>}, {'name': 'med', 'fSet': <__main__.FuzzySet object at 0x0000000002B86080>}, {'name': 'max', 'fSet': <__main__.FuzzySet object at 0x0000000002B860F0>}]
+    Printing changed fuzzy scale in human-readable: New Scale = {min, med, max}
+        min = <Hyperbolic(x, {'b': 20, 'c': 0, 'a': 2}), [0.0, 0.5]>
+        med = <Bell(x, {'b': 0.55, 'c': 0.7, 'a': 0.4}), [0.25, 0.75]>
+        max = <Triangle(x, {'b': 1, 'c': 1, 'a': 0.65}), [0.7, 1.0]>
+    Defuz() of all New Scale levels:
+    Defuz(min) = 0.24
+    Defuz(med) = 0.61
+    Defuz(max) = 0.89
+    Levels of Universal Fuzzy Scale: [{'name': 'Min', 'fSet': <__main__.FuzzySet object at 0x0000000002B86278>}, {'name': 'Low', 'fSet': <__main__.FuzzySet object at 0x0000000002B862E8>}, {'name': 'Med', 'fSet': <__main__.FuzzySet object at 0x0000000002B86358>}, {'name': 'High', 'fSet': <__main__.FuzzySet object at 0x0000000002B863C8>}, {'name': 'Max', 'fSet': <__main__.FuzzySet object at 0x0000000002B86438>}]
+    Printing scale: FuzzyScale = {Min, Low, Med, High, Max}
+        Min = <Hyperbolic(x, {'b': 20, 'c': 0, 'a': 8}), [0.0, 0.23]>
+        Low = <Bell(x, {'b': 0.23, 'c': 0.34, 'a': 0.17}), [0.17, 0.4]>
+        Med = <Bell(x, {'b': 0.4, 'c': 0.6, 'a': 0.34}), [0.34, 0.66]>
+        High = <Bell(x, {'b': 0.66, 'c': 0.77, 'a': 0.6}), [0.6, 0.83]>
+        Max = <Parabolic(x, {'b': 0.95, 'a': 0.77}), [0.77, 1.0]>
+    Fuzzy(0.0, FuzzyScale) = Min, Min = <Hyperbolic(x, {'b': 20, 'c': 0, 'a': 8}), [0.0, 0.23]>
+    Fuzzy(0.1, FuzzyScale) = Min, Min = <Hyperbolic(x, {'b': 20, 'c': 0, 'a': 8}), [0.0, 0.23]>
+    Fuzzy(0.2, FuzzyScale) = Low, Low = <Bell(x, {'b': 0.23, 'c': 0.34, 'a': 0.17}), [0.17, 0.4]>
+    Fuzzy(0.3, FuzzyScale) = Low, Low = <Bell(x, {'b': 0.23, 'c': 0.34, 'a': 0.17}), [0.17, 0.4]>
+    Fuzzy(0.4, FuzzyScale) = Med, Med = <Bell(x, {'b': 0.4, 'c': 0.6, 'a': 0.34}), [0.34, 0.66]>
+    Fuzzy(0.5, FuzzyScale) = Med, Med = <Bell(x, {'b': 0.4, 'c': 0.6, 'a': 0.34}), [0.34, 0.66]>
+    Fuzzy(0.7, FuzzyScale) = High, High = <Bell(x, {'b': 0.66, 'c': 0.77, 'a': 0.6}), [0.6, 0.83]>
+    Fuzzy(0.8, FuzzyScale) = High, High = <Bell(x, {'b': 0.66, 'c': 0.77, 'a': 0.6}), [0.6, 0.83]>
+    Fuzzy(0.9, FuzzyScale) = Max, Max = <Parabolic(x, {'b': 0.95, 'a': 0.77}), [0.77, 1.0]>
+    Fuzzy(1.0, FuzzyScale) = Max, Max = <Parabolic(x, {'b': 0.95, 'a': 0.77}), [0.77, 1.0]>
+    Finding level by name with exact matching:
+    GetLevelByName(Min, FuzzyScale) = Min, Min = <Hyperbolic(x, {'b': 20, 'c': 0, 'a': 8}), [0.0, 0.23]>
+    GetLevelByName(High, FuzzyScale) = High, High = <Bell(x, {'b': 0.66, 'c': 0.77, 'a': 0.6}), [0.6, 0.83]>
+    GetLevelByName(max, FuzzyScale) = None, None
+    Finding level by name without exact matching:
+    GetLevelByName('mIn', FuzzyScale) = Min, Min = <Hyperbolic(x, {'b': 20, 'c': 0, 'a': 8}), [0.0, 0.23]>
+    GetLevelByName('max', FuzzyScale) = Max, Max = <Parabolic(x, {'b': 0.95, 'a': 0.77}), [0.77, 1.0]>
+    GetLevelByName('Hig', FuzzyScale) = High, High = <Bell(x, {'b': 0.66, 'c': 0.77, 'a': 0.6}), [0.6, 0.83]>
+    GetLevelByName('LOw', FuzzyScale) = Low, Low = <Bell(x, {'b': 0.23, 'c': 0.34, 'a': 0.17}), [0.17, 0.4]>
+    GetLevelByName('eD', FuzzyScale) = Med, Med = <Bell(x, {'b': 0.4, 'c': 0.6, 'a': 0.34}), [0.34, 0.66]>
+    GetLevelByName('Highest', FuzzyScale) = None, None
+    IsCorrectFuzzyNumberValue(0.5) = True
+    IsCorrectFuzzyNumberValue(1.1) = False
+    FNOT(0.25) = 0.75
+    FNOT(0.25, alpha=0.25) = 0.25
+    FNOT(0.25, alpha=0.75) = 0.9166666666666666
+    FNOT(0.25, alpha=1) = 1.0
+    FNOTParabolic(0.25, alpha=0.25) = 0.25000000000000017
+    FNOTParabolic(0.25, alpha=0.75) = 0.9820000000000008
+    FuzzyAND(0.25, 0.5) = 0.25
+    FuzzyOR(0.25, 0.5) = 0.5
+    TNorm(0.25, 0.5, 'logic') = 0.25
+    TNorm(0.25, 0.5, 'algebraic') = 0.125
+    TNorm(0.25, 0.5, 'boundary') = 1
+    TNorm(0.25, 0.5, 'drastic') = 0
+    SCoNorm(0.25, 0.5, 'logic') = 0.5
+    SCoNorm(0.25, 0.5, 'algebraic') = 0.625
+    SCoNorm(0.25, 0.5, 'boundary') = 0.75
+    SCoNorm(0.25, 0.5, 'drastic') = 1
+    TNormCompose(0.25, 0.5, 0.75, 'logic') = 0.25
+    TNormCompose(0.25, 0.5, 0.75, 'algebraic') = 0.09375
+    TNormCompose(0.25, 0.5, 0.75, 'boundary') = 0.75
+    TNormCompose(0.25, 0.5, 0.75, 'drastic') = 0
+    SCoNormCompose(0.25, 0.5, 0.75, 'logic') = 0.75
+    SCoNormCompose(0.25, 0.5, 0.75, 'algebraic') = 0.90625
+    SCoNormCompose(0.25, 0.5, 0.75, 'boundary') = 0
+    SCoNormCompose(0.25, 0.5, 0.75, 'drastic') = 1
