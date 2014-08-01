@@ -17,7 +17,7 @@ Work contains two steps:
 
 **Presets:**
 
-FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source computing environment, based on Python 3.3.2 and includes many scientific packages, PyBrain library, http://pybrain.org - neural network routines.
+FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source computing environment, based on Python 3.3.2 and includes many scientific packages, e.g. PyBrain library, http://pybrain.org - neural network routines.
 
 
 **Usage:**
@@ -96,7 +96,7 @@ Start learning with user's ethalon data file and neuronet options Config=<3,[3,2
 
 Classify all candidates from file user_candidates.dat and show result in user_report.txt:
 
-    python FuzzyClassificator.py --candidates user_candidates.dat --network user_network.xml --report user_report.txt --classify
+    python FuzzyClassificator.py --candidates user_candidates.dat --network user_network.xml --report user_report.txt --classify config=3,3,2,2
 
 Where 'python' is Pyzo Python 3.3.2 interpreter.
 
