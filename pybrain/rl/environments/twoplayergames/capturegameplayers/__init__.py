@@ -1,0 +1,5 @@
+from pybrain.rl.environments.twoplayergames.capturegameplayers.randomplayer import RandomCapturePlayer
+from pybrain.rl.environments.twoplayergames.capturegameplayers.killing import KillingPlayer
+from pybrain.rl.environments.twoplayergames.capturegameplayers.nonsuicide import NonSuicidePlayer
+from pybrain.rl.environments.twoplayergames.capturegameplayers.moduledecision import ModuleDecidingPlayer
+from pybrain.rl.environments.twoplayergames.capturegameplayers.clientwrapper import ClientCapturePlayer

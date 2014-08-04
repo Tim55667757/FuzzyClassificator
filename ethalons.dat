@@ -1,0 +1,7 @@
+input1	input2	input3	1st_class_output	2nd_class_output
+0.1	0.2	Min	Min	Max
+0.2	0.3	Low	Min	Max
+0.3	0.4	Med	Min	Max
+0.4	0.5	Med	Max	Min
+0.5	0.6	High	Max	Min
+0.6	0.7	Max	Max	Min
