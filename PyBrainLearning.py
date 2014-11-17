@@ -457,14 +457,15 @@ class FuzzyNeuroNetwork(object):
             for value in outputVector:
                 fuzzyOutputVector.append(self.scale.Fuzzy(value)['name'])
 
-            FCLogger.debug('    Input: {}\tOutput: {}{}'.format(
-                inputVector, fuzzyOutputVector, '\tExpected: {}'.format(expectedVector) if expectedVector else ''))
+            FCLogger.debug('    Input: {}\tOutput: {}'.format(inputVector, fuzzyOutputVector))
+            FCLogger.debug('    {}'.format('Expected: {}'.format(expectedVector) if expectedVector else ''))
 
             return inputVector, fuzzyOutputVector, expectedVector, errorVector
 
         else:
-            FCLogger.debug('    Input: {}\tOutput: {}{}'.format(
-                defuzInput, outputVector, '\tExpected: {}\tError: {}'.format(defuzExpectedVector, errorVector) if expectedVector else ''))
+            FCLogger.debug('    Input: {}\tOutput: {}'.format(defuzInput, outputVector))
+            FCLogger.debug('    {}'.format('Expected: {}'.format(defuzExpectedVector) if expectedVector else ''))
+            FCLogger.debug('    {}'.format('Error: {}'.format(errorVector) if expectedVector else ''))
 
             return defuzInput, outputVector, defuzExpectedVector, errorVector
 
@@ -475,7 +476,7 @@ class FuzzyNeuroNetwork(object):
         if needFuzzy = True then appropriate output values converting into fuzzy values after activating, otherwise used real values.
         """
         classificationResults = []
-        FCLogger.debug('Classification results: ')
+        FCLogger.debug('Classification results for current epoch:')
 
         if fullEval:
             if needFuzzy:
