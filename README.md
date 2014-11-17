@@ -46,10 +46,10 @@ FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source comput
         File with Neuro Network configuration, report.txt by default.
 
     --no-fuzzy
-        Do not show fuzzy results, only real. False by default.
+        Add key if You doesn't want show fuzzy results, only real. Not set by default.
 
     --reload
-        Reload network from file before usage, False by default.
+        Add key if You want reload network from file before usage. Not set by default.
 
 
 *Work modes:*
@@ -90,15 +90,15 @@ Classifying Mode:
 
 *Examples:*
 
-Start learning with user's ethalon data file and neuronet options Config=<3,[3,2],2>, 10 epochs, 0.1 learning rate and 0.05 momentum:
+Start learning with user's ethalon data file and neuronet options Config=(3,[3,2],2), 10 epochs, 0.1 learning rate and 0.05 momentum:
 
-    python FuzzyClassificator.py --ethalons user_ethalons.dat --learn config=3,3,2,2 epochs=10 rate=0.1 momentum=0.05
+    python FuzzyClassificator.py --ethalons ethalons.dat --learn config=3,3,2,2 epochs=10 rate=0.1 momentum=0.05
 
-Classify all candidates from file user_candidates.dat and show result in user_report.txt:
+Classify all candidates from file candidates.dat and show result in report.txt:
 
-    python FuzzyClassificator.py --candidates user_candidates.dat --network user_network.xml --report user_report.txt --classify config=3,3,2,2
+    python FuzzyClassificator.py --candidates candidates.dat --network network.xml --report report.txt --classify config=3,3,2,2
 
-Where 'python' is Pyzo Python 3.3.2 interpreter.
+Where 'python' is full path to Pyzo Python 3.3.2 interpreter.
 
 Preparing data
 --------------
@@ -124,7 +124,7 @@ For each input vector level of membership in the class characterized by the outp
     0.5     0.6     High    Max               Min
     0.6     0.7     Max     Max               Min
 
-For training on this data use --learn key with config parameter, for example:
+For training on this data set use --learn key with config parameter, for example:
 
     --learn config=3,3,2,2 
 
@@ -150,17 +150,17 @@ This is default file with data set for classifying. This file contains tab-delim
     0.65    0.68    High
     0.76    0.79    Max
 
-To classify each of input vectors using --classify key. All columns are used as values of input vectors.
+To classify each of input vectors You must to use --classify key. All columns are used as values of input vectors.
 
-If we train Neuronet with command:
+If You train Neuronet with command:
 
     python FuzzyClassificator.py --ethalons ethalons.dat --learn config=3,3,2,2 epochs=1000 rate=0.1 momentum=0.05
 
-And then trying to classificate candidates vectors with command:
+And then classificate candidates vectors with command:
 
     python FuzzyClassificator.py --candidates candidates.dat --network network.xml --report report.txt --classify config=3,3,2,2
 
-Then we get *report.text* file with information that looks like this:
+Then You'll get *report.text* file with information that looks like this:
 
     Neuronet: C:\work\projects\FuzzyClassificator\network.xml
 
