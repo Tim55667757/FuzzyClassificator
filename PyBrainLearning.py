@@ -259,7 +259,7 @@ class FuzzyNeuroNetwork(object):
 
             # add samples from defuz raw-data as [[input_vector], [output_vector]] for PyBrain network:
             for sample in self._rawDefuzData:
-                learnData.addSample(sample[:self.config[0]], sample[self.config[-1] + 1:])
+                learnData.addSample(sample[:self.config[0]], sample[self.config[0]:self.config[0] + self.config[-1]])
 
             FCLogger.debug('PyBrain dataset vectors - target (output) and input:')
 
