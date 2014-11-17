@@ -92,11 +92,11 @@ Classifying Mode:
 
 Start learning with user's ethalon data file and neuronet options Config=(3,[3,2],2), 10 epochs, 0.1 learning rate and 0.05 momentum:
 
-    python FuzzyClassificator.py --ethalons ethalons.dat --learn config=3,3,2,2 epochs=10 rate=0.1 momentum=0.05
+    python FuzzyClassificator.py --ethalons ethalons.dat --learn config=3,3,2,2 epochs=10 rate=0.1 momentum=0.05 --debug-level=DEBUG
 
 Classify all candidates from file candidates.dat and show result in report.txt:
 
-    python FuzzyClassificator.py --candidates candidates.dat --network network.xml --report report.txt --classify config=3,3,2,2
+    python FuzzyClassificator.py --candidates candidates.dat --network network.xml --report report.txt --classify config=3,3,2,2 --debug-level=DEBUG
 
 Where 'python' is full path to Pyzo Python 3.3.2 interpreter.
 
