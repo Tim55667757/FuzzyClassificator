@@ -261,11 +261,37 @@ class FuzzyNeuroNetwork(object):
             for sample in self._rawDefuzData:
                 learnData.addSample(sample[:self.config[0]], sample[self.config[0]:self.config[0] + self.config[-1]])
 
-            FCLogger.debug('PyBrain dataset vectors - target (output) and input:')
+            FCLogger.debug('PyBrain dataset vectors, inputs and outputs (targets):')
 
-            for line in str(learnData).split('\n'):
-                if line:
-                    FCLogger.debug('    {}'.format(line))
+            allInputs = learnData.data['input'][:learnData.endmarker['input']]
+            learnDataInputsString = str(allInputs).split('\n')
+            FCLogger.debug("- input vectors, dim({}, {}):".format(len(allInputs[0]), len(allInputs)))
+
+            if len(allInputs) <= 10:
+                for value in learnDataInputsString:
+                    FCLogger.debug('    {}'.format(value))
+
+            else:
+                FCLogger.debug('    {}'.format(learnDataInputsString[0]))
+                FCLogger.debug('    {}'.format(learnDataInputsString[1]))
+                FCLogger.debug('     [... skipped ...]')
+                FCLogger.debug('    {}'.format(learnDataInputsString[-2]))
+                FCLogger.debug('    {}'.format(learnDataInputsString[-1]))
+
+            allTargets = learnData.data['target'][:learnData.endmarker['target']]
+            learnDataTargetsString = str(allTargets).split('\n')
+            FCLogger.debug("- output vectors, dim({}, {}):".format(len(allTargets[0]), len(allTargets)))
+
+            if len(allTargets) <= 10:
+                for value in learnDataTargetsString:
+                    FCLogger.debug('    {}'.format(value))
+
+            else:
+                FCLogger.debug('    {}'.format(learnDataTargetsString[0]))
+                FCLogger.debug('    {}'.format(learnDataTargetsString[1]))
+                FCLogger.debug('     [... skipped ...]')
+                FCLogger.debug('    {}'.format(learnDataTargetsString[-2]))
+                FCLogger.debug('    {}'.format(learnDataTargetsString[-1]))
 
             FCLogger.info('PyBrain dataset successfully prepared.')
 
