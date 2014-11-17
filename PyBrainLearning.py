@@ -390,11 +390,12 @@ class FuzzyNeuroNetwork(object):
         """
         Creating dump of network.
         """
-        FCLogger.debug('Saving network to PyBrain xml-formatted file...')
+        FCLogger.debug('Autosaving - enabled. Trying to save network as PyBrain xml-formatted file...')
 
         NetworkWriter.writeToFile(self.network, self.networkFile)
 
-        FCLogger.info('Network saved to file: {}'.format(os.path.abspath(self.networkFile)))
+        FCLogger.info('{}Network saved to file: {}'.format('Current epoch = {}. '.format(self.trainer.epoch) if self.trainer.epoch else '',
+                                                           os.path.abspath(self.networkFile)))
 
     def LoadNetwork(self):
         """
@@ -520,15 +521,14 @@ class FuzzyNeuroNetwork(object):
                 started = datetime.now()
                 FCLogger.debug('Max epochs: {}'.format(self._epochs))
 
-                for x in range(self._epochs):
+                for epoch in range(self._epochs):
                     FCLogger.debug('Epoch: {}'.format(self.trainer.epoch + 1))
 
                     self.trainer.train()  # training network
 
                     self.ClassificationResults(fullEval=False, needFuzzy=False)  # show some results for ethalon vectors
 
-                    if x % 10 == 0:
-                        FCLogger.debug('Auto saving Neuronet configuration...')
+                    if epoch % 10 == 0:
                         self.SaveNetwork()
 
                 if self._epochs > 1:
