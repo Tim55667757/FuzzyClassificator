@@ -501,19 +501,26 @@ class FuzzyNeuroNetwork(object):
 
         else:
             FCLogger.debug('Some classification results for current epoch: {}'.format(self.trainer.epoch))
-            classificationResults.append(
-                self.ClassificationResultForOneVector(self._rawData[0][:self.config[0]] if not needFuzzy else self._rawDefuzData[0][:self.config[0]],
-                                                      self._rawData[0][self.config[-1] + 1:] if not needFuzzy else self._rawDefuzData[0][self.config[-1] + 1:], needFuzzy))
-            classificationResults.append(
-                self.ClassificationResultForOneVector(self._rawData[1][:self.config[0]] if not needFuzzy else self._rawDefuzData[1][:self.config[0]],
-                                                      self._rawData[1][self.config[-1] + 1:] if not needFuzzy else self._rawDefuzData[1][self.config[-1] + 1:], needFuzzy))
-            FCLogger.debug('    ... skipped ...')
-            classificationResults.append(
-                self.ClassificationResultForOneVector(self._rawData[-2][:self.config[0]] if not needFuzzy else self._rawDefuzData[-2][:self.config[0]],
-                                                      self._rawData[-2][self.config[-1] + 1:] if not needFuzzy else self._rawDefuzData[-2][self.config[-1] + 1:], needFuzzy))
-            classificationResults.append(
-                self.ClassificationResultForOneVector(self._rawData[-1][:self.config[0]] if not needFuzzy else self._rawDefuzData[-1][:self.config[0]],
-                                                      self._rawData[-1][self.config[-1] + 1:] if not needFuzzy else self._rawDefuzData[-1][self.config[-1] + 1:], needFuzzy))
+            if len(self._rawData) <= 10:
+                for i, item in enumerate(self._rawData):
+                    classificationResults.append(
+                        self.ClassificationResultForOneVector(item[:self.config[0]] if not needFuzzy else self._rawDefuzData[i][:self.config[0]],
+                                                              item[self.config[-1] + 1:] if not needFuzzy else self._rawDefuzData[i][self.config[-1] + 1:], needFuzzy))
+
+            else:
+                classificationResults.append(
+                    self.ClassificationResultForOneVector(self._rawData[0][:self.config[0]] if not needFuzzy else self._rawDefuzData[0][:self.config[0]],
+                                                          self._rawData[0][self.config[-1] + 1:] if not needFuzzy else self._rawDefuzData[0][self.config[-1] + 1:], needFuzzy))
+                classificationResults.append(
+                    self.ClassificationResultForOneVector(self._rawData[1][:self.config[0]] if not needFuzzy else self._rawDefuzData[1][:self.config[0]],
+                                                          self._rawData[1][self.config[-1] + 1:] if not needFuzzy else self._rawDefuzData[1][self.config[-1] + 1:], needFuzzy))
+                FCLogger.debug('    ... skipped ...')
+                classificationResults.append(
+                    self.ClassificationResultForOneVector(self._rawData[-2][:self.config[0]] if not needFuzzy else self._rawDefuzData[-2][:self.config[0]],
+                                                          self._rawData[-2][self.config[-1] + 1:] if not needFuzzy else self._rawDefuzData[-2][self.config[-1] + 1:], needFuzzy))
+                classificationResults.append(
+                    self.ClassificationResultForOneVector(self._rawData[-1][:self.config[0]] if not needFuzzy else self._rawDefuzData[-1][:self.config[0]],
+                                                          self._rawData[-1][self.config[-1] + 1:] if not needFuzzy else self._rawDefuzData[-1][self.config[-1] + 1:], needFuzzy))
 
         return classificationResults
 
