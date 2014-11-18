@@ -30,20 +30,23 @@ FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source comput
     -h, --help
         Show help message and exit.
 
-    -l <verbosity>, --debug-level <verbosity>
+    -l [verbosity], --debug-level=[verbosity]
         Use 1, 2, 3, 4, 5 or DEBUG, INFO, WARNING, ERROR, CRITICAL debug info verbosity, INFO (2) by default.
 
-    -e <ethalon_filename>, --ethalons <ethalon_filename>
+    -e [ethalon_filename], --ethalons=[ethalon_filename]
         File with ethalon data samples, ethalons.dat by default.
 
-    -c <candidates_filename>, --candidates <candidates_filename>
+    -c [candidates_filename], --candidates=[candidates_filename]
         File with candidates data samples, candidates.dat by default.
 
-    -n <network_filename>, --network <network_filename>
+    -n [network_filename], --network=[network_filename]
         File with Neuro Network configuration, network.xml by default.
 
-    -r <report_filename>, --report <report_filename>
+    -r [report_filename], --report=[report_filename]
         File with Neuro Network configuration, report.txt by default.
+
+    -sep [TAB|SPACE|separator_char], --separator=[TAB|SPACE|separator_char]
+        Column's separator in raw data files. It can be TAB or SPACE abbreviation, comma, dot, semicolon or other char. TAB symbol by default.
 
     --no-fuzzy
         Add key if You doesn't want show fuzzy results, only real. Not set by default.
@@ -65,13 +68,13 @@ Learning Mode:
             layer1..N are number of neurons in hidden layers,
             and outputs is number of neurons in output layer
 
-        epochs=<int_num>
+        epochs=[int_num]
             this is a positive integer number, greater than 0, means the number of training cycles
 
-        rate=<float_num>
+        rate=[float_num]
             this is parameter of rate of learning, float number in [0, 1]
 
-        momentum=<float_num>
+        momentum=[float_num]
             this is parameter of momentum of learning, float number in [0, 1]
         }
 
@@ -92,11 +95,11 @@ Classifying Mode:
 
 Start learning with user's ethalon data file and neuronet options Config=(3,[3,2],2), 10 epochs, 0.1 learning rate and 0.05 momentum:
 
-    python FuzzyClassificator.py --ethalons ethalons.dat --learn config=3,3,2,2 epochs=10 rate=0.1 momentum=0.05 --debug-level=DEBUG
+    python FuzzyClassificator.py --ethalons ethalons.dat --learn config=3,3,2,2 epochs=10 rate=0.1 momentum=0.05 --separator=TAB --debug-level=DEBUG
 
 Classify all candidates from file candidates.dat and show result in report.txt:
 
-    python FuzzyClassificator.py --candidates candidates.dat --network network.xml --report report.txt --classify config=3,3,2,2 --debug-level=DEBUG
+    python FuzzyClassificator.py --candidates candidates.dat --network network.xml --report report.txt --classify config=3,3,2,2 --separator=TAB --debug-level=DEBUG
 
 Where 'python' is full path to Pyzo Python 3.3.2 interpreter.
 
@@ -105,7 +108,7 @@ Preparing data
 
 **ethalons.dat**
 
-This is default file with ethalon data set. This file contains tab-delimited data that looks like this:
+This is default file with ethalon data set. This file contains tab-delimited data (by default) that looks like this:
 
     <first header line with column names> 
     and then some strings contains real or fuzzy values:
@@ -134,7 +137,7 @@ dimension of output vector is 2, and the middle "3,2" parameters means that neur
 
 **candidates.dat**
 
-This is default file with data set for classifying. This file contains tab-delimited data that looks like this:
+This is default file with data set for classifying. This file contains tab-delimited data (by default) that looks like this:
 
     <first header line with column names>
     and then some strings contains real or fuzzy values:

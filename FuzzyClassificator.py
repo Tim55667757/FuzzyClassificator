@@ -55,6 +55,7 @@ ethalonsDataFile = 'ethalons.dat'  # file with ethalon data samples by default
 candidatesDataFile = 'candidates.dat'  # file with candidates data samples by default
 neuroNetworkFile = 'network.xml'  # file with Neuro Network configuration
 reportDataFile = 'report.txt'  # Report file with classification analysis
+sepSymbol = '\t'  # tab symbol used as separator by default
 reloadNetworkFromFile = False  # reload or not Neuro Network from file before usage
 noFuzzyOutput = False  # show results with fuzzy values if False, otherwise show real values
 
@@ -73,6 +74,7 @@ def ParseArgsMain():
     parser.add_argument('-c', '--candidates', type=str, help='File with candidates data samples, candidates.dat by default.')
     parser.add_argument('-n', '--network', type=str, help='File with Neuro Network configuration, network.xml by default.')
     parser.add_argument('-r', '--report', type=str, help='Report file with classification analysis, report.txt by default.')
+    parser.add_argument('-sep', '--separator', type=str, help='Separator symbol in raw data files. SPACE and TAB are reserved, TAB used by default.')
     parser.add_argument('--no-fuzzy', action='store_true', help='Do not show fuzzy results, only real. False by default.')
     parser.add_argument('--reload', action='store_true', help='Reload network from file before usage, False by default.')
     parser.add_argument('--learn', type=str, nargs='+', help='Start program in learning mode with options: config=inputs_num,layer1_num,layer2_num,...,outputs_num epochs=<int_number> rate=<float_num> momentum=<float_num>.')
@@ -147,6 +149,9 @@ def LMStep1CreatingNetworkWithParameters(**kwargs):
             fNetwork.rawDataFile = ethalonsDataFile
             fNetwork.reportFile = reportDataFile
             fNetwork.config = config
+
+            if sepSymbol:
+                fNetwork.separator = sepSymbol  # set up separator symbol between columns in raw data files
 
             if epochs:
                 fNetwork.epochs = epochs  # set up epochs of learning parameter
@@ -489,6 +494,9 @@ if __name__ == "__main__":
 
         if args.report:
             reportDataFile = args.report  # report file with classification analysis
+
+        if args.separator:
+            sepSymbol = args.separator  # separator symbol: TAB, SPACE or another
 
         if args.no_fuzzy:
             noFuzzyOutput = True

@@ -76,6 +76,7 @@ class FuzzyNeuroNetwork(object):
         self._learningRate = 0.05  # learning rate
         self._momentum = 0.01  # momentum of learning
         self.reportFile = ''  # filename for report with classification analysis
+        self._separator = '\t'  # tab symbol used as separator by default
 
     def _DefuzRawData(self):
         """
@@ -197,6 +198,32 @@ class FuzzyNeuroNetwork(object):
             self._momentum = 0.01
             FCLogger.warning('Parameter momentum might be a float number! It was set to 0.01, by default.')
 
+    @property
+    def separator(self):
+        return self._separator
+
+    @separator.setter
+    def separator(self, value):
+        if isinstance(value, str):
+
+            if value.upper() == 'TAB':
+                self._separator = '\t'
+
+            elif value.upper() == 'SPACE':
+                self._separator = ' '
+
+            else:
+                if len(value) == 1:
+                    self._separator = value
+
+                else:
+                    FCLogger.warning('Parameter separator must be an 1-character string! It was set to TAB char, by default.')
+                    self._separator = '\t'
+
+        else:
+            self._separator = '\t'
+            FCLogger.warning('Parameter separator must be an 1-character string! It was set to TAB char, by default.')
+
     def ParseRawDataFile(self):
         """
         Get list of lines with raw string data without first header-line and empty lines.
@@ -208,8 +235,9 @@ class FuzzyNeuroNetwork(object):
             if self.rawDataFile:
                 with open(self.rawDataFile, newline='') as csvfile:
                     FCLogger.debug('Opened file: {}'.format(self.rawDataFile))
+                    FCLogger.debug('Separator symbol used: {}'.format('TAB' if self.separator == '\t' else '{}'.format('SPACE' if self.separator == ' ' else self.separator)))
 
-                    for row in csv.reader(csvfile, delimiter='\t'):
+                    for row in csv.reader(csvfile, delimiter=self._separator):
                         if row:
                             raw.append(row)
 
