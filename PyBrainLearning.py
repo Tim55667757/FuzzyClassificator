@@ -216,7 +216,7 @@ class FuzzyNeuroNetwork(object):
                 if raw:
                     raw = raw[1:]  # use data without first header-line
 
-                    FCLogger.debug('Parsed raw-data vectors:')
+                    FCLogger.debug('Parsed raw-data vectors without first header-line:')
                     if len(raw) <= 5:
                         for line in raw:
                             FCLogger.debug('    {}'.format(line))
@@ -228,7 +228,10 @@ class FuzzyNeuroNetwork(object):
                         FCLogger.debug('    {}'.format(raw[-2]))
                         FCLogger.debug('    {}'.format(raw[-1]))
 
-            FCLogger.info('File with raw data successfully parsed.')
+                FCLogger.info('File with raw data successfully parsed.')
+
+            else:
+                FCLogger.warning('File with raw data not define or not exist!')
 
         except:
             raw = []
@@ -236,6 +239,8 @@ class FuzzyNeuroNetwork(object):
             FCLogger.error('An error occurred while parsing raw data file!')
 
         finally:
+            if not raw:
+                FCLogger.warning('Empty raw data file!')
             self.rawData = raw  # list of input vectors without first header line
 
     def PrepareDataSet(self):
