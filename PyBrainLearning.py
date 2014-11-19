@@ -465,20 +465,21 @@ class FuzzyNeuroNetwork(object):
             else:
                 defuzInput.append(value)
 
+        outputVector = self.network.activate(defuzInput)
+
         # defuzzyficate expected values:
         defuzExpectedVector = []
-        for value in expectedVector:
-            level = self.scale.GetLevelByName(levelName='{}'.format(value), exactMatching=False)
-
-            if level:
-                if isinstance(level['fSet'], FuzzySet):
-                    defuzExpectedVector.append(level['fSet'].Defuz())
-
-            else:
-                defuzExpectedVector.append(value)
-
-        outputVector = self.network.activate(defuzInput)
         if expectedVector:
+            for value in expectedVector:
+                level = self.scale.GetLevelByName(levelName='{}'.format(value), exactMatching=False)
+
+                if level:
+                    if isinstance(level['fSet'], FuzzySet):
+                        defuzExpectedVector.append(level['fSet'].Defuz())
+
+                else:
+                    defuzExpectedVector.append(value)
+
             errorVector = []
             for num, currentValue in enumerate(outputVector):
                 errorVector.append(float(defuzExpectedVector[num]) - currentValue)
@@ -492,22 +493,25 @@ class FuzzyNeuroNetwork(object):
                 fuzzyOutputVector.append(self.scale.Fuzzy(value)['name'])
 
             FCLogger.debug('        Input: {}\tOutput: {}'.format(inputVector, fuzzyOutputVector))
-            FCLogger.debug('        {}'.format('Expected: {}'.format(expectedVector) if expectedVector else ''))
+            if expectedVector:
+                FCLogger.debug('        Expected: {}'.format(expectedVector))
 
             return inputVector, fuzzyOutputVector, expectedVector, errorVector
 
         else:
             FCLogger.debug('        Input: {}\tOutput: {}'.format(defuzInput, outputVector))
-            FCLogger.debug('        {}'.format('Expected: {}'.format(defuzExpectedVector) if expectedVector else ''))
-            FCLogger.debug('        {}'.format('Error: {}'.format(errorVector) if expectedVector else ''))
+            if expectedVector and defuzExpectedVector and errorVector:
+                FCLogger.debug('        Expected: {}'.format(defuzExpectedVector))
+                FCLogger.debug('        Error: {}'.format(errorVector))
 
             return defuzInput, outputVector, defuzExpectedVector, errorVector
 
-    def ClassificationResults(self, fullEval=False, needFuzzy=False):
+    def ClassificationResults(self, fullEval=False, needFuzzy=False, showExpectedVector=True):
         """
         Method use for receiving results after activating Neuronet with all input vectors.
         If fullEval = True then method calculate results for all input vectors, otherwise for first and last two input vectors.
-        if needFuzzy = True then appropriate output values converting into fuzzy values after activating, otherwise used real values.
+        If needFuzzy = True then appropriate output values converting into fuzzy values after activating, otherwise used real values.
+        If showExpectedVector = True then vector with expected results will shown in log and result file.
         """
         classificationResults = []
 
@@ -516,7 +520,12 @@ class FuzzyNeuroNetwork(object):
             if needFuzzy:
                 for i, vector in enumerate(self._rawData):
                     inputVector = vector[:self.config[0]]
-                    expectedVector = vector[self.config[-1] + 1:]
+
+                    if showExpectedVector:
+                        expectedVector = vector[self.config[-1] + 1:]
+
+                    else:
+                        expectedVector = None
 
                     FCLogger.debug('    Vector #{}:'.format(i))
                     classificationResults.append(self.ClassificationResultForOneVector(inputVector, expectedVector, needFuzzy))
@@ -524,7 +533,12 @@ class FuzzyNeuroNetwork(object):
             else:
                 for i, vector in enumerate(self._rawDefuzData):
                     inputVector = vector[:self.config[0]]
-                    expectedVector = vector[self.config[-1] + 1:]
+
+                    if showExpectedVector:
+                        expectedVector = vector[self.config[-1] + 1:]
+
+                    else:
+                        expectedVector = None
 
                     FCLogger.debug('    Vector #{}:'.format(i))
                     classificationResults.append(self.ClassificationResultForOneVector(inputVector, expectedVector))

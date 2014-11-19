@@ -419,7 +419,7 @@ def CMStep4ActivatingNetworkForAllCandidateInputVectors(fNetwork):
     FCLogger.debug(sepShort)
     FCLogger.info('Step 4. Activating network for all candidate input vectors.')
 
-    results = fNetwork.ClassificationResults(fullEval=True, needFuzzy=not(noFuzzyOutput))
+    results = fNetwork.ClassificationResults(fullEval=True, needFuzzy=not(noFuzzyOutput), showExpectedVector=False)
 
     return results
 
