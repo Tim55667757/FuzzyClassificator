@@ -176,6 +176,8 @@ Then You'll get *report.text* file with information that looks like this:
 
     Classification results for candidates vectors:
 
+        Header: [input1 input2 input3]	[1st_class_output 2nd_class_output]
+        ----------------------------------------------------------------------
         Input: ['0.12', '0.32', 'Min']	Output: ['Min', 'Max']
         Input: ['0.32', '0.35', 'Low']	Output: ['Low', 'High']
         Input: ['0.54', '0.57', 'Med']	Output: ['Max', 'Min']

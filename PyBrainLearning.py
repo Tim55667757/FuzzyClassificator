@@ -67,7 +67,8 @@ class FuzzyNeuroNetwork(object):
         self.networkFile = ''  # file with PyBrain network xml-configuration
         self.rawDataFile = ''  # file with text raw-data for learning
         self.config = ()  # network configuration is a tuple of numbers: (inputs_dim, layer1_dim,..., layerN_dim, outputs_dim)
-        self._rawData = []  # list of raw strings data: ['input_vector',  'output_vector']
+        self._rawData = []  # list of raw strings data without first header line: ['input_vector',  'output_vector']
+        self.headers = []  # list of strings with parsed headers
         self._rawDefuzData = []  # list of raw strings data but with deffazification values if it present in self._rawData
         self.dataSet = None  # PyBrain-formatted dataset after parsing raw-data: [[input_vector], [output_vector]]
         self.network = None  # PyBrain neural network instance
@@ -242,6 +243,7 @@ class FuzzyNeuroNetwork(object):
                             raw.append(row)
 
                 if raw:
+                    self.headers = raw[0]
                     raw = raw[1:]  # use data without first header-line
 
                     FCLogger.debug('Parsed raw-data vectors without first header-line:')
@@ -263,6 +265,7 @@ class FuzzyNeuroNetwork(object):
 
         except:
             raw = []
+            self.headers = []
             FCLogger.error(traceback.format_exc())
             FCLogger.error('An error occurred while parsing raw data file!')
 
@@ -517,6 +520,8 @@ class FuzzyNeuroNetwork(object):
 
         if fullEval:
             FCLogger.debug('Full classification results:')
+            FCLogger.debug('    Header:    [{}]\t[{}]'.format(' '.join(item for item in self.headers[:self.config[0]]),
+                                                              ' '.join(item for item in self.headers[len(self.headers) - self.config[-1]:])))
             if needFuzzy:
                 for i, vector in enumerate(self._rawData):
                     inputVector = vector[:self.config[0]]
@@ -545,6 +550,8 @@ class FuzzyNeuroNetwork(object):
 
         else:
             FCLogger.debug('Some classification results:')
+            FCLogger.debug('    Header:    [{}]\t[{}]'.format(' '.join(item for item in self.headers[:self.config[0]]),
+                                                              ' '.join(item for item in self.headers[len(self.headers) - self.config[-1]:])))
             if len(self._rawData) <= 10:
                 for i, item in enumerate(self._rawData):
                     FCLogger.debug('    Vector #{}:'.format(i))
@@ -625,6 +632,10 @@ class FuzzyNeuroNetwork(object):
                 fH.write('Neuronet: {}\n\n'.format(os.path.abspath(self.networkFile)))
                 fH.write('{}\n\n'.format(self.scale))
                 fH.write('Classification results for candidates vectors:\n\n')
+                head = '    Header: [{}]\t[{}]\n'.format(' '.join(item for item in self.headers[:self.config[0]]),
+                                                         ' '.join(item for item in self.headers[len(self.headers) - self.config[-1]:]))
+                fH.write(head)
+                fH.write('    {}\n'.format('-' * len(head) if len(head) < 100 else '-' * 100))
 
                 for result in results:
                     if fuzzyOutput:
