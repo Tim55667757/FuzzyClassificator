@@ -349,6 +349,9 @@ def CMStep1CreatingPyBrainNetwork(**kwargs):
         fNetwork.rawDataFile = candidatesDataFile
         fNetwork.reportFile = reportDataFile
 
+        if sepSymbol:
+            fNetwork.separator = sepSymbol  # set up separator symbol between columns in raw data files
+
         FCLogger.debug('Instance of fuzzy network initialized with parameters:')
         FCLogger.debug('{}'.format(kwargs))
         FCLogger.debug('File with candidates data: {}'.format(os.path.abspath(fNetwork.rawDataFile)))
