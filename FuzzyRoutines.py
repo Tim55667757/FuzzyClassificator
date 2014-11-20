@@ -264,8 +264,10 @@ class MFunction():
         return self.mju.__name__  # membership function method name
 
     def __str__(self):
-        # return view of function: Function_name(**parameters). Example: Bell(x,a,b)
-        funcView = '{}({})'.format(self.name, 'y' if self.name == 'Desirability' else 'x, {}'.format(self._parameters))
+        # return view of function: Function_name(**parameters). Example: Bell(x, {"a": 0.6, "b": 0.66, "c": 0.77}
+        funcView = '{}({})'.format(self.name, 'y' if self.name == 'Desirability' else 'x, {}'.format(
+            '{' + ', '.join('"{}": {}'.format(*val) for val in [(k, self._parameters[k])
+                                                                for k in sorted(self._parameters)]) + '}'))
         return funcView
 
     @property
