@@ -518,7 +518,7 @@ class FuzzyNeuroNetwork(object):
         if fullEval:
             FCLogger.debug('Full classification results:')
             FCLogger.debug('    Header:    [{}]\t[{}]'.format(' '.join(head for head in self.headers[:self.config[0]]),
-                                                              ' '.join(head for head in self.headers[len(self.headers) - self.config[-1]:])))
+                                                              ' '.join(head for head in self.headers[len(self.headers) - self.config[-1]:]) if len(self.headers) >= self.config[0] + self.config[-1] else ''))
             if needFuzzy:
                 for vecNum, vector in enumerate(self._rawData):
                     inputVector = vector[:self.config[0]]
@@ -548,7 +548,7 @@ class FuzzyNeuroNetwork(object):
         else:
             FCLogger.debug('Some classification results:')
             FCLogger.debug('    Header:    [{}]\t[{}]'.format(' '.join(head for head in self.headers[:self.config[0]]),
-                                                              ' '.join(head for head in self.headers[len(self.headers) - self.config[-1]:])))
+                                                              ' '.join(head for head in self.headers[len(self.headers) - self.config[-1]:]) if len(self.headers) >= self.config[0] + self.config[-1] else ''))
             if len(self._rawData) <= 10:
                 for vecNum, rawLine in enumerate(self._rawData):
                     FCLogger.debug('    Vector #{}:'.format(vecNum))
@@ -629,8 +629,8 @@ class FuzzyNeuroNetwork(object):
                 fH.write('Neuronet: {}\n\n'.format(os.path.abspath(self.networkFile)))
                 fH.write('{}\n\n'.format(self.scale))
                 fH.write('Classification results for candidates vectors:\n\n')
-                head = '    Header: [{}]\t[{}]\n'.format(' '.join(item for item in self.headers[:self.config[0]]),
-                                                         ' '.join(item for item in self.headers[len(self.headers) - self.config[-1]:]))
+                head = '    Header: [{}]\t[{}]\n'.format(' '.join(header for header in self.headers[:self.config[0]]),
+                                                         ' '.join(header for header in self.headers[len(self.headers) - self.config[-1]:]) if len(self.headers) >= self.config[0] + self.config[-1] else '')
                 fH.write(head)
                 fH.write('    {}\n'.format('-' * len(head) if len(head) < 100 else '-' * 100))
 
