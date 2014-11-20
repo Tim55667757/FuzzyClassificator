@@ -495,16 +495,13 @@ class FuzzyNeuroNetwork(object):
             for value in outputVector:
                 fuzzyOutputVector.append(self.scale.Fuzzy(value)['name'])
 
-            FCLogger.debug('        Input: {}\tOutput: {}'.format(inputVector, fuzzyOutputVector))
-            if expectedVector:
-                FCLogger.debug('        Expected: {}'.format(expectedVector))
+            FCLogger.debug('        Input: {}\tOutput: {}{}'.format(inputVector, fuzzyOutputVector, '\tExpected: {}'.format(expectedVector) if expectedVector else ''))
 
             return inputVector, fuzzyOutputVector, expectedVector, errorVector
 
         else:
-            FCLogger.debug('        Input: {}\tOutput: {}'.format(defuzInput, outputVector))
+            FCLogger.debug('        Input: {}\tOutput: {}{}'.format(defuzInput, outputVector, '\tExpected: {}'.format(defuzExpectedVector) if expectedVector and defuzExpectedVector and errorVector else ''))
             if expectedVector and defuzExpectedVector and errorVector:
-                FCLogger.debug('        Expected: {}'.format(defuzExpectedVector))
                 FCLogger.debug('        Error: {}'.format(errorVector))
 
             return defuzInput, outputVector, defuzExpectedVector, errorVector
@@ -520,63 +517,63 @@ class FuzzyNeuroNetwork(object):
 
         if fullEval:
             FCLogger.debug('Full classification results:')
-            FCLogger.debug('    Header:    [{}]\t[{}]'.format(' '.join(item for item in self.headers[:self.config[0]]),
-                                                              ' '.join(item for item in self.headers[len(self.headers) - self.config[-1]:])))
+            FCLogger.debug('    Header:    [{}]\t[{}]'.format(' '.join(head for head in self.headers[:self.config[0]]),
+                                                              ' '.join(head for head in self.headers[len(self.headers) - self.config[-1]:])))
             if needFuzzy:
-                for i, vector in enumerate(self._rawData):
+                for vecNum, vector in enumerate(self._rawData):
                     inputVector = vector[:self.config[0]]
 
                     if showExpectedVector:
-                        expectedVector = vector[self.config[-1] + 1:]
+                        expectedVector = vector[len(vector) - self.config[-1]:]
 
                     else:
                         expectedVector = None
 
-                    FCLogger.debug('    Vector #{}:'.format(i))
+                    FCLogger.debug('    Vector #{}:'.format(vecNum))
                     classificationResults.append(self.ClassificationResultForOneVector(inputVector, expectedVector, needFuzzy))
 
             else:
-                for i, vector in enumerate(self._rawDefuzData):
+                for vecNum, vector in enumerate(self._rawDefuzData):
                     inputVector = vector[:self.config[0]]
 
                     if showExpectedVector:
-                        expectedVector = vector[self.config[-1] + 1:]
+                        expectedVector = vector[len(vector) - self.config[-1]:]
 
                     else:
                         expectedVector = None
 
-                    FCLogger.debug('    Vector #{}:'.format(i))
+                    FCLogger.debug('    Vector #{}:'.format(vecNum))
                     classificationResults.append(self.ClassificationResultForOneVector(inputVector, expectedVector))
 
         else:
             FCLogger.debug('Some classification results:')
-            FCLogger.debug('    Header:    [{}]\t[{}]'.format(' '.join(item for item in self.headers[:self.config[0]]),
-                                                              ' '.join(item for item in self.headers[len(self.headers) - self.config[-1]:])))
+            FCLogger.debug('    Header:    [{}]\t[{}]'.format(' '.join(head for head in self.headers[:self.config[0]]),
+                                                              ' '.join(head for head in self.headers[len(self.headers) - self.config[-1]:])))
             if len(self._rawData) <= 10:
-                for i, item in enumerate(self._rawData):
-                    FCLogger.debug('    Vector #{}:'.format(i))
+                for vecNum, rawLine in enumerate(self._rawData):
+                    FCLogger.debug('    Vector #{}:'.format(vecNum))
                     classificationResults.append(
-                        self.ClassificationResultForOneVector(item[:self.config[0]] if not needFuzzy else self._rawDefuzData[i][:self.config[0]],
-                                                              item[self.config[-1] + 1:] if not needFuzzy else self._rawDefuzData[i][self.config[-1] + 1:], needFuzzy))
+                        self.ClassificationResultForOneVector(rawLine[:self.config[0]] if not needFuzzy else self._rawDefuzData[vecNum][:self.config[0]],
+                                                              rawLine[len(rawLine) - self.config[-1]:] if not needFuzzy else self._rawDefuzData[vecNum][len(self._rawDefuzData[vecNum]) - self.config[-1]:], needFuzzy))
 
             else:
                 FCLogger.debug('    Vector #0:')
                 classificationResults.append(
                     self.ClassificationResultForOneVector(self._rawData[0][:self.config[0]] if not needFuzzy else self._rawDefuzData[0][:self.config[0]],
-                                                          self._rawData[0][self.config[-1] + 1:] if not needFuzzy else self._rawDefuzData[0][self.config[-1] + 1:], needFuzzy))
+                                                          self._rawData[0][len(self._rawData[0]) - self.config[-1]:] if not needFuzzy else self._rawDefuzData[0][len(self._rawDefuzData[0]) - self.config[-1]:], needFuzzy))
                 FCLogger.debug('    Vector #1:')
                 classificationResults.append(
                     self.ClassificationResultForOneVector(self._rawData[1][:self.config[0]] if not needFuzzy else self._rawDefuzData[1][:self.config[0]],
-                                                          self._rawData[1][self.config[-1] + 1:] if not needFuzzy else self._rawDefuzData[1][self.config[-1] + 1:], needFuzzy))
+                                                          self._rawData[1][len(self._rawData[1]) - self.config[-1]:] if not needFuzzy else self._rawDefuzData[1][len(self._rawDefuzData[1]) - self.config[-1]:], needFuzzy))
                 FCLogger.debug('    ... skipped ...')
                 FCLogger.debug('    Vector #{}:'.format(len(self._rawData) - 2))
                 classificationResults.append(
                     self.ClassificationResultForOneVector(self._rawData[-2][:self.config[0]] if not needFuzzy else self._rawDefuzData[-2][:self.config[0]],
-                                                          self._rawData[-2][self.config[-1] + 1:] if not needFuzzy else self._rawDefuzData[-2][self.config[-1] + 1:], needFuzzy))
+                                                          self._rawData[-2][len(self._rawData[-2]) - self.config[-1]:] if not needFuzzy else self._rawDefuzData[-2][len(self._rawDefuzData[-2]) - self.config[-1]:], needFuzzy))
                 FCLogger.debug('    Vector #{}:'.format(len(self._rawData) - 1))
                 classificationResults.append(
                     self.ClassificationResultForOneVector(self._rawData[-1][:self.config[0]] if not needFuzzy else self._rawDefuzData[-1][:self.config[0]],
-                                                          self._rawData[-1][self.config[-1] + 1:] if not needFuzzy else self._rawDefuzData[-1][self.config[-1] + 1:], needFuzzy))
+                                                          self._rawData[-1][len(self._rawData[-1]) - self.config[-1]:] if not needFuzzy else self._rawDefuzData[-1][len(self._rawDefuzData[-1]) - self.config[-1]:], needFuzzy))
 
         return classificationResults
 
@@ -602,7 +599,7 @@ class FuzzyNeuroNetwork(object):
 
                 if self._epochs > 1:
                     self.SaveNetwork()
-                FCLogger.debug('Duration of learning: {}'.format(datetime.now() - started))
+                FCLogger.info('Duration of learning: {}'.format(datetime.now() - started))
 
             else:
                 raise Exception('Trainer instance not created!')
