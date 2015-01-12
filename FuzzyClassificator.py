@@ -67,7 +67,7 @@ def ParseArgsMain():
     parser = argparse.ArgumentParser()  # command-line string parser
 
     parser.description = 'This program uses neural networks to solve classification problems, and uses fuzzy sets and fuzzy logic to interpreting results.'
-    parser.epilog = 'FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source computing environment, based on Python 3.3.2., and PyBrain library: http://pybrain.org'
+    parser.epilog = 'See examples on GitHub: https://github.com/Tim55667757/FuzzyClassificator FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source computing environment, based on Python 3.3.2., and PyBrain library: http://pybrain.org'
 
     parser.add_argument('-l', '--debug-level', type=str, help='Use 1, 2, 3, 4, 5 or DEBUG, INFO, WARNING, ERROR, CRITICAL debug info verbosity, INFO (2) by default.')
     parser.add_argument('-e', '--ethalons', type=str, help='File with ethalon data samples, ethalons.dat by default.')
