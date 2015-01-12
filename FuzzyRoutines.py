@@ -779,7 +779,7 @@ if __name__ == "__main__":
 
     #funct = MFunction(userFunc='desirability')  # creating instance of desirability function without parameters
 
-    print('Printing Membership function parameters: ', funct)
+    print('Printing Membership function with parameters: ', funct)
 
     ## --- Calculating some function's values in [0, 1]:
 
@@ -787,7 +787,7 @@ if __name__ == "__main__":
     for i in range(0, 11, 1):
         xPar = (xPar + i) / 10
         res = funct.mju(xPar)  # calculate one value of MF with given parameters
-        print('{}({:1.1f}, {}) = {:1.4f}'.format(funct.name, xPar, funct.parameters, res))
+        print('{} = {:1.4f}'.format(funct, res))
 
     ## --- Work with fuzzy set:
 
@@ -804,7 +804,7 @@ if __name__ == "__main__":
     fuzzySet.mFunction.parameters = changedMjuPars
     fuzzySet.supportSet = changedSupportSet
 
-    print('New membership function parameters: ', fuzzySet.mFunction.parameters)
+    print('New membership function with parameters: ', fuzzySet.mFunction)
     print('New support set: ', fuzzySet.supportSet)
     print('New value of Defuz({}) = {:1.2f}'.format(fuzzySet.name, fuzzySet.Defuz()))
     print('Printing fuzzy set after changes:', fuzzySet)
