@@ -617,9 +617,9 @@ class FuzzyScale():
     def __str__(self):
         # return view of fuzzy scale - name = {**levels} and levels interpreter. Example:
         # DefaultScale = {Min, Med, High}
-        #     Minimum = <Hyperbolic(x, {'a': 7, 'c': 0, 'b': 4}), [0.0, 1.0]>
-        #     Medium = <Bell(x, {'a': 0.35, 'c': 0.6, 'b': 0.5}), [0.0, 1.0]>
-        #     High = <Triangle(x, {'a': 0.7, 'c': 1, 'b': 1}), [0.0, 1.0]>
+        #     Minimum = <Hyperbolic(x, {"a": 7, "b": 4, "c": 0}), [0.0, 1.0]>
+        #     Medium = <Bell(x, {"a": 0.35, "b": 0.5, "c": 0.6}), [0.0, 1.0]>
+        #     High = <Triangle(x, {"a": 0.7, "b": 1, "c": 1}), [0.0, 1.0]>
         allLevelsName = self._levels[0]['name']
         allLevels = '\n    {}'.format(self._levels[0]['fSet'].__str__())
         
@@ -717,7 +717,13 @@ class FuzzyScale():
 
 class UniversalFuzzyScale(FuzzyScale):
     """
-    Iniversal fuzzy scale S_f = {Min, Low, Med, High, Max}.
+    Iniversal fuzzy scale S_f = {Min, Low, Med, High, Max}. Example view:
+    FuzzyScale = {Min, Low, Med, High, Max}
+        Min = <Hyperbolic(x, {"a": 8, "b": 20, "c": 0}), [0.0, 0.23]>
+        Low = <Bell(x, {"a": 0.17, "b": 0.23, "c": 0.34}), [0.17, 0.4]>
+        Med = <Bell(x, {"a": 0.34, "b": 0.4, "c": 0.6}), [0.34, 0.66]>
+        High = <Bell(x, {"a": 0.6, "b": 0.66, "c": 0.77}), [0.6, 0.83]>
+        Max = <Parabolic(x, {"a": 0.77, "b": 0.95}), [0.77, 1.0]>
     """
 
     def __init__(self):

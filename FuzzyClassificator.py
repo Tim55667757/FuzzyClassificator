@@ -291,10 +291,12 @@ def LearningMode(**inputParameters):
     6. Starts learning and saving network configuration to file.
     """
     successFinish = False  # success Learning Mode finish flag
+
     FCLogger.info('Learning mode activated.')
     FCLogger.info('Log file: {}'.format(os.path.abspath(fileLogHandler.baseFilename)))
 
     fNetwork = LMStep1CreatingNetworkWithParameters(**inputParameters)
+
     if fNetwork:
         if LMStep2ParsingRawDataFileWithEthalons(fNetwork):
             if LMStep3PreparingPyBrainDataset(fNetwork):
@@ -453,17 +455,19 @@ def ClassifyingMode(**inputParameters):
     5. Interpreting results.
     """
     successFinish = False  # success Classifying mode finish flag
+
     FCLogger.info('Classificator mode activated.')
     FCLogger.info('Log file: {}'.format(os.path.abspath(fileLogHandler.baseFilename)))
 
     fNetwork = CMStep1CreatingPyBrainNetwork(**inputParameters)
+
     if fNetwork:
         if CMStep2ParsingRawDataFileWithCandidates(fNetwork):
-                if CMStep3LoadingTrainedNetworkFromNetworkConfigurationFile(fNetwork):
-                    classificateResult = CMStep4ActivatingNetworkForAllCandidateInputVectors(fNetwork)
-                    if classificateResult:
-                        if CMStep5InterpretingResults(fNetwork, classificateResult, not(noFuzzyOutput)):
-                            successFinish = True
+            if CMStep3LoadingTrainedNetworkFromNetworkConfigurationFile(fNetwork):
+                classificateResult = CMStep4ActivatingNetworkForAllCandidateInputVectors(fNetwork)
+                if classificateResult:
+                    if CMStep5InterpretingResults(fNetwork, classificateResult, not(noFuzzyOutput)):
+                        successFinish = True
 
     if successFinish:
         FCLogger.debug(sepShort)
