@@ -495,12 +495,23 @@ class FuzzyNeuroNetwork(object):
             for value in outputVector:
                 fuzzyOutputVector.append(self.scale.Fuzzy(value)['name'])
 
-            FCLogger.debug('        Input: {}\tOutput: {}{}'.format(inputVector, fuzzyOutputVector, '\tExpected: {}'.format(expectedVector) if expectedVector else ''))
+            if len(inputVector) <= 10:
+                FCLogger.debug('        Input: {}\tOutput: {}{}'.format(inputVector, fuzzyOutputVector, '\tExpected: {}'.format(expectedVector) if expectedVector else ''))
+
+            else:
+                cutInput = '[{}, {}, ..., {}, {}]'.format(inputVector[0], inputVector[1], inputVector[-2], inputVector[-1])
+                FCLogger.debug('        Input: {}\tOutput: {}{}'.format(cutInput, fuzzyOutputVector, '\tExpected: {}'.format(expectedVector) if expectedVector else ''))
 
             return inputVector, fuzzyOutputVector, expectedVector, errorVector
 
         else:
-            FCLogger.debug('        Input: {}\tOutput: {}{}'.format(defuzInput, outputVector, '\tExpected: {}'.format(defuzExpectedVector) if expectedVector and defuzExpectedVector and errorVector else ''))
+            if len(defuzInput) <= 10:
+                FCLogger.debug('        Input: {}\tOutput: {}{}'.format(defuzInput, outputVector, '\tExpected: {}'.format(defuzExpectedVector) if expectedVector and defuzExpectedVector and errorVector else ''))
+
+            else:
+                cutDefuzInput = '[{}, {}, ..., {}, {}]'.format(defuzInput[0], defuzInput[1], defuzInput[-2], defuzInput[-1])
+                FCLogger.debug('        Input: {}\tOutput: {}{}'.format(cutDefuzInput, outputVector, '\tExpected: {}'.format(defuzExpectedVector) if expectedVector and defuzExpectedVector and errorVector else ''))
+
             if expectedVector and defuzExpectedVector and errorVector:
                 FCLogger.debug('        Error: {}'.format(errorVector))
 
