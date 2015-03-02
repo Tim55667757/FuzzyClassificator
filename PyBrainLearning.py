@@ -247,16 +247,21 @@ class FuzzyNeuroNetwork(object):
                     raw = raw[1:]  # use data without first header-line
 
                     FCLogger.debug('Parsed raw-data vectors without first header-line:')
-                    if len(raw) <= 5:
+
+                    if len(raw) <= 10:
                         for line in raw:
-                            FCLogger.debug('    {}'.format(line))
+                            if len(line) <= 10:
+                                FCLogger.debug('    {}'.format(line))
+
+                            else:
+                                FCLogger.debug('    [{}, {}, ..., {}, {}]'.format(line[0], line[1], line[-2], line[-1]))
 
                     else:
-                        FCLogger.debug('    {}'.format(raw[0]))
-                        FCLogger.debug('    {}'.format(raw[1]))
+                        FCLogger.debug('    {}'.format(raw[0] if len(raw[0]) <= 10 else '[{}, {}, ..., {}, {}]'.format(raw[0][0], raw[0][1], raw[0][-2], raw[0][-1])))
+                        FCLogger.debug('    {}'.format(raw[0] if len(raw[1]) <= 10 else '[{}, {}, ..., {}, {}]'.format(raw[1][0], raw[1][1], raw[1][-2], raw[1][-1])))
                         FCLogger.debug('    [ ... skipped ... ]')
-                        FCLogger.debug('    {}'.format(raw[-2]))
-                        FCLogger.debug('    {}'.format(raw[-1]))
+                        FCLogger.debug('    {}'.format(raw[0] if len(raw[0]) <= 10 else '[{}, {}, ..., {}, {}]'.format(raw[-2][0], raw[-2][1], raw[-2][-2], raw[-2][-1])))
+                        FCLogger.debug('    {}'.format(raw[0] if len(raw[0]) <= 10 else '[{}, {}, ..., {}, {}]'.format(raw[-1][0], raw[-1][1], raw[-1][-2], raw[-1][-1])))
 
                 FCLogger.info('File with raw data successfully parsed.')
 
