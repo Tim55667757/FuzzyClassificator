@@ -526,10 +526,20 @@ class FuzzyNeuroNetwork(object):
         """
         classificationResults = []
 
+        inputHeaders = self.headers[:self.config[0]]
+        outputHeaders = self.headers[len(self.headers) - self.config[-1]:]
+
         if fullEval:
             FCLogger.debug('Full classification results:')
-            FCLogger.debug('    Header:    [{}]\t[{}]'.format(' '.join(head for head in self.headers[:self.config[0]]),
-                                                              ' '.join(head for head in self.headers[len(self.headers) - self.config[-1]:]) if len(self.headers) >= self.config[0] + self.config[-1] else ''))
+
+            if len(inputHeaders) <= 10:
+                FCLogger.debug('    Header:    [{}]\t[{}]'.format(' '.join(head for head in inputHeaders),
+                                                                  ' '.join(head for head in outputHeaders) if len(self.headers) >= self.config[0] + self.config[-1] else ''))
+
+            else:
+                FCLogger.debug('    Header:    [{} {} ... {} {}]\t[{}]'.format(inputHeaders[0], inputHeaders[1], inputHeaders[-2], inputHeaders[-1],
+                                                                               ' '.join(head for head in outputHeaders) if len(self.headers) >= self.config[0] + self.config[-1] else ''))
+
             if needFuzzy:
                 for vecNum, vector in enumerate(self._rawData):
                     inputVector = vector[:self.config[0]]
@@ -558,8 +568,15 @@ class FuzzyNeuroNetwork(object):
 
         else:
             FCLogger.debug('Some classification results:')
-            FCLogger.debug('    Header:    [{}]\t[{}]'.format(' '.join(head for head in self.headers[:self.config[0]]),
-                                                              ' '.join(head for head in self.headers[len(self.headers) - self.config[-1]:]) if len(self.headers) >= self.config[0] + self.config[-1] else ''))
+
+            if len(inputHeaders) <= 10:
+                FCLogger.debug('    Header:    [{}]\t[{}]'.format(' '.join(head for head in inputHeaders),
+                                                                  ' '.join(head for head in outputHeaders) if len(self.headers) >= self.config[0] + self.config[-1] else ''))
+
+            else:
+                FCLogger.debug('    Header:    [{} {} ... {} {}]\t[{}]'.format(inputHeaders[0], inputHeaders[1], inputHeaders[-2], inputHeaders[-1],
+                                                                               ' '.join(head for head in outputHeaders) if len(self.headers) >= self.config[0] + self.config[-1] else ''))
+
             if len(self._rawData) <= 10:
                 for vecNum, rawLine in enumerate(self._rawData):
                     FCLogger.debug('    Vector #{}:'.format(vecNum))
