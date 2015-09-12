@@ -979,3 +979,10 @@ if __name__ == "__main__":
     print("SCoNormCompose(0.25, 0.5, 0.75, 'algebraic') =", SCoNormCompose(0.25, 0.5, 0.75, normType='algebraic'))
     print("SCoNormCompose(0.25, 0.5, 0.75, 'boundary') =", SCoNormCompose(0.25, 0.5, 0.75, normType='boundary'))
     print("SCoNormCompose(0.25, 0.5, 0.75, 'drastic') =", SCoNormCompose(0.25, 0.5, 0.75, normType='drastic'))
+
+    ## --- Work with other methods:
+    print("Converting some strings to range of sorted unique numbers:")
+    print('String "1,5" converted to:', DiapasonParser("1,5"))
+    print('String "1-5" converted to:', DiapasonParser("1-5"))
+    print('String "1-5, 6, 7-8" converted to:', DiapasonParser("1-5, 6, 7-8"))
+    print('String "11, 11, 12, 12, 1-5, 3-7" converted to:', DiapasonParser("11, 12, 1-5, 3-7"))
