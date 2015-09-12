@@ -46,7 +46,7 @@ FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source comput
     -r [report_filename], --report=[report_filename]
         File with Neuro Network configuration, report.txt by default.
 
-    -i [indexes], --ignore-columns=[indexes]
+    -ic [indexes], --ignore-columns=[indexes]
         Column indexes in input files that should be ignored.
         Use only dash and comma as separator numbers, other symbols are ignored.
         Example (no space after comma): 1,2,5-11
