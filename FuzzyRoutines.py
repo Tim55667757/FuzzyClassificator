@@ -50,16 +50,36 @@ import traceback
 from FCLogger import FCLogger
 
 
+def DiapasonParser(diapason):
+    """
+    Parse input with diapason string and return list of full indexes in that diapason.
+    Example: string "1,3,5-11" converts to list [1, 3, 5, 6, 7, 8, 9, 10 ,11]
+    """
+    fullDiapason = []
+
+    try:
+        for element in diapason.split(','):
+            fullDiapason += [x for x in range(int(element.split('-')[0]), int(element.split('-')[-1]) + 1)]
+
+    except:
+        FCLogger.error('"{}" is not correct diapason string!'.format(diapason))
+        fullDiapason = []
+
+    finally:
+        return sorted(list(set(fullDiapason)))
+
+
 def IsCorrectFuzzyNumberValue(value):
     """
     All operations in fuzzy logic are executed with numbers in interval [0, 1].
     """
     correctNumberFlag = True
+
     try:
         correctNumberFlag = (0 <= value <= 1)
 
     except:
-        FCLogger.error('{} is number not in [0, 1]!')
+        FCLogger.error('{} is number not in [0, 1]!'.format(value))
         correctNumberFlag = False
 
     finally:
@@ -287,6 +307,7 @@ class MFunction():
         This is hyperbolic membership function with real inputs x and parameters a, b, c.
         """
         a, b, c, result = 0, 0, 0, 0
+
         try:
             a = self._parameters['a']
             b = self._parameters['b']
@@ -312,6 +333,7 @@ class MFunction():
         This is bell membership function with real inputs x and parameters a, b, c.
         """
         a, b, c, result = 0, 0, 0, 0
+
         try:
             a = self._parameters['a']
             b = self._parameters['b']
@@ -349,6 +371,7 @@ class MFunction():
         This is parabolic membership function with real inputs x and parameters a, b.
         """
         a, b, result = 0, 0, 0
+
         try:
             a = self._parameters['a']
             b = self._parameters['b']
@@ -379,6 +402,7 @@ class MFunction():
         This is triangle membership function with real inputs x and parameters a, b, c.
         """
         a, b, c, result = 0, 0, 0, 0
+
         try:
             a = self._parameters['a']
             b = self._parameters['b']
@@ -410,6 +434,7 @@ class MFunction():
         This is trapezium membership function with real inputs x and parameters a, b, c, d.
         """
         a, b, c, d, result = 0, 0, 0, 0, 0
+
         try:
             a = self._parameters['a']
             b = self._parameters['b']
@@ -445,6 +470,7 @@ class MFunction():
         This is exponential membership function with real inputs x and parameters a, b.
         """
         a, b, result = 0, 0, 0
+
         try:
             a = self._parameters['a']
             b = self._parameters['b']
@@ -466,6 +492,7 @@ class MFunction():
         This is sigmoidal membership function with real inputs x and parameters a, b.
         """
         a, b, result = 0, 0, 0
+
         try:
             a = self._parameters['a']
             b = self._parameters['b']
@@ -486,6 +513,7 @@ class MFunction():
         This is Harrington's desirability membership function with real input y without any parameters.
         """
         result = 0
+
         try:
             result = math.exp(-math.exp(-y))
 
