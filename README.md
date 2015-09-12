@@ -22,7 +22,7 @@ FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source comput
 
 **Usage:**
 
-    python FuzzyClassificator.py [options] [--learn [Network_Options]] | [--classify [Network_Options]]
+    python FuzzyClassificator.py [options] [--learn]|[--classify] [Network_Options]
 
 
 *Optional arguments:*
@@ -31,7 +31,8 @@ FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source comput
         Show help message and exit.
 
     -l [verbosity], --debug-level=[verbosity]
-        Use 1, 2, 3, 4, 5 or DEBUG, INFO, WARNING, ERROR, CRITICAL debug info verbosity, INFO (2) by default.
+        Use 1, 2, 3, 4, 5 or DEBUG, INFO, WARNING, ERROR, CRITICAL debug info verbosity,
+        INFO (2) by default.
 
     -e [ethalon_filename], --ethalons=[ethalon_filename]
         File with ethalon data samples, ethalons.dat by default.
@@ -45,8 +46,15 @@ FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source comput
     -r [report_filename], --report=[report_filename]
         File with Neuro Network configuration, report.txt by default.
 
+    -i [indexes], --ignore-columns=[indexes]
+        Column indexes in input files that should be ignored.
+        Use only dash and comma as separator numbers, other symbols are ignored.
+        Example (no space after comma): 1,2,5-11
+
     -sep [TAB|SPACE|separator_char], --separator=[TAB|SPACE|separator_char]
-        Column's separator in raw data files. It can be TAB or SPACE abbreviation, comma, dot, semicolon or other char. TAB symbol by default.
+        Column's separator in raw data files.
+        It can be TAB or SPACE abbreviation, comma, dot, semicolon or other char.
+        TAB symbol by default.
 
     --no-fuzzy
         Add key if You doesn't want show fuzzy results, only real. Not set by default.
@@ -60,7 +68,7 @@ FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source comput
 Learning Mode:
     
     --learn [Network_Options]
-        Start program in learning mode with options parameters, where Network_Options is a dictionary:
+        Start program in learning mode, where Network_Options is a dictionary:
         
         {
         config=inputs,layer1,layer2,...,outputs
@@ -81,7 +89,7 @@ Learning Mode:
 Classifying Mode:
 
     --classify [Network_Options]
-        Start program in classificator mode with options parameters, where Network_Options is a dictionary:
+        Start program in classificator mode, where Network_Options is a dictionary:
 
         {
         config=inputs,layer1,layer2,...,outputs
