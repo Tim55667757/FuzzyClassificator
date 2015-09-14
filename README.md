@@ -47,14 +47,14 @@ FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source comput
         File with Neuro Network configuration, report.txt by default.
 
     -ic [indexes], --ignore-col=[indexes]
-        Column indexes in input files that should be ignored.
+        Columns in input files that should be ignored.
         Use only dash and comma as separator numbers, other symbols are ignored.
-        Example (no space after comma): 0,2,5-11
+        Example (no space after comma): 1,2,5-11
 
     -ir [indexes], --ignore-row=[indexes]
-        Row indexes in input files that should be ignored.
-        Use only dash and comma as separator numbers, other symbols are ignored. Zero raw set as ignored by default.
-        Example (no space after comma): 0,1,4-7
+        Rows in input files that should be ignored.
+        Use only dash and comma as separator numbers, other symbols are ignored. 1st header row always set as ignored.
+        Example (no space after comma): 2,4-7
 
     -sep [TAB|SPACE|separator_char], --separator=[TAB|SPACE|separator_char]
         Column's separator in raw data files.

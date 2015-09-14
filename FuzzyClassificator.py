@@ -55,8 +55,8 @@ ethalonsDataFile = 'ethalons.dat'  # file with ethalon data samples by default
 candidatesDataFile = 'candidates.dat'  # file with candidates data samples by default
 neuroNetworkFile = 'network.xml'  # file with Neuro Network configuration
 reportDataFile = 'report.txt'  # Report file with classification analysis
-ignoreColumns = []  # List of indexes of ignored columns
-ignoreRows = []  # List of indexes of ignored rows
+ignoreColumns = []  # List of ignored columns in input files.
+ignoreRows = [1]  # List of ignored rows in input files.
 sepSymbol = '\t'  # tab symbol used as separator by default
 reloadNetworkFromFile = False  # reload or not Neuro Network from file before usage
 noFuzzyOutput = False  # show results with fuzzy values if False, otherwise show real values
@@ -77,8 +77,8 @@ def ParseArgsMain():
     parser.add_argument('-n', '--network', type=str, help='File with Neuro Network configuration, network.xml by default.')
     parser.add_argument('-r', '--report', type=str, help='Report file with classification analysis, report.txt by default.')
 
-    parser.add_argument('-ic', '--ignore-col', type=str, help='Column indexes in input files that should be ignored. Use only dash and comma as separator numbers, other symbols are ignored. Example (no space after comma): 0,2,5-11')
-    parser.add_argument('-ir', '--ignore-row', type=str, help='Row indexes in input files that should be ignored. Use only dash and comma as separator numbers, other symbols are ignored. Zero raw set as ignored by default. row Example (no space after comma): 0,1,4-7')
+    parser.add_argument('-ic', '--ignore-col', type=str, help='Column indexes in input files that should be ignored. Use only dash and comma as separator numbers, other symbols are ignored. Example (no space after comma): 1,2,5-11')
+    parser.add_argument('-ir', '--ignore-row', type=str, help='Row indexes in input files that should be ignored. Use only dash and comma as separator numbers, other symbols are ignored. 1st raw always set as ignored. Example (no space after comma): 2,4-7')
     parser.add_argument('-sep', '--separator', type=str, help='Separator symbol in raw data files. SPACE and TAB are reserved, TAB used by default.')
     parser.add_argument('--no-fuzzy', action='store_true', help='Do not show fuzzy results, only real. False by default.')
     parser.add_argument('--reload', action='store_true', help='Reload network from file before usage, False by default.')

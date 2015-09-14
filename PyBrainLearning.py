@@ -64,20 +64,28 @@ class FuzzyNeuroNetwork(object):
 
     def __init__(self):
         self.scale = UniversalFuzzyScale()  # creating fuzzy scale S_f = {Min, Low, Med, High, Max}
+
         self.networkFile = ''  # file with PyBrain network xml-configuration
         self.rawDataFile = ''  # file with text raw-data for learning
+        self.reportFile = ''  # filename for report with classification analysis
+
         self.config = ()  # network configuration is a tuple of numbers: (inputs_dim, layer1_dim,..., layerN_dim, outputs_dim)
-        self._rawData = []  # list of raw strings data without first header line: ['input_vector',  'output_vector']
-        self.headers = []  # list of strings with parsed headers
+
+        self._rawData = []  # list of raw strings data without 1st header line: ['input_vector',  'output_vector']
+        self.headers = []  # list of strings with parsed headers. 1st line always use as header line.
         self._rawDefuzData = []  # list of raw strings data but with deffazification values if it present in self._rawData
+
         self.dataSet = None  # PyBrain-formatted dataset after parsing raw-data: [[input_vector], [output_vector]]
         self.network = None  # PyBrain neural network instance
         self.trainer = None  # PyBrain trainer instance
+
         self._epochs = 10  # epochs of learning
         self._learningRate = 0.05  # learning rate
         self._momentum = 0.01  # momentum of learning
-        self.reportFile = ''  # filename for report with classification analysis
-        self._separator = '\t'  # tab symbol used as separator by default
+
+        self._ignoreColumns = []  # List of indexes of ignored columns. Start from 0: 1st column encode as index 0.
+        self._ignoreRows = [0]  # List of indexes of ignored rows. 1st line with headers always ignored. Start from 0: 1st line encode as index 0.
+        self._separator = '\t'  # Tab symbol used as separator by default
 
     def _DefuzRawData(self):
         """
@@ -200,6 +208,64 @@ class FuzzyNeuroNetwork(object):
             FCLogger.warning('Parameter momentum might be a float number! It was set to 0.01, by default.')
 
     @property
+    def ignoreColumns(self):
+        return self._ignoreColumns
+
+    @ignoreColumns.setter
+    def ignoreColumns(self, value):
+        if isinstance(value, list):
+            self._ignoreColumns = []
+
+            for el in value:
+                if not isinstance(el, int):
+                    self._ignoreColumns = []
+                    FCLogger.warning('Parameter ignoreColumns must be list of numbers! It was set to empty list, by default.')
+                    break
+
+                else:
+                    if el > 0:
+                        self._ignoreColumns.append(el - 1)
+                        FCLogger.debug('Column added to ignore list: {} (index: {})'.format(el, el - 1))
+
+                    else:
+                        FCLogger.debug('Column {} (index: {}) not added to ignoreColumns list.'.format(el, el - 1))
+
+        else:
+            self._ignoreColumns = []
+            FCLogger.warning('Parameter ignoreColumns must be list of numbers! It was set to empty list, by default.')
+
+        self._ignoreColumns = list(set(self._ignoreColumns))
+
+    @property
+    def ignoreRows(self):
+        return self._ignoreRows
+
+    @ignoreRows.setter
+    def ignoreRows(self, value):
+        if isinstance(value, list):
+            self._ignoreRows = [0]  # always ignore 1st header line
+
+            for el in value:
+                if not isinstance(el, int):
+                    self._ignoreRows = [0]
+                    FCLogger.warning('Parameter ignoreRows must be list of numbers! It was set to [0], by default.')
+                    break
+
+                else:
+                    if el > 0:
+                        self._ignoreRows.append(el - 1)
+                        FCLogger.debug('Row added to ignore list: {} (index: {})'.format(el, el - 1))
+
+                    else:
+                        FCLogger.debug('Row {} (index: {}) not added to ignoreRows list.'.format(el, el - 1))
+
+        else:
+            self._ignoreRows = [0]
+            FCLogger.warning('Parameter ignoreRows must be list of numbers! It was set to [0], by default.')
+
+        self._ignoreRows = list(set(self._ignoreRows))
+
+    @property
     def separator(self):
         return self._separator
 
@@ -237,16 +303,29 @@ class FuzzyNeuroNetwork(object):
                 with open(self.rawDataFile, newline='') as csvfile:
                     FCLogger.debug('Opened file: {}'.format(self.rawDataFile))
                     FCLogger.debug('Separator symbol used: {}'.format('TAB' if self.separator == '\t' else '{}'.format('SPACE' if self.separator == ' ' else self.separator)))
+                    FCLogger.debug('Ignored row indexes (1st row is 0): {}'.format(self.ignoreRows))
+                    FCLogger.debug('Ignored column indexes (1st column is 0): {}'.format(self.ignoreColumns))
 
                     for row in csv.reader(csvfile, delimiter=self._separator):
                         if row:
                             raw.append(row)
 
                 if raw:
-                    self.headers = raw[0]
-                    raw = raw[1:]  # use data without first header-line
+                    newRaw = []  # removing ignored rows and columns:
+                    for indexRow, row in enumerate(raw):
+                        if indexRow not in self._ignoreRows or indexRow == 0:
+                            newline = []
 
-                    FCLogger.debug('Parsed raw-data vectors without first header-line:')
+                            for indexCol, col in enumerate(row):
+                                if indexCol not in self._ignoreColumns:
+                                    newline.append(col)
+
+                            newRaw.append(newline)
+
+                    self.headers = newRaw[0]  # header-line is always 1st line in input file
+                    raw = newRaw[1:]  # cut headers
+
+                    FCLogger.debug('Parsed raw-data (without ignored rows and columns):')
 
                     if len(raw) <= 10:
                         for line in raw:
@@ -315,7 +394,7 @@ class FuzzyNeuroNetwork(object):
             else:
                 FCLogger.debug('    {}'.format(learnDataInputsString[0]))
                 FCLogger.debug('    {}'.format(learnDataInputsString[1]))
-                FCLogger.debug('     [... skipped ...]')
+                FCLogger.debug('     [ ... skipped ... ]')
                 FCLogger.debug('    {}'.format(learnDataInputsString[-2]))
                 FCLogger.debug('    {}'.format(learnDataInputsString[-1]))
 
@@ -330,7 +409,7 @@ class FuzzyNeuroNetwork(object):
             else:
                 FCLogger.debug('    {}'.format(learnDataTargetsString[0]))
                 FCLogger.debug('    {}'.format(learnDataTargetsString[1]))
-                FCLogger.debug('     [... skipped ...]')
+                FCLogger.debug('     [ ... skipped ... ]')
                 FCLogger.debug('    {}'.format(learnDataTargetsString[-2]))
                 FCLogger.debug('    {}'.format(learnDataTargetsString[-1]))
 
@@ -339,7 +418,7 @@ class FuzzyNeuroNetwork(object):
         except:
             learnData = None
             FCLogger.error(traceback.format_exc())
-            FCLogger.error('An error occurred while preparing PyBrain dataset!')
+            FCLogger.error('An error occurred while preparing PyBrain dataset! Check your configuration parameters!')
 
         finally:
             self.dataSet = learnData
@@ -455,11 +534,12 @@ class FuzzyNeuroNetwork(object):
 
         self.network = net
 
-    def ClassificationResultForOneVector(self, inputVector, expectedVector=None, needFuzzy=False):
+    def ClassificationResultForOneVector(self, inputVector, expectedVector=None, needFuzzy=False, forecastingHorizon=0):
         """
         Method use for receiving results after activating Neuronet with one input vector.
         inputVector - is a defuzzyficated raw data of input vector.
-        if needFuzzy = True then appropriate output values converting into fuzzy values after activating, otherwise used real values.
+        If needFuzzy = True then appropriate output values converting into fuzzy values after activating, otherwise used real values.
+        If forecastingHorizon more than 0 then for every inputVector will be prognose some additional vectors.
         """
         # defuzzyficate input values:
         defuzInput = []
