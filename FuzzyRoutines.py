@@ -52,8 +52,12 @@ from FCLogger import FCLogger
 
 def DiapasonParser(diapason):
     """
-    Parse input with diapason string and return list of full indexes in that diapason.
-    Example: string "1,3,5-11" converts to list [1, 3, 5, 6, 7, 8, 9, 10 ,11]
+    Parse input with diapason string and return sorted list of full and unique indexes in that diapason.
+    Examples:
+        String "1,5" converted to: [1, 5]
+        String "1-5" converted to: [1, 2, 3, 4, 5]
+        String "8-10, 1-5, 6" converted to: [1, 2, 3, 4, 5, 6, 8, 9, 10]
+        String "11, 11, 12, 12, 1-5, 3-7" converted to: [1, 2, 3, 4, 5, 6, 7, 11, 12]
     """
     fullDiapason = []
 
@@ -984,5 +988,5 @@ if __name__ == "__main__":
     print("Converting some strings to range of sorted unique numbers:")
     print('String "1,5" converted to:', DiapasonParser("1,5"))
     print('String "1-5" converted to:', DiapasonParser("1-5"))
-    print('String "1-5, 6, 7-8" converted to:', DiapasonParser("1-5, 6, 7-8"))
+    print('String "8-10, 1-5, 6" converted to:', DiapasonParser("8-10, 1-5, 6"))
     print('String "11, 11, 12, 12, 1-5, 3-7" converted to:', DiapasonParser("11, 12, 1-5, 3-7"))
