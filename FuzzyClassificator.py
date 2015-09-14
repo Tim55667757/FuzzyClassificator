@@ -55,6 +55,8 @@ ethalonsDataFile = 'ethalons.dat'  # file with ethalon data samples by default
 candidatesDataFile = 'candidates.dat'  # file with candidates data samples by default
 neuroNetworkFile = 'network.xml'  # file with Neuro Network configuration
 reportDataFile = 'report.txt'  # Report file with classification analysis
+ignoreColumns = []  # List of indexes of ignored columns
+ignoreRows = []  # List of indexes of ignored rows
 sepSymbol = '\t'  # tab symbol used as separator by default
 reloadNetworkFromFile = False  # reload or not Neuro Network from file before usage
 noFuzzyOutput = False  # show results with fuzzy values if False, otherwise show real values
@@ -74,11 +76,15 @@ def ParseArgsMain():
     parser.add_argument('-c', '--candidates', type=str, help='File with candidates data samples, candidates.dat by default.')
     parser.add_argument('-n', '--network', type=str, help='File with Neuro Network configuration, network.xml by default.')
     parser.add_argument('-r', '--report', type=str, help='Report file with classification analysis, report.txt by default.')
+
+    parser.add_argument('-ic', '--ignore-col', type=str, help='Column indexes in input files that should be ignored. Use only dash and comma as separator numbers, other symbols are ignored. Example (no space after comma): 0,2,5-11')
+    parser.add_argument('-ir', '--ignore-row', type=str, help='Row indexes in input files that should be ignored. Use only dash and comma as separator numbers, other symbols are ignored. Zero raw set as ignored by default. row Example (no space after comma): 0,1,4-7')
     parser.add_argument('-sep', '--separator', type=str, help='Separator symbol in raw data files. SPACE and TAB are reserved, TAB used by default.')
     parser.add_argument('--no-fuzzy', action='store_true', help='Do not show fuzzy results, only real. False by default.')
     parser.add_argument('--reload', action='store_true', help='Reload network from file before usage, False by default.')
-    parser.add_argument('--learn', type=str, nargs='+', help='Start program in learning mode with options: config=inputs_num,layer1_num,layer2_num,...,outputs_num epochs=<int_number> rate=<float_num> momentum=<float_num>.')
-    parser.add_argument('--classify', type=str, nargs='+', help='Start program in classificator mode with options: config=inputs_num,layer1_num,layer2_num,...,outputs_num.')
+
+    parser.add_argument('--learn', type=str, nargs='+', help='Start program in learning mode with options (no space after comma): config=<inputs_num>,<layer1_num>,<layer2_num>,...,<outputs_num> epochs=<int_number> rate=<float_num> momentum=<float_num>')
+    parser.add_argument('--classify', type=str, nargs='+', help='Start program in classificator mode with options (no space after comma): config=<inputs_num>,<layer1_num>,<layer2_num>,...,<outputs_num>')
 
     cmdArgs = parser.parse_args()
     if (cmdArgs.learn and cmdArgs.classify) or (not cmdArgs.learn and not cmdArgs.classify):
@@ -149,6 +155,12 @@ def LMStep1CreatingNetworkWithParameters(**kwargs):
             fNetwork.rawDataFile = ethalonsDataFile
             fNetwork.reportFile = reportDataFile
             fNetwork.config = config
+
+            if ignoreColumns:
+                fNetwork.ignoreColumns = ignoreColumns  # set up ignored columns
+
+            if ignoreRows:
+                fNetwork.ignoreRows = ignoreRows  # set up ignored rows
 
             if sepSymbol:
                 fNetwork.separator = sepSymbol  # set up separator symbol between columns in raw data files
@@ -351,6 +363,12 @@ def CMStep1CreatingPyBrainNetwork(**kwargs):
         fNetwork.rawDataFile = candidatesDataFile
         fNetwork.reportFile = reportDataFile
 
+        if ignoreColumns:
+            fNetwork.ignoreColumns = ignoreColumns  # set up ignored columns
+
+        if ignoreRows:
+            fNetwork.ignoreRows = ignoreRows  # set up ignored rows
+
         if sepSymbol:
             fNetwork.separator = sepSymbol  # set up separator symbol between columns in raw data files
 
@@ -501,6 +519,12 @@ if __name__ == "__main__":
 
         if args.report:
             reportDataFile = args.report  # report file with classification analysis
+
+        if args.ignore_col:
+            ignoreColumns = DiapasonParser(args.ignore_col)
+
+        if args.ignore_row:
+            ignoreRows = DiapasonParser(args.ignore_row)
 
         if args.separator:
             sepSymbol = args.separator  # separator symbol: TAB, SPACE or another
