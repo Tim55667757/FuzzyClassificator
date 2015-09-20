@@ -53,7 +53,8 @@ FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source comput
 
     -ir [indexes], --ignore-row=[indexes]
         Rows in input files that should be ignored.
-        Use only dash and comma as separator numbers, other symbols are ignored. 1st header row always set as ignored.
+        Use only dash and comma as separator numbers, other symbols are ignored.
+        1st header row always set as ignored.
         Example (no space after comma): 2,4-7
 
     -sep [TAB|SPACE|separator_char], --separator=[TAB|SPACE|separator_char]
