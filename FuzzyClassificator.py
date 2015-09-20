@@ -165,8 +165,8 @@ def LMStep1CreatingNetworkWithParameters(**kwargs):
             if sepSymbol:
                 fNetwork.separator = sepSymbol  # set up separator symbol between columns in raw data files
 
-            if epochs:
-                fNetwork.epochs = epochs  # set up epochs of learning parameter
+            if epochs >= 0:
+                fNetwork.epochs = epochs  # set up epochs of learning
 
             if rate:
                 fNetwork.learningRate = rate  # set up learning rate parameter
