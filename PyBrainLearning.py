@@ -150,12 +150,12 @@ class FuzzyNeuroNetwork(object):
     def epochs(self, value):
         if isinstance(value, int):
 
-            if value >= 1:
+            if value >= 0:
                 self._epochs = value
 
             else:
                 self._epochs = 1
-                FCLogger.warning('Parameter epochs might be greater or equal 1! It was set to 1 now.')
+                FCLogger.warning('Parameter epochs might be greater or equal 0! It was set to 1.')
 
         else:
             self._epochs = 10
@@ -181,7 +181,7 @@ class FuzzyNeuroNetwork(object):
                 FCLogger.warning('Parameter rate might be less than 1! It was set to 1 now.')
 
         else:
-            self._epochs = 0.05
+            self._learningRate = 0.05
             FCLogger.warning('Parameter rate might be a float number! It was set to 0.05, by default.')
 
     @property
@@ -696,26 +696,31 @@ class FuzzyNeuroNetwork(object):
         """
         noTrainErrors = True  # successful train flag
         try:
-            if self.trainer:
-                started = datetime.now()
-                FCLogger.debug('Max epochs: {}'.format(self._epochs))
+            if self._epochs > 0:
+                if self.trainer:
+                    started = datetime.now()
+                    FCLogger.debug('Max epochs: {}'.format(self._epochs))
 
-                for epoch in range(self._epochs):
-                    FCLogger.debug('Epoch: {}'.format(self.trainer.epoch + 1))
+                    for epoch in range(self._epochs):
+                        FCLogger.debug('Epoch: {}'.format(self.trainer.epoch + 1))
 
-                    self.trainer.train()  # training network
+                        self.trainer.train()  # training network
 
-                    self.ClassificationResults(fullEval=False, needFuzzy=False)  # show some results for ethalon vectors
+                        self.ClassificationResults(fullEval=False, needFuzzy=False)  # show some results for ethalon vectors
 
-                    if epoch % 10 == 0:
+                        if epoch % 10 == 0:
+                            self.SaveNetwork()
+
+                    if self._epochs > 1:
                         self.SaveNetwork()
 
-                if self._epochs > 1:
-                    self.SaveNetwork()
-                FCLogger.info('Duration of learning: {}'.format(datetime.now() - started))
+                    FCLogger.info('Duration of learning: {}'.format(datetime.now() - started))
+
+                else:
+                    raise Exception('Trainer instance not created!')
 
             else:
-                raise Exception('Trainer instance not created!')
+                FCLogger.warning('Epoch of learning count is 0. Network not updated!')
 
         except:
             noTrainErrors = False
