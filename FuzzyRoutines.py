@@ -631,7 +631,7 @@ class FuzzyScale():
     """
 
     def __init__(self):
-        self._name = 'DefaultScale'  # default scale contains 3 level, DefaultScale = {Min, Med, High}:
+        self._name = 'DefaultScale'  # default scale contains 3 levels, DefaultScale = {Min, Med, High}:
 
         self._levels = [{'name': 'Min',
                          'fSet': FuzzySet(membershipFunction=MFunction('hyperbolic', **{'a': 7, 'b': 4, 'c': 0}),
@@ -761,7 +761,7 @@ class UniversalFuzzyScale(FuzzyScale):
     def __init__(self):
         super().__init__()
 
-        self._name = 'FuzzyScale'  # default scale contains 3 level, FuzzyScale = {Min, Med, High}:
+        self._name = 'FuzzyScale'  # default universal fuzzy scale contains 5 levels, FuzzyScale = {Min, Low, Med, High, Max}:
 
         self._levels = [{'name': 'Min',
                          'fSet': FuzzySet(membershipFunction=MFunction('hyperbolic', **{'a': 8, 'b': 20, 'c': 0}),
@@ -786,7 +786,7 @@ class UniversalFuzzyScale(FuzzyScale):
 
     @property
     def levels(self):
-        return self._levels  # only read levels for Universal Fuzzy Scale
+        return self._levels  # only readable levels for Universal Fuzzy Scale
 
 
 if __name__ == "__main__":
