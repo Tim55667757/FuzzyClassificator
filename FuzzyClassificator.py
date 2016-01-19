@@ -51,15 +51,20 @@ from FCLogger import *
 
 
 # Constants and Global variables:
+
 ethalonsDataFile = 'ethalons.dat'  # file with ethalon data samples by default
 candidatesDataFile = 'candidates.dat'  # file with candidates data samples by default
 neuroNetworkFile = 'network.xml'  # file with Neuro Network configuration
 reportDataFile = 'report.txt'  # Report file with classification analysis
 bestNetworkFile = 'best_nn.xml'  # best network
 bestNetworkInfoFile = 'best_nn.txt'  # information about best network
+
+epochsBetweenErrorStatusUpdating = 1  # epochs between error status updated
+
 ignoreColumns = []  # List of ignored columns in input files.
 ignoreRows = [1]  # List of ignored rows in input files.
 sepSymbol = '\t'  # tab symbol used as separator by default
+
 reloadNetworkFromFile = False  # reload or not Neuro Network from file before usage
 noFuzzyOutput = False  # show results with fuzzy values if False, otherwise show real values
 
@@ -86,6 +91,7 @@ def ParseArgsMain():
     parser.add_argument('-sep', '--separator', type=str, help='Separator symbol in raw data files. SPACE and TAB are reserved, TAB used by default.')
     parser.add_argument('--no-fuzzy', action='store_true', help='Do not show fuzzy results, only real. False by default.')
     parser.add_argument('--reload', action='store_true', help='Reload network from file before usage, False by default.')
+    parser.add_argument('-u', '--epochs-before-status-updating', type=str, help='Update error status after this epochs time, 1 by default. This parameter affected training speed.')
 
     parser.add_argument('--learn', type=str, nargs='+', help='Start program in learning mode with options (no space after comma): config=<inputs_num>,<layer1_num>,<layer2_num>,...,<outputs_num> epochs=<int_number> rate=<float_num> momentum=<float_num> epsilon=momentum=<float_num> stop=momentum=<float_num>')
     parser.add_argument('--classify', type=str, nargs='+', help='Start program in classificator mode with options (no space after comma): config=<inputs_num>,<layer1_num>,<layer2_num>,...,<outputs_num>')
@@ -181,6 +187,7 @@ def LMStep1CreatingNetworkWithParameters(**kwargs):
             fNetwork.bestNetworkFile = bestNetworkFile
             fNetwork.bestNetworkInfoFile = bestNetworkInfoFile
             fNetwork.config = config
+            fNetwork.epochsBetweenErrorStatusUpdating = epochsBetweenErrorStatusUpdating
 
             if ignoreColumns:
                 fNetwork.ignoreColumns = ignoreColumns  # set up ignored columns
@@ -552,6 +559,12 @@ if __name__ == "__main__":
         if args.report:
             reportDataFile = args.report  # report file with classification analysis
 
+        if args.best_network:
+            bestNetworkFile = args.best_network  # file with best network
+
+        if args.best_network_info:
+            bestNetworkInfoFile = args.best_network_info  # file with information about best network
+
         if args.ignore_col:
             ignoreColumns = DiapasonParser(args.ignore_col)
 
@@ -566,6 +579,9 @@ if __name__ == "__main__":
 
         if args.reload:
             reloadNetworkFromFile = args.reload  # reload neural network from given file before usage
+
+        if args.epochs_before_status_updating:
+            epochsBetweenErrorStatusUpdating = args.epochs_before_status_updating  # epochs before error status updating
 
         if args.learn:
             exitCode = int(not(LearningMode(**dict(kw.split('=') for kw in args.learn))))  # Learning mode
