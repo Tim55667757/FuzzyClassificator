@@ -55,6 +55,8 @@ ethalonsDataFile = 'ethalons.dat'  # file with ethalon data samples by default
 candidatesDataFile = 'candidates.dat'  # file with candidates data samples by default
 neuroNetworkFile = 'network.xml'  # file with Neuro Network configuration
 reportDataFile = 'report.txt'  # Report file with classification analysis
+bestNetworkFile = 'best_nn.xml'  # best network
+bestNetworkInfoFile = 'best_nn.txt'  # information about best network
 ignoreColumns = []  # List of ignored columns in input files.
 ignoreRows = [1]  # List of ignored rows in input files.
 sepSymbol = '\t'  # tab symbol used as separator by default
@@ -76,6 +78,8 @@ def ParseArgsMain():
     parser.add_argument('-c', '--candidates', type=str, help='File with candidates data samples, candidates.dat by default.')
     parser.add_argument('-n', '--network', type=str, help='File with Neuro Network configuration, network.xml by default.')
     parser.add_argument('-r', '--report', type=str, help='Report file with classification analysis, report.txt by default.')
+    parser.add_argument('-bn', '--best-network', type=str, help='Copy best network to this file, best_nn.xml by default.')
+    parser.add_argument('-bni', '--best-network-info', type=str, help='File with information about best network, best_nn.txt by default.')
 
     parser.add_argument('-ic', '--ignore-col', type=str, help='Column indexes in input files that should be ignored. Use only dash and comma as separator numbers, other symbols are ignored. Example (no space after comma): 1,2,5-11')
     parser.add_argument('-ir', '--ignore-row', type=str, help='Row indexes in input files that should be ignored. Use only dash and comma as separator numbers, other symbols are ignored. 1st raw always set as ignored. Example (no space after comma): 2,4-7')
@@ -83,7 +87,7 @@ def ParseArgsMain():
     parser.add_argument('--no-fuzzy', action='store_true', help='Do not show fuzzy results, only real. False by default.')
     parser.add_argument('--reload', action='store_true', help='Reload network from file before usage, False by default.')
 
-    parser.add_argument('--learn', type=str, nargs='+', help='Start program in learning mode with options (no space after comma): config=<inputs_num>,<layer1_num>,<layer2_num>,...,<outputs_num> epochs=<int_number> rate=<float_num> momentum=<float_num>')
+    parser.add_argument('--learn', type=str, nargs='+', help='Start program in learning mode with options (no space after comma): config=<inputs_num>,<layer1_num>,<layer2_num>,...,<outputs_num> epochs=<int_number> rate=<float_num> momentum=<float_num> epsilon=momentum=<float_num> stop=momentum=<float_num>')
     parser.add_argument('--classify', type=str, nargs='+', help='Start program in classificator mode with options (no space after comma): config=<inputs_num>,<layer1_num>,<layer2_num>,...,<outputs_num>')
 
     cmdArgs = parser.parse_args()
@@ -109,6 +113,8 @@ def LMStep1CreatingNetworkWithParameters(**kwargs):
     epochs = 10  # epochs of learning
     rate = 0.05  # learning rate
     momentum = 0.01  # momentum of learning
+    epsilon = 0.001  # epsilon in chi-squared distribution
+    stop = 5  # stop parameter
 
     if 'config' in kwargs.keys():
         try:
@@ -147,6 +153,24 @@ def LMStep1CreatingNetworkWithParameters(**kwargs):
             FCLogger.error(traceback.format_exc())
             FCLogger.error('Momentum parameter might be a float number greater than 0 and less or equal 1!')
 
+    if 'epsilon' in kwargs.keys():
+        try:
+            epsilon = float(kwargs['epsilon'])
+
+        except:
+            noErrors = False
+            FCLogger.error(traceback.format_exc())
+            FCLogger.error('Epsilon parameter might be a float number greater than 0 and less or equal 1!')
+
+    if 'stop' in kwargs.keys():
+        try:
+            stop = float(kwargs['stop'])
+
+        except:
+            noErrors = False
+            FCLogger.error(traceback.format_exc())
+            FCLogger.error('Stop parameter might be a float number greater than 0 and less or equal 100!')
+
     fNetwork = FuzzyNeuroNetwork()  # create network
 
     if noErrors:
@@ -154,6 +178,8 @@ def LMStep1CreatingNetworkWithParameters(**kwargs):
             fNetwork.networkFile = neuroNetworkFile
             fNetwork.rawDataFile = ethalonsDataFile
             fNetwork.reportFile = reportDataFile
+            fNetwork.bestNetworkFile = bestNetworkFile
+            fNetwork.bestNetworkInfoFile = bestNetworkInfoFile
             fNetwork.config = config
 
             if ignoreColumns:
@@ -174,8 +200,14 @@ def LMStep1CreatingNetworkWithParameters(**kwargs):
             if momentum:
                 fNetwork.momentum = momentum  # set up momentum of learning parameter
 
+            if epsilon:
+                fNetwork.epsilon = epsilon  # set up epsilon parameter
+
+            if stop:
+                fNetwork.stop = stop  # set up stop parameter
+
             FCLogger.debug('Instance of fuzzy network initialized with parameters:')
-            FCLogger.debug('{}'.format(kwargs))
+            FCLogger.debug('    {}'.format(kwargs))
             FCLogger.debug('File with ethalons data: {}'.format(os.path.abspath(fNetwork.rawDataFile)))
             FCLogger.debug('File for saving Neuronet: {}'.format(os.path.abspath(fNetwork.networkFile)))
             FCLogger.debug('Classification Report file: {}'.format(os.path.abspath(fNetwork.reportFile)))
