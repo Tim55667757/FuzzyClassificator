@@ -46,6 +46,12 @@ FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source comput
     -r [report_filename], --report=[report_filename]
         File with Neuro Network configuration, report.txt by default.
 
+    -bn [best_network_filename], --best-network=[best_network_filename]
+        Copy best network to this file, best_nn.xml by default.
+
+    -bni [best_network_info_filename], --best-network-info=[best_network_info_filename]
+        File with information about best network, best_nn.txt by default.
+
     -ic [indexes], --ignore-col=[indexes]
         Columns in input files that should be ignored.
         Use only dash and comma as separator numbers, other symbols are ignored.
@@ -86,10 +92,16 @@ Learning Mode:
             this is a positive integer number, greater than 0, means the number of training cycles
 
         rate=[float_num]
-            this is parameter of rate of learning, float number in [0, 1]
+            this is parameter of rate of learning, float number in (0, 1]
 
         momentum=[float_num]
-            this is parameter of momentum of learning, float number in [0, 1]
+            this is parameter of momentum of learning, float number in (0, 1]
+
+        epsilon=[float_num]
+            this parameter used in chi-squared distribution to compare vectors, float number in (0, 1]
+
+        stop=[float_num]
+            this is stop parameter of learning (percent of errors), float number in [0, 100]
         }
 
 Classifying Mode:
@@ -107,9 +119,9 @@ Classifying Mode:
 
 *Examples:*
 
-Start learning with user's ethalon data file and neuronet options Config=(3,[3,2],2), 10 epochs, 0.1 learning rate and 0.05 momentum:
+Start learning with user's ethalon data file and neuronet options Config=(3,[3,2],2), 10 epochs, 0.1 learning rate and 0.05 momentum, epsilon is 0.001 and stop learning if errors less than 5%:
 
-    python FuzzyClassificator.py --ethalons ethalons.dat --learn config=3,3,2,2 epochs=10 rate=0.1 momentum=0.05 --separator=TAB --debug-level=DEBUG
+    python FuzzyClassificator.py --ethalons ethalons.dat --learn config=3,3,2,2 epochs=10 rate=0.1 momentum=0.05 epsilon=0.001 stop=5 --separator=TAB --debug-level=DEBUG
 
 Classify all candidates from file candidates.dat and show result in report.txt:
 
