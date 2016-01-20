@@ -88,7 +88,7 @@ class FuzzyNeuroNetwork(object):
         self._epsilon = 0.01  # Used to compare the distance between the two vectors if self._stop > 0.
         self._stop = 0  # Stop if errors count on ethalon vectors less than this number of percents during the traning. If 0 then used only self._epochs value.
 
-        self.epochsBetweenErrorStatusUpdating = 1  # epochs between error status updated
+        self._epochsToUpdate = 1  # epochs between error status updated
         self.currentFalsePercent = 100.0  # current percents of false classificated vectors
         self.bestNetworkFalsePercent = self.currentFalsePercent  # best network with minimum percents of false classificated vectors
 
@@ -257,6 +257,25 @@ class FuzzyNeuroNetwork(object):
         else:
             self._stop = 0
             FCLogger.warning('Parameter stop might be a float number! It was set to 0, by default.')
+
+    @property
+    def epochsToUpdate(self):
+        return self._epochsToUpdate
+
+    @epochsToUpdate.setter
+    def epochsToUpdate(self, value):
+        if isinstance(value, int):
+
+            if value >= 1:
+                self._epochsToUpdate = value
+
+            else:
+                self._epochsToUpdate = 1
+                FCLogger.warning('Parameter epochsToUpdate might be greater or equal 1! It was set to 1.')
+
+        else:
+            self._epochsToUpdate = 1
+            FCLogger.warning('Parameter epochs might be an integer number! It was set to 5, by default.')
 
     @property
     def ignoreColumns(self):
@@ -772,7 +791,7 @@ class FuzzyNeuroNetwork(object):
                         FCLogger.info('Current epoch: {}'.format(self.trainer.epoch + 1))
 
                         # Updating current error status:
-                        if (epoch + 1) % self.epochsBetweenErrorStatusUpdating == 0:
+                        if (epoch + 1) % self._epochsToUpdate == 0:
                             # Current results is the list of result vectors: [[defuzInput, outputVector, defuzExpectedVector, errorVector], ...]:
                             currentResult = self.ClassificationResults(fullEval=True, needFuzzy=True, showExpectedVector=True)
 
@@ -814,7 +833,7 @@ class FuzzyNeuroNetwork(object):
 
                         # Main step of training network at current epoch:
                         self.trainer.train()  # training network
-                        if (epoch + 1) % self.epochsBetweenErrorStatusUpdating != 0:
+                        if (epoch + 1) % self._epochsToUpdate != 0:
                             self.ClassificationResults(fullEval=False, needFuzzy=False)  # show some results for ethalon vectors
 
                         if epoch % 10 == 0:
