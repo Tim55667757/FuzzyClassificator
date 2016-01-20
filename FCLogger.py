@@ -59,28 +59,23 @@ def SetLevel(vLevel='ERROR'):
     This procedure setting up FCLogger verbosity level.
     """
     FCLogger.level = logging.NOTSET
-    FCLogger.parent.level = logging.NOTSET
+    FCLogger.parent.level = logging.DEBUG  # fc.log always contains DEBUG log
 
     if isinstance(vLevel, str):
         if vLevel == '5' or vLevel.upper() == 'CRITICAL':
             FCLogger.level = logging.CRITICAL
-            FCLogger.parent.level = logging.CRITICAL
 
         elif vLevel == '4' or vLevel.upper() == 'ERROR':
             FCLogger.level = logging.ERROR
-            FCLogger.parent.level = logging.ERROR
 
         elif vLevel == '3' or vLevel.upper() == 'WARNING':
             FCLogger.level = logging.WARNING
-            FCLogger.parent.level = logging.WARNING
 
         elif vLevel == '2' or vLevel.upper() == 'INFO':
             FCLogger.level = logging.INFO
-            FCLogger.parent.level = logging.INFO
 
         elif vLevel == '1' or vLevel.upper() == 'DEBUG':
             FCLogger.level = logging.DEBUG
-            FCLogger.parent.level = logging.DEBUG
 
 
 class LevelFilter(logging.Filter):
@@ -132,8 +127,10 @@ def DisableLogger(handler, parentHandler=FCLogger):
 SetLevel('INFO')  # set up INFO verbosity level by default for FCLogger
 streamHandler = logging.StreamHandler()  # initialize Console FCLogger by default
 streamHandler.setFormatter(formatter)  # set formatter for console FCLogger
+
 if FCLogger.parent.handlers:
     FCLogger.parent.handlers[0].setFormatter(formatter)
+
 else:
     FCLogger.addHandler(streamHandler)  # adding console FCLogger handler to Parent Logger
 
