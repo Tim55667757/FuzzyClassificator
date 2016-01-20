@@ -266,7 +266,7 @@ class MFunction():
     """
 
     def __init__(self, userFunc, **membershipFunctionParams):
-        self.accuracy = 1000  # Line of numbers divided by points, affect on accuracy, using in integral calculating
+        self.accuracy = 10  # Line of numbers divided by points, affect on accuracy, using in integral calculating
         self._functions = {'hyperbolic': self.Hyperbolic,
                            'bell': self.Bell,
                            'parabolic': self.Parabolic,
