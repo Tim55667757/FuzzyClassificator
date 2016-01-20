@@ -797,8 +797,6 @@ class FuzzyNeuroNetwork(object):
 
                             # Counting error as length of list with only vectors with euclidian norm between expected vector and current vector given error > self._epsilon:
                             vectorsWithErrors = [res[3] for res in currentResult if math.sqrt(sum([item * item for item in res[3]])) > self._epsilon]
-                            #print(vectorsWithErrors)
-                            #print([math.sqrt(sum([item * item for item in res[3]])) for res in currentResult])
                             self.currentFalsePercent = len(vectorsWithErrors) * 100 / len(currentResult)
 
                             errorString = '{:.1f}% ({} of {})'.format(self.currentFalsePercent,
