@@ -119,7 +119,7 @@ def LMStep1CreatingNetworkWithParameters(**kwargs):
     epochs = 10  # epochs of learning
     rate = 0.05  # learning rate
     momentum = 0.01  # momentum of learning
-    epsilon = 0.001  # epsilon in chi-squared distribution
+    epsilon = 0.01  # epsilon used to compare the distance between the two vectors
     stop = 5  # stop parameter
 
     if 'config' in kwargs.keys():

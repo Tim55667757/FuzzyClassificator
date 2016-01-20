@@ -45,6 +45,7 @@
 
 import csv
 import os
+import shutil
 from datetime import datetime
 
 from pybrain.tools.shortcuts import buildNetwork
@@ -68,6 +69,8 @@ class FuzzyNeuroNetwork(object):
         self.networkFile = ''  # file with PyBrain network xml-configuration
         self.rawDataFile = ''  # file with text raw-data for learning
         self.reportFile = ''  # filename for report with classification analysis
+        self.bestNetworkFile = ''  # best network
+        self.bestNetworkInfoFile = ''  # information about best network
 
         self.config = ()  # network configuration is a tuple of numbers: (inputs_dim, layer1_dim,..., layerN_dim, outputs_dim)
 
@@ -79,19 +82,27 @@ class FuzzyNeuroNetwork(object):
         self.network = None  # PyBrain neural network instance
         self.trainer = None  # PyBrain trainer instance
 
-        self._epochs = 10  # epochs of learning
-        self._learningRate = 0.05  # learning rate
-        self._momentum = 0.01  # momentum of learning
+        self._epochs = 10  # Epochs of learning
+        self._learningRate = 0.05  # Learning rate
+        self._momentum = 0.01  # Momentum of learning
+        self._epsilon = 0.01  # Used to compare the distance between the two vectors if self._stop > 0.
+        self._stop = 0  # Stop if errors count on ethalon vectors less than this number of percents during the traning. If 0 then used only self._epochs value.
+
+        self.epochsBetweenErrorStatusUpdating = 1  # epochs between error status updated
+        self.currentFalsePercent = 100.0  # current percents of false classificated vectors
+        self.bestNetworkFalsePercent = self.currentFalsePercent  # best network with minimum percents of false classificated vectors
 
         self._ignoreColumns = []  # List of indexes of ignored columns. Start from 0: 1st column encode as index 0.
         self._ignoreRows = [0]  # List of indexes of ignored rows. 1st line with headers always ignored. Start from 0: 1st line encode as index 0.
         self._separator = '\t'  # Tab symbol used as separator by default
 
-    def _DefuzRawData(self):
+    def DefuzRawData(self):
         """
         Functions parse raw text data and converting fuzzy values to its real represents.
         """
+        FCLogger.info('Defuzzyficating raw data ...')
         defuzData = []
+
         try:
             for line in self.rawData:
                 # defuzzificating fuzzy values to real values:
@@ -104,9 +115,9 @@ class FuzzyNeuroNetwork(object):
 
                     except:
                         level = self.scale.GetLevelByName(levelName=itemValue, exactMatching=False)
+
                         if level:
-                            if isinstance(level['fSet'], FuzzySet):
-                                num = level['fSet'].Defuz()
+                            num = level['fSet'].Defuz()
 
                         else:
                             FCLogger.warning('{} not correct real or fuzzy value! It is reset at 0.'.format(itemValue))
@@ -135,8 +146,6 @@ class FuzzyNeuroNetwork(object):
         else:
             self._rawData = []
             FCLogger.warning('Raw text data might be a list of strings! It was set to empty list: [].')
-
-        self._DefuzRawData()
 
     @property
     def rawDefuzData(self):
@@ -178,7 +187,7 @@ class FuzzyNeuroNetwork(object):
 
             else:
                 self._learningRate = 1
-                FCLogger.warning('Parameter rate might be less than 1! It was set to 1 now.')
+                FCLogger.warning('Parameter rate might be less or equal 1! It was set to 1 now.')
 
         else:
             self._learningRate = 0.05
@@ -201,11 +210,53 @@ class FuzzyNeuroNetwork(object):
 
             else:
                 self._momentum = 1
-                FCLogger.warning('Parameter momentum might be less than 1! It was set to 1 now.')
+                FCLogger.warning('Parameter momentum might be less or equal 1! It was set to 1 now.')
 
         else:
             self._momentum = 0.01
             FCLogger.warning('Parameter momentum might be a float number! It was set to 0.01, by default.')
+
+    @property
+    def epsilon(self):
+        return self._epsilon
+
+    @epsilon.setter
+    def epsilon(self, value):
+        if isinstance(value, float):
+
+            if (value > 0) and (value <= 1):
+                self._epsilon = value
+
+            elif value <= 0:
+                self._epsilon = 0.01
+                FCLogger.warning('Parameter epsilon might be greater than 0! It was set to 0.01 now.')
+
+            else:
+                self._epsilon = 1
+                FCLogger.warning('Parameter epsilon might be less or equal 1! It was set to 1 now.')
+
+        else:
+            self._epsilon = 0.01
+            FCLogger.warning('Parameter epsilon might be a float number! It was set to 0.01, by default.')
+
+    @property
+    def stop(self):
+        return self._stop
+
+    @stop.setter
+    def stop(self, value):
+        if isinstance(value, float):
+
+            if (value >= 0) and (value <= 100):
+                self._stop = value
+
+            else:
+                self._stop = 0
+                FCLogger.warning('Parameter stop might be greater than 0 and less or equal 100! It was set to 0 now.')
+
+        else:
+            self._stop = 0
+            FCLogger.warning('Parameter stop might be a float number! It was set to 0, by default.')
 
     @property
     def ignoreColumns(self):
@@ -295,8 +346,9 @@ class FuzzyNeuroNetwork(object):
         """
         Get list of lines with raw string data without first header-line and empty lines.
         """
-        raw = []
         FCLogger.info('Parsing file with raw data...')
+
+        raw = []
 
         try:
             if self.rawDataFile:
@@ -356,14 +408,17 @@ class FuzzyNeuroNetwork(object):
         finally:
             if not raw:
                 FCLogger.warning('Empty raw data file!')
+
             self.rawData = raw  # list of input vectors without first header line
+            self.DefuzRawData()  # defuzzificating raw data
 
     def PrepareDataSet(self):
         """
         This method preparing PyBrain dataset from raw data file.
         """
+        FCLogger.info('Converting parsed and defuzzificated raw-data into PyBrain dataset format...')
+
         learnData = None
-        FCLogger.info('Converting parsed raw-data into PyBrain dataset format...')
 
         try:
             if self.config:
@@ -427,8 +482,9 @@ class FuzzyNeuroNetwork(object):
         """
         This method creating instance of PyBrain network.
         """
-        net = None
         FCLogger.info('Creating PyBrain network...')
+
+        net = None
 
         try:
             if self.config:
@@ -436,21 +492,21 @@ class FuzzyNeuroNetwork(object):
                 if len(self.config) > 2:
                     hLayers = self.config[1:-1]  # parameters for hidden layers
 
-                    FCLogger.debug('Neuronet configuration: Config = <inputs, {layers}, outputs>')
-                    FCLogger.debug('    - inputs is dimension of all input vectors: {},'.format(self.config[0]))
-                    FCLogger.debug('    - outputs is dimension of all output vectors: {},'.format(self.config[-1]))
-                    FCLogger.debug('    - count of hidden layers for Neuronet: {},'.format(len(hLayers)))
+                    FCLogger.info('Neuronet configuration: Config = <inputs, {layers}, outputs>')
+                    FCLogger.info('    - inputs is dimension of all input vectors: {},'.format(self.config[0]))
+                    FCLogger.info('    - outputs is dimension of all output vectors: {},'.format(self.config[-1]))
+                    FCLogger.info('    - count of hidden layers for Neuronet: {},'.format(len(hLayers)))
 
                     if len(hLayers) <= 10:
                         for nNum, dim in enumerate(hLayers):
-                            FCLogger.debug('      ... dimension of {} hidden layer: {}'.format(nNum, dim))
+                            FCLogger.info('      ... dimension of {} hidden layer: {}'.format(nNum, dim))
 
                     else:
-                        FCLogger.debug('      ... dimension of 0 hidden layer: {}'.format(hLayers[0]))
-                        FCLogger.debug('      ... dimension of 1 hidden layer: {}'.format(hLayers[1]))
-                        FCLogger.debug('      ... skipped ...')
-                        FCLogger.debug('      ... dimension of {} hidden layer: {}'.format(len(hLayers) - 2, hLayers[-2]))
-                        FCLogger.debug('      ... dimension of {} hidden layer: {}'.format(len(hLayers) - 1, hLayers[-1]))
+                        FCLogger.info('      ... dimension of 0 hidden layer: {}'.format(hLayers[0]))
+                        FCLogger.info('      ... dimension of 1 hidden layer: {}'.format(hLayers[1]))
+                        FCLogger.info('      ... skipped ...')
+                        FCLogger.info('      ... dimension of {} hidden layer: {}'.format(len(hLayers) - 2, hLayers[-2]))
+                        FCLogger.info('      ... dimension of {} hidden layer: {}'.format(len(hLayers) - 1, hLayers[-1]))
 
                     net = buildNetwork(*self.config)  # create network with config
 
@@ -474,19 +530,22 @@ class FuzzyNeuroNetwork(object):
         """
         This method preparing PyBrain trainer.
         """
-        backpropTrainer = None
         FCLogger.info('Initializing PyBrain backpropagating trainer...')
+
+        backpropTrainer = None
 
         try:
             if self.network:
 
                 if self.dataSet:
-                    FCLogger.debug('Trainer using parameters:')
-                    FCLogger.debug('    - PyBrain network previously created,')
-                    FCLogger.debug('    - PyBrain dataset previously created,')
-                    FCLogger.debug('    - epoch parameter: {}'.format(self._epochs))
-                    FCLogger.debug('    - network learning rate parameter: {}'.format(self._learningRate))
-                    FCLogger.debug('    - momentum parameter: {}'.format(self._momentum))
+                    FCLogger.info('Trainer using parameters:')
+                    FCLogger.info('    - PyBrain network previously created,')
+                    FCLogger.info('    - PyBrain dataset previously created,')
+                    FCLogger.info('    - epoch parameter: {}'.format(self._epochs))
+                    FCLogger.info('    - network learning rate parameter: {}'.format(self._learningRate))
+                    FCLogger.info('    - momentum parameter: {}'.format(self._momentum))
+                    FCLogger.info('    - epsilon parameter: {}'.format(self._epsilon))
+                    FCLogger.info('    - stop parameter: {:.1f}%'.format(self._stop))
 
                     backpropTrainer = BackpropTrainer(self.network, self.dataSet, learningrate=self._learningRate, momentum=self._momentum)
 
@@ -514,14 +573,14 @@ class FuzzyNeuroNetwork(object):
 
         NetworkWriter.writeToFile(self.network, self.networkFile)
 
-        FCLogger.info('{}Network saved to file: {}'.format('Current epoch = {}. '.format(self.trainer.epoch) if self.trainer.epoch else '',
-                                                           os.path.abspath(self.networkFile)))
+        FCLogger.info('Current network saved to file: {}'.format(os.path.abspath(self.networkFile)))
 
     def LoadNetwork(self):
         """
         Loading network dump from file.
         """
         FCLogger.debug('Loading network from PyBrain xml-formatted file...')
+
         net = None
 
         if os.path.exists(self.networkFile):
@@ -534,41 +593,41 @@ class FuzzyNeuroNetwork(object):
 
         self.network = net
 
-    def ClassificationResultForOneVector(self, inputVector, expectedVector=None, needFuzzy=False, forecastingHorizon=0):
+    def ClassificationResultForOneVector(self, inputVector, expectedVector=None, needFuzzy=False):
         """
         Method use for receiving results after activating Neuronet with one input vector.
         inputVector - is a defuzzyficated raw data of input vector.
         If needFuzzy = True then appropriate output values converting into fuzzy values after activating, otherwise used real values.
-        If forecastingHorizon more than 0 then for every inputVector will be prognose some additional vectors.
         """
-        # defuzzyficate input values:
         defuzInput = []
+
+        # defuzzyficating input values:
         for value in inputVector:
             level = self.scale.GetLevelByName(levelName='{}'.format(value), exactMatching=False)
 
             if level:
-                if isinstance(level['fSet'], FuzzySet):
-                    defuzInput.append(level['fSet'].Defuz())
+                defuzInput.append(level['fSet'].Defuz())
 
             else:
                 defuzInput.append(value)
 
         outputVector = self.network.activate(defuzInput)
 
-        # defuzzyficate expected values:
         defuzExpectedVector = []
+
+        # defuzzyficate expected values:
         if expectedVector:
             for value in expectedVector:
                 level = self.scale.GetLevelByName(levelName='{}'.format(value), exactMatching=False)
 
                 if level:
-                    if isinstance(level['fSet'], FuzzySet):
-                        defuzExpectedVector.append(level['fSet'].Defuz())
+                    defuzExpectedVector.append(level['fSet'].Defuz())
 
                 else:
                     defuzExpectedVector.append(value)
 
             errorVector = []
+
             for num, currentValue in enumerate(outputVector):
                 errorVector.append(float(defuzExpectedVector[num]) - currentValue)
 
@@ -577,6 +636,7 @@ class FuzzyNeuroNetwork(object):
 
         if needFuzzy:
             fuzzyOutputVector = []
+
             for value in outputVector:
                 fuzzyOutputVector.append(self.scale.Fuzzy(value)['name'])
 
@@ -695,18 +755,67 @@ class FuzzyNeuroNetwork(object):
         Realize training mechanism.
         """
         noTrainErrors = True  # successful train flag
+
         try:
             if self._epochs > 0:
                 if self.trainer:
                     started = datetime.now()
-                    FCLogger.debug('Max epochs: {}'.format(self._epochs))
+                    FCLogger.info('Max epochs: {}'.format(self._epochs))
+
+                    if os.path.exists(self.bestNetworkFile):
+                        os.remove(self.bestNetworkFile)  # remove old best network before training
+
+                    if os.path.exists(self.bestNetworkInfoFile):
+                        os.remove(self.bestNetworkInfoFile)  # remove best network info file before training
 
                     for epoch in range(self._epochs):
-                        FCLogger.debug('Epoch: {}'.format(self.trainer.epoch + 1))
+                        FCLogger.info('Current epoch: {}'.format(self.trainer.epoch + 1))
 
+                        # Updating current error status:
+                        if (epoch + 1) % self.epochsBetweenErrorStatusUpdating == 0:
+                            # Current results is the list of result vectors: [[defuzInput, outputVector, defuzExpectedVector, errorVector], ...]:
+                            currentResult = self.ClassificationResults(fullEval=True, needFuzzy=True, showExpectedVector=True)
+
+                            # Counting error as length of list with only vectors with euclidian norm between expected vector and current vector given error > self._epsilon:
+                            vectorsWithErrors = [res[3] for res in currentResult if math.sqrt(sum([item * item for item in res[3]])) > self._epsilon]
+                            #print(vectorsWithErrors)
+                            #print([math.sqrt(sum([item * item for item in res[3]])) for res in currentResult])
+                            self.currentFalsePercent = len(vectorsWithErrors) * 100 / len(currentResult)
+
+                            errorString = '{:.1f}% ({} of {})'.format(self.currentFalsePercent,
+                                                                      len(vectorsWithErrors),
+                                                                      len(currentResult))
+                            FCLogger.info("    - number of error vectors: {}".format(errorString))
+
+                        # Saving current best network:
+                        if self.currentFalsePercent < self.bestNetworkFalsePercent:
+                            if os.path.exists(self.networkFile):
+                                self.bestNetworkFalsePercent = self.currentFalsePercent
+
+                                FCLogger.info('Best network found:')
+                                FCLogger.info('    Config: {}'.format(self.config))
+                                FCLogger.info('    Epoch: {}'.format(epoch + 1))
+                                FCLogger.info("    Number of error vectors (Euclidian norm > epsilon): {}".format(errorString))
+
+                                with open(self.bestNetworkInfoFile, 'w') as fH:
+                                    fH.write('Best network common results:\n')
+                                    fH.write('    Config: {}\n'.format(self.config))
+                                    fH.write('    Epoch: {}\n'.format(epoch + 1))
+                                    fH.write("    Number of error vectors (Euclidian norm > epsilon): {}\n".format(errorString))
+
+                                shutil.copyfile(self.networkFile, self.bestNetworkFile)
+                                FCLogger.info('Best network saved to file: {}'.format(os.path.abspath(self.bestNetworkFile)))
+                                FCLogger.info('Common information about best network saved to file: {}'.format(os.path.abspath(self.bestNetworkInfoFile)))
+
+                        # Stop train if best netwok found:
+                        if self.currentFalsePercent <= self._stop:
+                            FCLogger.info('Current percent of false classificated vectors is {:.1f}% less than stop value {:.1f}%.'.format(self.currentFalsePercent, self._stop))
+                            break
+
+                        # Main step of training network at current epoch:
                         self.trainer.train()  # training network
-
-                        self.ClassificationResults(fullEval=False, needFuzzy=False)  # show some results for ethalon vectors
+                        if (epoch + 1) % self.epochsBetweenErrorStatusUpdating != 0:
+                            self.ClassificationResults(fullEval=False, needFuzzy=False)  # show some results for ethalon vectors
 
                         if epoch % 10 == 0:
                             self.SaveNetwork()
@@ -714,13 +823,21 @@ class FuzzyNeuroNetwork(object):
                     if self._epochs > 1:
                         self.SaveNetwork()
 
+                    # Replace last network with the best network:
+                    if os.path.exists(self.networkFile) and os.path.exists(self.bestNetworkFile):
+
+                        os.remove(self.networkFile)
+                        shutil.copyfile(self.bestNetworkFile, self.networkFile)
+
+                        FCLogger.info('Current network replace with the best network.')
+
                     FCLogger.info('Duration of learning: {}'.format(datetime.now() - started))
 
                 else:
                     raise Exception('Trainer instance not created!')
 
             else:
-                FCLogger.warning('Epoch of learning count is 0. Network not updated!')
+                FCLogger.warning('Epoch of learning count is 0. Train not run!')
 
         except:
             noTrainErrors = False
@@ -736,8 +853,9 @@ class FuzzyNeuroNetwork(object):
         results is a list of tuples in ClassificationResults() format.
         fuzzyOutput is a key for show fuzzy values if True.
         """
-        noReportCreationErrors = True  # successful of Creating Report process flag
         FCLogger.debug('Creating Classificate Report File...')
+
+        noReportCreationErrors = True  # successful of Creating Report process flag
 
         try:
             if not results:
