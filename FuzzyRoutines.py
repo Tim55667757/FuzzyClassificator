@@ -266,7 +266,7 @@ class MFunction():
     """
 
     def __init__(self, userFunc, **membershipFunctionParams):
-        self.accuracy = 10  # Line of numbers divided by points, affect on accuracy, using in integral calculating
+        self.accuracy = 1000  # Line of numbers divided by points, affect on accuracy, using in integral calculating
         self._functions = {'hyperbolic': self.Hyperbolic,
                            'bell': self.Bell,
                            'parabolic': self.Parabolic,
@@ -556,6 +556,8 @@ class FuzzySet():
         else:
             raise Exception('Support Set must be 2-dim tuple (a, b) with real a, b parameters, a < b!')
 
+        self._defuzValue = self._Defuz()  # initiating defuzzy value of current fuzzy set
+
     def __str__(self):
         # return view of fuzzy set - name = <mju(x|y, params), supportSet>. Example: FuzzySet = <Bell(x, a, b), [0, 1]>
         fSetView = '{} = <{}, [{}, {}]>'.format(self._name, self._mFunction, self._supportSet[0], self._supportSet[1])
@@ -597,7 +599,11 @@ class FuzzySet():
         else:
             raise Exception('Support Set must be 2-dim tuple (a, b) with real a, b parameters, a < b!')
 
-    def Defuz(self):
+    @property
+    def defuzValue(self):
+        return self._defuzValue
+
+    def _Defuz(self):
         """
         Defuzzyfication function returns real value in support set of given fuzzy set using "center of gravity method".
         Integrals in this method calculated from left to right border of support set of membership function.
@@ -618,6 +624,12 @@ class FuzzySet():
             denominatorIntegral += mjuValue
 
         return numeratorIntegral / denominatorIntegral
+
+    def Defuz(self):
+        """
+        This function now used for backward compatibility.
+        """
+        return self._defuzValue
 
 
 class FuzzyScale():
