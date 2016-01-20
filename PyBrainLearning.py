@@ -88,7 +88,7 @@ class FuzzyNeuroNetwork(object):
         self._epsilon = 0.01  # Used to compare the distance between the two vectors if self._stop > 0.
         self._stop = 0  # Stop if errors count on ethalon vectors less than this number of percents during the traning. If 0 then used only self._epochs value.
 
-        self._epochsToUpdate = 1  # epochs between error status updated
+        self._epochsToUpdate = 5  # epochs between error status updated
         self.currentFalsePercent = 100.0  # current percents of false classificated vectors
         self.bestNetworkFalsePercent = self.currentFalsePercent  # best network with minimum percents of false classificated vectors
 
@@ -274,7 +274,7 @@ class FuzzyNeuroNetwork(object):
                 FCLogger.warning('Parameter epochsToUpdate might be greater or equal 1! It was set to 1.')
 
         else:
-            self._epochsToUpdate = 1
+            self._epochsToUpdate = 5
             FCLogger.warning('Parameter epochs might be an integer number! It was set to 5, by default.')
 
     @property
