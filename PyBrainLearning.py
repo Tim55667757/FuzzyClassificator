@@ -115,7 +115,7 @@ class FuzzyNeuroNetwork(object):
                         num = float(itemValue)
 
                     except:
-                        level = self.scale.GetLevelByName(levelName=itemValue, exactMatching=False)
+                        level = self.scale.GetLevelByName(levelName=itemValue.capitalize())
 
                         if level:
                             num = level['fSet'].Defuz()
@@ -624,7 +624,7 @@ class FuzzyNeuroNetwork(object):
 
         # defuzzyficating input values:
         for value in inputVector:
-            level = self.scale.GetLevelByName(levelName=str(value), exactMatching=False)
+            level = self.scale.GetLevelByName(levelName=str(value).capitalize())
 
             if level:
                 defuzInput.append(level['fSet'].Defuz())
@@ -639,7 +639,7 @@ class FuzzyNeuroNetwork(object):
         # defuzzyficate expected values:
         if expectedVector:
             for value in expectedVector:
-                level = self.scale.GetLevelByName(levelName=str(value), exactMatching=False)
+                level = self.scale.GetLevelByName(levelName=str(value).capitalize())
 
                 if level:
                     defuzExpectedVector.append(level['fSet'].Defuz())
