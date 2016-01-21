@@ -899,7 +899,7 @@ if __name__ == "__main__":
         print('Defuz({}) = {:1.2f}'.format(item['name'], item['fSet'].Defuz()))
 
     ## --- Work with Universal Fuzzy Scale:
-    ## Iniversal fuzzy scales S_f = {Min, Low, Med, High, Max} pre-defined in UniversalFuzzyScale() class.
+    ## Universal fuzzy scales S_f = {Min, Low, Med, High, Max} pre-defined in UniversalFuzzyScale() class.
 
     uniFScale = UniversalFuzzyScale()
     print('Levels of Universal Fuzzy Scale:', uniFScale.levels)

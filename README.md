@@ -371,11 +371,15 @@ Change scale levels:
 
 *Work with Universal Fuzzy Scale.*
 
-Iniversal fuzzy scales S_f = {Min, Low, Med, High, Max} pre-defined in UniversalFuzzyScale() class.
+Universal fuzzy scales S_f = {Min, Low, Med, High, Max} pre-defined in UniversalFuzzyScale() class.
 
     uniFScale = UniversalFuzzyScale()
     print('Levels of Universal Fuzzy Scale:', uniFScale.levels)
     print('Printing scale:', uniFScale)
+
+    print('Defuz() of all Universal Fuzzy Scale levels:')
+    for item in uniFScale.levels:
+        print('Defuz({}) = {:1.2f}'.format(item['name'], item['fSet'].Defuz()))
 
 Use Fuzzy() function to looking for level on Fuzzy Scale:
 
