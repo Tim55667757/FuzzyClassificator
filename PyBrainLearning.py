@@ -806,7 +806,7 @@ class FuzzyNeuroNetwork(object):
 
                     for epoch in range(self._epochs):
                         self.progress = (epoch + 1) * 100 / self._epochs
-                        FCLogger.info('Progress: {:.1f}% (current epoch: {} in {})'.format(self.progress,
+                        FCLogger.info('Progress: {:.2f}% (current epoch: {} in {})'.format(self.progress,
                                                                                            self.trainer.epoch + 1,
                                                                                            self._epochs))
 
