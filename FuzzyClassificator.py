@@ -112,7 +112,7 @@ def LMStep1CreatingNetworkWithParameters(**kwargs):
     Function returns instance of PyBrain network.
     """
     noErrors = True  # successful flag
-    FCLogger.debug(sepShort)
+    FCLogger.info(sepShort)
     FCLogger.info('Step 1. Creating PyBrain network instance with pre-defined config parameters.')
 
     # Create default config:
@@ -245,7 +245,7 @@ def LMStep2ParsingRawDataFileWithEthalons(fNetwork):
     Function returns True if all operations with neural network finished successful.
     """
     noErrors = True  # successful flag
-    FCLogger.debug(sepShort)
+    FCLogger.info(sepShort)
     FCLogger.info('Step 2. Parsing raw data file with ethalons.')
 
     fNetwork.ParseRawDataFile()
@@ -264,7 +264,7 @@ def LMStep3PreparingPyBrainDataset(fNetwork):
     Function returns True if all operations with neural network finished successful.
     """
     noErrors = True  # successful flag
-    FCLogger.debug(sepShort)
+    FCLogger.info(sepShort)
     FCLogger.info('Step 3. Preparing PyBrain dataset.')
 
     fNetwork.PrepareDataSet()
@@ -283,7 +283,7 @@ def LMStep4InitializePyBrainNetworkForLearning(fNetwork):
     Function returns True if all operations with neural network finished successful.
     """
     noErrors = True  # successful flag
-    FCLogger.debug(sepShort)
+    FCLogger.info(sepShort)
     FCLogger.info('Step 4. Initialize empty PyBrain network for learning or reading network configuration from file.')
 
     if reloadNetworkFromFile:
@@ -306,7 +306,7 @@ def LMStep5CreatingPyBrainTrainer(fNetwork):
     Function returns True if all operations with neural network finished successful.
     """
     noErrors = True  # successful flag
-    FCLogger.debug(sepShort)
+    FCLogger.info(sepShort)
     FCLogger.info('Step 5. Creating PyBrain trainer.')
 
     fNetwork.CreateTrainer()
@@ -324,7 +324,7 @@ def LMStep6StartsLearningAndSavingNetworkConfigurationToFile(fNetwork):
     fNetwork is a PyBrain format neural network, created at 1st step.
     Function returns True if all operations with neural network finished successful.
     """
-    FCLogger.debug(sepShort)
+    FCLogger.info(sepShort)
     FCLogger.info('Step 6. Starts learning and saving network configuration to file.')
 
     noErrors = fNetwork.Train()  # train and receive finish status
@@ -345,6 +345,7 @@ def LearningMode(**inputParameters):
     """
     successFinish = False  # success Learning Mode finish flag
 
+    FCLogger.info(sepLong)
     FCLogger.info('Learning mode activated.')
     FCLogger.info('Log file: {}'.format(os.path.abspath(fileLogHandler.baseFilename)))
 
@@ -359,13 +360,13 @@ def LearningMode(**inputParameters):
                             successFinish = True
 
     if successFinish:
-        FCLogger.debug(sepShort)
+        FCLogger.info(sepShort)
         FCLogger.info('Successful finish all Learning steps.')
 
         fNetwork.ClassificationResults(fullEval=True, needFuzzy=not(noFuzzyOutput))
 
     else:
-        FCLogger.debug(sepShort)
+        FCLogger.info(sepShort)
         FCLogger.critical('Learning finished with some errors!')
 
     FCLogger.info('Learning mode deactivated.')
@@ -380,7 +381,7 @@ def CMStep1CreatingPyBrainNetwork(**kwargs):
     Function returns instance of PyBrain network.
     """
     noErrors = True  # successful flag
-    FCLogger.debug(sepShort)
+    FCLogger.info(sepShort)
     FCLogger.info('Step 1. Creating PyBrain network instance.')
 
     fNetwork = None
@@ -443,7 +444,7 @@ def CMStep2ParsingRawDataFileWithCandidates(fNetwork):
     Function returns True if all operations with neural network finished successful.
     """
     noErrors = True  # successful flag
-    FCLogger.debug(sepShort)
+    FCLogger.info(sepShort)
     FCLogger.info('Step 2. Parsing raw data file with candidates.')
 
     fNetwork.ParseRawDataFile()
@@ -462,7 +463,7 @@ def CMStep3LoadingTrainedNetworkFromNetworkConfigurationFile(fNetwork):
     Function returns True if all operations with neural network finished successful.
     """
     noErrors = True  # successful flag
-    FCLogger.debug(sepShort)
+    FCLogger.info(sepShort)
     FCLogger.info('Step 3. Loading trained network from network configuration file.')
 
     fNetwork.LoadNetwork()  # reload old network for continuing training
@@ -480,7 +481,7 @@ def CMStep4ActivatingNetworkForAllCandidateInputVectors(fNetwork):
     fNetwork is a PyBrain format neural network, created at 1st step.
     Function returns result of classification.
     """
-    FCLogger.debug(sepShort)
+    FCLogger.info(sepShort)
     FCLogger.info('Step 4. Activating network for all candidate input vectors.')
 
     results = fNetwork.ClassificationResults(fullEval=True, needFuzzy=not(noFuzzyOutput), showExpectedVector=False)
@@ -495,7 +496,7 @@ def CMStep5InterpretingResults(fNetwork, results, fuzzyOutput=True):
     fNetwork is a PyBrain format neural network, created at 1st step.
     Function creates Classification Report File.
     """
-    FCLogger.debug(sepShort)
+    FCLogger.info(sepShort)
     FCLogger.info('Step 5. Interpreting results.')
 
     noErrors = fNetwork.CreateReport(results, fuzzyOutput)  # create report file
@@ -515,6 +516,7 @@ def ClassifyingMode(**inputParameters):
     """
     successFinish = False  # success Classifying mode finish flag
 
+    FCLogger.info(sepLong)
     FCLogger.info('Classificator mode activated.')
     FCLogger.info('Log file: {}'.format(os.path.abspath(fileLogHandler.baseFilename)))
 
@@ -529,11 +531,11 @@ def ClassifyingMode(**inputParameters):
                         successFinish = True
 
     if successFinish:
-        FCLogger.debug(sepShort)
+        FCLogger.info(sepShort)
         FCLogger.info('Successful finish all Classifying steps.')
 
     else:
-        FCLogger.debug(sepShort)
+        FCLogger.info(sepShort)
         FCLogger.critical('Classifying finished with some errors!')
 
     FCLogger.info('Classificator mode deactivated.')
@@ -597,7 +599,7 @@ if __name__ == "__main__":
 
     finally:
         FCLogger.info('FuzzyClassificator work finished.')
-        FCLogger.debug(sepLong)
+        FCLogger.info(sepLong)
 
         DisableLogger(fileLogHandler)
         sys.exit(exitCode)
