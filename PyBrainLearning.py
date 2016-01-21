@@ -804,8 +804,12 @@ class FuzzyNeuroNetwork(object):
                                                                       len(currentResult))
                             FCLogger.info("    - number of error vectors: {}".format(errorString))
 
-                        # Saving current best network after first epoch only:
-                        if epoch > 0 and self.currentFalsePercent < self.bestNetworkFalsePercent:
+                        # Saving best network after first epoch only:
+                        if epoch == 0:
+                            self.bestNetworkFalsePercent = self.currentFalsePercent
+
+                        # Saving current best network:
+                        if self.currentFalsePercent < self.bestNetworkFalsePercent:
                             if os.path.exists(self.networkFile):
                                 self.bestNetworkFalsePercent = self.currentFalsePercent
 
