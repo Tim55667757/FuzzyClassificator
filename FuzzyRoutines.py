@@ -740,20 +740,10 @@ class FuzzyScale():
         fuzzyLevel = None
 
         for level in self._levels:
-            scaleLevelName = level['name']
+            scaleLevelName = level['name'] if exactMatching else level['name'].upper()
 
-            if not exactMatching:
-                levelName = levelName.upper()
-                scaleLevelName = scaleLevelName.upper()
-
-                if levelName in scaleLevelName:
-                    fuzzyLevel = level
-
-            else:
-                if levelName == scaleLevelName:
-                    fuzzyLevel = level
-
-            if fuzzyLevel:
+            if (exactMatching and levelName == scaleLevelName) or (not exactMatching and levelName.upper() == scaleLevelName):
+                fuzzyLevel = level
                 break
 
         return fuzzyLevel
