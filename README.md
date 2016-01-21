@@ -75,7 +75,7 @@ FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source comput
         Add key if You want reload network from file before usage. Not set by default.
 
     -u [epochs], --epochs-to-update=[epochs]
-        Update error status after this epochs time, 1 by default.
+        Update error status after this epochs time, 5 by default.
         This parameter affected training speed.
 
 *Work modes:*
