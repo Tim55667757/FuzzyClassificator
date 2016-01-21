@@ -85,7 +85,7 @@ class FuzzyNeuroNetwork(object):
         self._epochs = 10  # Epochs of learning
         self._learningRate = 0.05  # Learning rate
         self._momentum = 0.01  # Momentum of learning
-        self._epsilon = 0.01  # Used to compare the distance between the two vectors if self._stop > 0.
+        self._epsilon = 0.05  # Used to compare the distance between the two vectors if self._stop > 0.
         self._stop = 0  # Stop if errors count on ethalon vectors less than this number of percents during the traning. If 0 then used only self._epochs value.
 
         self._epochsToUpdate = 5  # epochs between error status updated
@@ -236,8 +236,8 @@ class FuzzyNeuroNetwork(object):
                 FCLogger.warning('Parameter epsilon might be less or equal 1! It was set to 1 now.')
 
         else:
-            self._epsilon = 0.01
-            FCLogger.warning('Parameter epsilon might be a float number! It was set to 0.01, by default.')
+            self._epsilon = 0.05
+            FCLogger.warning('Parameter epsilon might be a float number! It was set to 0.05, by default.')
 
     @property
     def stop(self):
