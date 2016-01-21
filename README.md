@@ -484,33 +484,42 @@ If you run code above - you'll see next console output:
     Trapezium(x, {"a": 0.1, "b": 1, "c": 0.5, "d": 0.8}) = 0.6173
     Trapezium(x, {"a": 0.1, "b": 1, "c": 0.5, "d": 0.8}) = 0.0617
     Trapezium(x, {"a": 0.1, "b": 1, "c": 0.5, "d": 0.8}) = 0.0000
+
     Printing fuzzy set after init and before changes: FuzzySet = <Trapezium(x, {"a": 0.1, "b": 1, "c": 0.5, "d": 0.8}), [0.0, 1.0]>
     Defuz(FuzzySet) = 0.59
+
     New membership function with parameters:  Trapezium(x, {"a": 0, "b": 1, "c": 0.5, "d": 0.8})
     New support set:  (0.5, 1)
     New value of Defuz(Changed fuzzy set) = 0.70
+
     Printing fuzzy set after changes: Changed fuzzy set = <Trapezium(x, {"a": 0, "b": 1, "c": 0.5, "d": 0.8}), [0.5, 1]>
     Printing default fuzzy scale in human-readable: DefaultScale = {Min, Med, High}
         Minimum = <Hyperbolic(x, {"a": 7, "b": 4, "c": 0}), [0.0, 1.0]>
         Medium = <Bell(x, {"a": 0.35, "b": 0.5, "c": 0.6}), [0.0, 1.0]>
         High = <Triangle(x, {"a": 0.7, "b": 1, "c": 1}), [0.0, 1.0]>
+
     Defuz() of all default levels:
     Defuz(Min) = 0.10
     Defuz(Med) = 0.55
     Defuz(High) = 0.90
+
     Define some new levels:
     Printing Level 1 in human-readable: min = <Hyperbolic(x, {"a": 2, "b": 20, "c": 0}), [0.0, 0.5]>
     Printing Level 2 in human-readable: med = <Bell(x, {"a": 0.4, "b": 0.55, "c": 0.7}), [0.25, 0.75]>
     Printing Level 3 in human-readable: max = <Triangle(x, {"a": 0.65, "b": 1, "c": 1}), [0.7, 1.0]>
+
     Changed List of levels as objects: [{'name': 'min', 'fSet': <__main__.FuzzySet object at 0x00000000027B1208>}, {'name': 'med', 'fSet': <__main__.FuzzySet object at 0x00000000027B1278>}, {'name': 'max', 'fSet': <__main__.FuzzySet object at 0x00000000027B1320>}]
+
     Printing changed fuzzy scale in human-readable: New Scale = {min, med, max}
         min = <Hyperbolic(x, {"a": 2, "b": 20, "c": 0}), [0.0, 0.5]>
         med = <Bell(x, {"a": 0.4, "b": 0.55, "c": 0.7}), [0.25, 0.75]>
         max = <Triangle(x, {"a": 0.65, "b": 1, "c": 1}), [0.7, 1.0]>
+
     Defuz() of all New Scale levels:
     Defuz(min) = 0.24
     Defuz(med) = 0.61
     Defuz(max) = 0.89
+
     Levels of Universal Fuzzy Scale: [{'name': 'Min', 'fSet': <__main__.FuzzySet object at 0x00000000027B14A8>}, {'name': 'Low', 'fSet': <__main__.FuzzySet object at 0x00000000027B1518>}, {'name': 'Med', 'fSet': <__main__.FuzzySet object at 0x00000000027B1588>}, {'name': 'High', 'fSet': <__main__.FuzzySet object at 0x00000000027B15F8>}, {'name': 'Max', 'fSet': <__main__.FuzzySet object at 0x00000000027B1668>}]
     Printing scale: FuzzyScale = {Min, Low, Med, High, Max}
         Min = <Hyperbolic(x, {"a": 8, "b": 20, "c": 0}), [0.0, 0.23]>
@@ -518,6 +527,14 @@ If you run code above - you'll see next console output:
         Med = <Bell(x, {"a": 0.34, "b": 0.4, "c": 0.6}), [0.34, 0.66]>
         High = <Bell(x, {"a": 0.6, "b": 0.66, "c": 0.77}), [0.6, 0.83]>
         Max = <Parabolic(x, {"a": 0.77, "b": 0.95}), [0.77, 1.0]>
+
+    Defuz() of all Universal Fuzzy Scale levels:
+    Defuz(Min) = 0.06
+    Defuz(Low) = 0.29
+    Defuz(Med) = 0.50
+    Defuz(High) = 0.71
+    Defuz(Max) = 0.93
+
     Fuzzy(0.0, FuzzyScale) = Min, Min = <Hyperbolic(x, {"a": 8, "b": 20, "c": 0}), [0.0, 0.23]>
     Fuzzy(0.1, FuzzyScale) = Min, Min = <Hyperbolic(x, {"a": 8, "b": 20, "c": 0}), [0.0, 0.23]>
     Fuzzy(0.2, FuzzyScale) = Low, Low = <Bell(x, {"a": 0.17, "b": 0.23, "c": 0.34}), [0.17, 0.4]>
@@ -528,10 +545,12 @@ If you run code above - you'll see next console output:
     Fuzzy(0.8, FuzzyScale) = High, High = <Bell(x, {"a": 0.6, "b": 0.66, "c": 0.77}), [0.6, 0.83]>
     Fuzzy(0.9, FuzzyScale) = Max, Max = <Parabolic(x, {"a": 0.77, "b": 0.95}), [0.77, 1.0]>
     Fuzzy(1.0, FuzzyScale) = Max, Max = <Parabolic(x, {"a": 0.77, "b": 0.95}), [0.77, 1.0]>
+
     Finding level by name with exact matching:
     GetLevelByName(Min, FuzzyScale) = Min, Min = <Hyperbolic(x, {"a": 8, "b": 20, "c": 0}), [0.0, 0.23]>
     GetLevelByName(High, FuzzyScale) = High, High = <Bell(x, {"a": 0.6, "b": 0.66, "c": 0.77}), [0.6, 0.83]>
     GetLevelByName(max, FuzzyScale) = None, None
+
     Finding level by name without exact matching:
     GetLevelByName('mIn', FuzzyScale) = Min, Min = <Hyperbolic(x, {"a": 8, "b": 20, "c": 0}), [0.0, 0.23]>
     GetLevelByName('max', FuzzyScale) = Max, Max = <Parabolic(x, {"a": 0.77, "b": 0.95}), [0.77, 1.0]>
@@ -539,28 +558,37 @@ If you run code above - you'll see next console output:
     GetLevelByName('LOw', FuzzyScale) = Low, Low = <Bell(x, {"a": 0.17, "b": 0.23, "c": 0.34}), [0.17, 0.4]>
     GetLevelByName('eD', FuzzyScale) = Med, Med = <Bell(x, {"a": 0.34, "b": 0.4, "c": 0.6}), [0.34, 0.66]>
     GetLevelByName('Highest', FuzzyScale) = None, None
+
     IsCorrectFuzzyNumberValue(0.5) = True
     IsCorrectFuzzyNumberValue(1.1) = False
+
     FNOT(0.25) = 0.75
     FNOT(0.25, alpha=0.25) = 0.25
+
     FNOT(0.25, alpha=0.75) = 0.9166666666666666
     FNOT(0.25, alpha=1) = 1.0
+
     FNOTParabolic(0.25, alpha=0.25) = 0.25000000000000017
     FNOTParabolic(0.25, alpha=0.75) = 0.9820000000000008
+
     FuzzyAND(0.25, 0.5) = 0.25
     FuzzyOR(0.25, 0.5) = 0.5
+
     TNorm(0.25, 0.5, 'logic') = 0.25
     TNorm(0.25, 0.5, 'algebraic') = 0.125
     TNorm(0.25, 0.5, 'boundary') = 1
     TNorm(0.25, 0.5, 'drastic') = 0
+
     SCoNorm(0.25, 0.5, 'logic') = 0.5
     SCoNorm(0.25, 0.5, 'algebraic') = 0.625
     SCoNorm(0.25, 0.5, 'boundary') = 0.75
     SCoNorm(0.25, 0.5, 'drastic') = 1
+
     TNormCompose(0.25, 0.5, 0.75, 'logic') = 0.25
     TNormCompose(0.25, 0.5, 0.75, 'algebraic') = 0.09375
     TNormCompose(0.25, 0.5, 0.75, 'boundary') = 0.75
     TNormCompose(0.25, 0.5, 0.75, 'drastic') = 0
+
     SCoNormCompose(0.25, 0.5, 0.75, 'logic') = 0.75
     SCoNormCompose(0.25, 0.5, 0.75, 'algebraic') = 0.90625
     SCoNormCompose(0.25, 0.5, 0.75, 'boundary') = 0
