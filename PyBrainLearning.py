@@ -791,7 +791,7 @@ class FuzzyNeuroNetwork(object):
                         FCLogger.info('Current epoch: {}'.format(self.trainer.epoch + 1))
 
                         # Updating current error status:
-                        if (epoch == 0) or (epoch + 1) % self._epochsToUpdate == 0:
+                        if epoch == 0 or (epoch + 1) % self._epochsToUpdate == 0:
                             # Current results is the list of result vectors: [[defuzInput, outputVector, defuzExpectedVector, errorVector], ...]:
                             currentResult = self.ClassificationResults(fullEval=True, needFuzzy=True, showExpectedVector=True)
 
@@ -804,8 +804,8 @@ class FuzzyNeuroNetwork(object):
                                                                       len(currentResult))
                             FCLogger.info("    - number of error vectors: {}".format(errorString))
 
-                        # Saving current best network:
-                        if self.currentFalsePercent < self.bestNetworkFalsePercent:
+                        # Saving current best network after first epoch only:
+                        if epoch > 0 and self.currentFalsePercent < self.bestNetworkFalsePercent:
                             if os.path.exists(self.networkFile):
                                 self.bestNetworkFalsePercent = self.currentFalsePercent
 
