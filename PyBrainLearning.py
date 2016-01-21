@@ -853,10 +853,7 @@ class FuzzyNeuroNetwork(object):
                             FCLogger.info('Current percent of false classificated vectors is {:.1f}% less than stop value {:.1f}%.'.format(self.currentFalsePercent, self._stop))
                             break
 
-                        # Main step of training network at current epoch:
                         self.trainer.train()  # training network
-                        if (epoch + 1) % self._epochsToUpdate != 0:
-                            self.ClassificationResults(fullEval=False, needFuzzy=False)  # show some results for ethalon vectors
 
                         if epoch % 10 == 0:
                             self.SaveNetwork()
