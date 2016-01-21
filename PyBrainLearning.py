@@ -89,6 +89,7 @@ class FuzzyNeuroNetwork(object):
         self._stop = 0  # Stop if errors count on ethalon vectors less than this number of percents during the traning. If 0 then used only self._epochs value.
 
         self._epochsToUpdate = 5  # epochs between error status updated
+        self.progress = 0  # current train progress in percents = current epoch * 100 / self._epochs
         self.currentFalsePercent = 100.0  # current percents of false classificated vectors
         self.bestNetworkFalsePercent = self.currentFalsePercent  # best network with minimum percents of false classificated vectors
 
@@ -788,7 +789,10 @@ class FuzzyNeuroNetwork(object):
                         os.remove(self.bestNetworkInfoFile)  # remove best network info file before training
 
                     for epoch in range(self._epochs):
-                        FCLogger.info('Current epoch: {}'.format(self.trainer.epoch + 1))
+                        self.progress = (epoch + 1) * 100 / self._epochs
+                        FCLogger.info('Progress: {:.1f}% (current epoch: {} in {})'.format(self.progress,
+                                                                                           self.trainer.epoch + 1,
+                                                                                           self._epochs))
 
                         # Updating current error status:
                         if epoch == 0 or (epoch + 1) % self._epochsToUpdate == 0:
@@ -802,7 +806,7 @@ class FuzzyNeuroNetwork(object):
                             errorString = '{:.1f}% ({} of {})'.format(self.currentFalsePercent,
                                                                       len(vectorsWithErrors),
                                                                       len(currentResult))
-                            FCLogger.info("    - number of error vectors: {}".format(errorString))
+                            FCLogger.info("    - false classificated of vectors: {}".format(errorString))
 
                         # Saving best network after first epoch only:
                         if epoch == 0:
