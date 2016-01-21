@@ -373,10 +373,10 @@ class FuzzyNeuroNetwork(object):
         try:
             if self.rawDataFile:
                 with open(self.rawDataFile, newline='') as csvfile:
-                    FCLogger.debug('Opened file: {}'.format(self.rawDataFile))
+                    FCLogger.debug('Opened file: ' + self.rawDataFile)
                     FCLogger.debug('Separator symbol used: {}'.format('TAB' if self.separator == '\t' else '{}'.format('SPACE' if self.separator == ' ' else self.separator)))
-                    FCLogger.debug('Ignored row indexes (1st row is 0): {}'.format(self.ignoreRows))
-                    FCLogger.debug('Ignored column indexes (1st column is 0): {}'.format(self.ignoreColumns))
+                    FCLogger.debug('Ignored row indexes (1st row is 0): ' + str(self.ignoreRows))
+                    FCLogger.debug('Ignored column indexes (1st column is 0): ' + str(self.ignoreColumns))
 
                     for row in csv.reader(csvfile, delimiter=self._separator):
                         if row:
@@ -402,7 +402,7 @@ class FuzzyNeuroNetwork(object):
                     if len(raw) <= 10:
                         for line in raw:
                             if len(line) <= 10:
-                                FCLogger.debug('    {}'.format(line))
+                                FCLogger.debug('    ' + line)
 
                             else:
                                 FCLogger.debug('    [{}, {}, ..., {}, {}]'.format(line[0], line[1], line[-2], line[-1]))
@@ -463,30 +463,30 @@ class FuzzyNeuroNetwork(object):
             FCLogger.debug("- input vectors, dim({}, {}):".format(len(allInputs[0]), len(allInputs)))
 
             if len(allInputs) <= 10:
-                for value in learnDataInputsString:
-                    FCLogger.debug('    {}'.format(value))
+                for strValue in learnDataInputsString:
+                    FCLogger.debug('    ' + strValue)
 
             else:
-                FCLogger.debug('    {}'.format(learnDataInputsString[0]))
-                FCLogger.debug('    {}'.format(learnDataInputsString[1]))
+                FCLogger.debug('    ' + learnDataInputsString[0])
+                FCLogger.debug('    ' + learnDataInputsString[1])
                 FCLogger.debug('     [ ... skipped ... ]')
-                FCLogger.debug('    {}'.format(learnDataInputsString[-2]))
-                FCLogger.debug('    {}'.format(learnDataInputsString[-1]))
+                FCLogger.debug('    ' + learnDataInputsString[-2])
+                FCLogger.debug('    ' + learnDataInputsString[-1])
 
             allTargets = learnData.data['target'][:learnData.endmarker['target']]
             learnDataTargetsString = str(allTargets).split('\n')
             FCLogger.debug("- output vectors, dim({}, {}):".format(len(allTargets[0]), len(allTargets)))
 
             if len(allTargets) <= 10:
-                for value in learnDataTargetsString:
-                    FCLogger.debug('    {}'.format(value))
+                for strValue in learnDataTargetsString:
+                    FCLogger.debug('    ' + strValue)
 
             else:
-                FCLogger.debug('    {}'.format(learnDataTargetsString[0]))
-                FCLogger.debug('    {}'.format(learnDataTargetsString[1]))
+                FCLogger.debug('    ' + learnDataTargetsString[0])
+                FCLogger.debug('    ' + learnDataTargetsString[1])
                 FCLogger.debug('     [ ... skipped ... ]')
-                FCLogger.debug('    {}'.format(learnDataTargetsString[-2]))
-                FCLogger.debug('    {}'.format(learnDataTargetsString[-1]))
+                FCLogger.debug('    ' + learnDataTargetsString[-2])
+                FCLogger.debug('    ' + learnDataTargetsString[-1])
 
             FCLogger.info('PyBrain dataset successfully prepared.')
 
@@ -513,20 +513,20 @@ class FuzzyNeuroNetwork(object):
                     hLayers = self.config[1:-1]  # parameters for hidden layers
 
                     FCLogger.info('Neuronet configuration: Config = <inputs, {layers}, outputs>')
-                    FCLogger.info('    - inputs is dimension of all input vectors: {},'.format(self.config[0]))
-                    FCLogger.info('    - outputs is dimension of all output vectors: {},'.format(self.config[-1]))
-                    FCLogger.info('    - count of hidden layers for Neuronet: {},'.format(len(hLayers)))
+                    FCLogger.info('    - inputs is dimension of all input vectors: ' + str(self.config[0]))
+                    FCLogger.info('    - outputs is dimension of all output vectors: ' + str(self.config[-1]))
+                    FCLogger.info('    - count of hidden layers for Neuronet: ' + str(len(hLayers)))
 
                     if len(hLayers) <= 10:
                         for nNum, dim in enumerate(hLayers):
-                            FCLogger.info('      ... dimension of {} hidden layer: {}'.format(nNum, dim))
+                            FCLogger.info('      ... dimension of ' + str(nNum) + ' hidden layer: ' + str(dim))
 
                     else:
-                        FCLogger.info('      ... dimension of 0 hidden layer: {}'.format(hLayers[0]))
-                        FCLogger.info('      ... dimension of 1 hidden layer: {}'.format(hLayers[1]))
+                        FCLogger.info('      ... dimension of 0 hidden layer: ' + str(hLayers[0]))
+                        FCLogger.info('      ... dimension of 1 hidden layer: ' + str(hLayers[1]))
                         FCLogger.info('      ... skipped ...')
-                        FCLogger.info('      ... dimension of {} hidden layer: {}'.format(len(hLayers) - 2, hLayers[-2]))
-                        FCLogger.info('      ... dimension of {} hidden layer: {}'.format(len(hLayers) - 1, hLayers[-1]))
+                        FCLogger.info('      ... dimension of ' + str(len(hLayers) - 2) + ' hidden layer: ' + str(hLayers[-2]))
+                        FCLogger.info('      ... dimension of ' + str(len(hLayers) - 1) + ' hidden layer: {}' + str(hLayers[-1]))
 
                     net = buildNetwork(*self.config)  # create network with config
 
@@ -561,10 +561,10 @@ class FuzzyNeuroNetwork(object):
                     FCLogger.info('Trainer using parameters:')
                     FCLogger.info('    - PyBrain network previously created,')
                     FCLogger.info('    - PyBrain dataset previously created,')
-                    FCLogger.info('    - epoch parameter: {}'.format(self._epochs))
-                    FCLogger.info('    - network learning rate parameter: {}'.format(self._learningRate))
-                    FCLogger.info('    - momentum parameter: {}'.format(self._momentum))
-                    FCLogger.info('    - epsilon parameter: {}'.format(self._epsilon))
+                    FCLogger.info('    - epoch parameter: ' + str(self._epochs))
+                    FCLogger.info('    - network learning rate parameter: ' + str(self._learningRate))
+                    FCLogger.info('    - momentum parameter: ' + str(self._momentum))
+                    FCLogger.info('    - epsilon parameter: ' + str(self._epsilon))
                     FCLogger.info('    - stop parameter: {:.1f}%'.format(self._stop))
 
                     backpropTrainer = BackpropTrainer(self.network, self.dataSet, learningrate=self._learningRate, momentum=self._momentum)
@@ -606,24 +606,25 @@ class FuzzyNeuroNetwork(object):
         if os.path.exists(self.networkFile):
             net = NetworkReader.readFrom(self.networkFile)
 
-            FCLogger.info('Network loaded from dump-file: {}'.format(os.path.abspath(self.networkFile)))
+            FCLogger.info('Network loaded from dump-file: ' + os.path.abspath(self.networkFile))
 
         else:
-            FCLogger.warning('{} - file with Neural Network configuration not exist!'.format(os.path.abspath(self.networkFile)))
+            FCLogger.warning('File with Neural Network configuration not exist: ' + os.path.abspath(self.networkFile))
 
         self.network = net
 
-    def ClassificationResultForOneVector(self, inputVector, expectedVector=None, needFuzzy=False):
+    def ClassificationResultForOneVector(self, inputVector, expectedVector=None, needFuzzy=False, printLog=True):
         """
         Method use for receiving results after activating Neuronet with one input vector.
         inputVector - is a defuzzyficated raw data of input vector.
         If needFuzzy = True then appropriate output values converting into fuzzy values after activating, otherwise used real values.
+        If printLog = False then results not printing to log.
         """
         defuzInput = []
 
         # defuzzyficating input values:
         for value in inputVector:
-            level = self.scale.GetLevelByName(levelName='{}'.format(value), exactMatching=False)
+            level = self.scale.GetLevelByName(levelName=str(value), exactMatching=False)
 
             if level:
                 defuzInput.append(level['fSet'].Defuz())
@@ -638,7 +639,7 @@ class FuzzyNeuroNetwork(object):
         # defuzzyficate expected values:
         if expectedVector:
             for value in expectedVector:
-                level = self.scale.GetLevelByName(levelName='{}'.format(value), exactMatching=False)
+                level = self.scale.GetLevelByName(levelName=str(value), exactMatching=False)
 
                 if level:
                     defuzExpectedVector.append(level['fSet'].Defuz())
@@ -661,50 +662,81 @@ class FuzzyNeuroNetwork(object):
                 fuzzyOutputVector.append(self.scale.Fuzzy(value)['name'])
 
             if len(inputVector) <= 10:
-                FCLogger.debug('        Input: {}\tOutput: {}{}'.format(inputVector, fuzzyOutputVector, '\tExpected: {}'.format(expectedVector) if expectedVector else ''))
+                longStr = '        Input:' + str(inputVector) + '\tOutput: ' + str(fuzzyOutputVector)
+
+                if expectedVector:
+                    longStr += '\tExpected: ' + str(expectedVector)
+
+                if printLog:
+                    FCLogger.debug(longStr)
 
             else:
-                cutInput = '[{}, {}, ..., {}, {}]'.format(inputVector[0], inputVector[1], inputVector[-2], inputVector[-1])
-                FCLogger.debug('        Input: {}\tOutput: {}{}'.format(cutInput, fuzzyOutputVector, '\tExpected: {}'.format(expectedVector) if expectedVector else ''))
+                cutInputVectorStr = '[' + str(inputVector[0]) + ', ' + str(inputVector[1]) + ', ..., ' + str(inputVector[-2]) + ', ' + str(inputVector[-1]) + ']'
+                shortStr = '        Input: ' + cutInputVectorStr + '\tOutput: ' + str(fuzzyOutputVector)
+
+                if expectedVector:
+                    shortStr += '\tExpected: ' + str(expectedVector)
+
+                if printLog:
+                    FCLogger.debug(shortStr)
 
             return inputVector, fuzzyOutputVector, expectedVector, errorVector
 
         else:
             if len(defuzInput) <= 10:
-                FCLogger.debug('        Input: {}\tOutput: {}{}'.format(defuzInput, outputVector, '\tExpected: {}'.format(defuzExpectedVector) if expectedVector and defuzExpectedVector and errorVector else ''))
+                longDefuzStr = '        Input:' + str(defuzInput) + '\tOutput: ' + str(outputVector)
+
+                if expectedVector:
+                    longDefuzStr += '\tExpected: ' + str(defuzExpectedVector)
+
+                if printLog:
+                    FCLogger.debug(longDefuzStr)
 
             else:
-                cutDefuzInput = '[{}, {}, ..., {}, {}]'.format(defuzInput[0], defuzInput[1], defuzInput[-2], defuzInput[-1])
-                FCLogger.debug('        Input: {}\tOutput: {}{}'.format(cutDefuzInput, outputVector, '\tExpected: {}'.format(defuzExpectedVector) if expectedVector and defuzExpectedVector and errorVector else ''))
+                cutDefuzInputVectorStr = '[' + str(defuzInput[0]) + ', ' + str(defuzInput[1]) + ', ..., ' + str(defuzInput[-2]) + ', ' + str(defuzInput[-1]) + ']'
+                shortDefuzStr = '        Input: ' + cutDefuzInputVectorStr + '\tOutput: ' + str(outputVector)
+
+                if expectedVector and defuzExpectedVector and errorVector:
+                    shortDefuzStr += '\tExpected: ' + str(defuzExpectedVector)
+
+                if printLog:
+                    FCLogger.debug(shortDefuzStr)
 
             if expectedVector and defuzExpectedVector and errorVector:
-                FCLogger.debug('        Error: {}'.format(errorVector))
+                if printLog:
+                    FCLogger.debug('        Error: ' + str(errorVector))
 
             return defuzInput, outputVector, defuzExpectedVector, errorVector
 
-    def ClassificationResults(self, fullEval=False, needFuzzy=False, showExpectedVector=True):
+    def ClassificationResults(self, fullEval=False, needFuzzy=False, showExpectedVector=True, printLog=True):
         """
         Method use for receiving results after activating Neuronet with all input vectors.
         If fullEval = True then method calculate results for all input vectors, otherwise for first and last two input vectors.
         If needFuzzy = True then appropriate output values converting into fuzzy values after activating, otherwise used real values.
         If showExpectedVector = True then vector with expected results will shown in log and result file.
+        If printLog = False then results not printing to log.
         """
         classificationResults = []
 
         inputHeaders = self.headers[:self.config[0]]
         outputHeaders = self.headers[len(self.headers) - self.config[-1]:]
 
+        if printLog:
+            FCLogger.debug('Classification results:')
+
+        if len(inputHeaders) <= 10:
+            shortHeaderStr = '    Header:    [' + ' '.join(head for head in inputHeaders) + ']\t[' + ' '.join(head for head in outputHeaders) + ']'
+
+            if printLog:
+                FCLogger.debug(shortHeaderStr)
+
+        else:
+            longHeaderStr = '    Header:    [' + inputHeaders[0] + ' ' + inputHeaders[1] + ' ... ' + inputHeaders[-2] + ' ' + inputHeaders[-1] + ']\t[' + ' '.join(head for head in outputHeaders) + ']'
+
+            if printLog:
+                FCLogger.debug(longHeaderStr)
+
         if fullEval:
-            FCLogger.debug('Full classification results:')
-
-            if len(inputHeaders) <= 10:
-                FCLogger.debug('    Header:    [{}]\t[{}]'.format(' '.join(head for head in inputHeaders),
-                                                                  ' '.join(head for head in outputHeaders) if len(self.headers) >= self.config[0] + self.config[-1] else ''))
-
-            else:
-                FCLogger.debug('    Header:    [{} {} ... {} {}]\t[{}]'.format(inputHeaders[0], inputHeaders[1], inputHeaders[-2], inputHeaders[-1],
-                                                                               ' '.join(head for head in outputHeaders) if len(self.headers) >= self.config[0] + self.config[-1] else ''))
-
             if needFuzzy:
                 for vecNum, vector in enumerate(self._rawData):
                     inputVector = vector[:self.config[0]]
@@ -715,8 +747,7 @@ class FuzzyNeuroNetwork(object):
                     else:
                         expectedVector = None
 
-                    FCLogger.debug('    Vector #{}:'.format(vecNum))
-                    classificationResults.append(self.ClassificationResultForOneVector(inputVector, expectedVector, needFuzzy))
+                    classificationResults.append(self.ClassificationResultForOneVector(inputVector, expectedVector, needFuzzy, printLog))
 
             else:
                 for vecNum, vector in enumerate(self._rawDefuzData):
@@ -728,45 +759,30 @@ class FuzzyNeuroNetwork(object):
                     else:
                         expectedVector = None
 
-                    FCLogger.debug('    Vector #{}:'.format(vecNum))
-                    classificationResults.append(self.ClassificationResultForOneVector(inputVector, expectedVector))
+                    classificationResults.append(self.ClassificationResultForOneVector(inputVector, expectedVector, printLog=printLog))
 
         else:
-            FCLogger.debug('Some classification results:')
-
-            if len(inputHeaders) <= 10:
-                FCLogger.debug('    Header:    [{}]\t[{}]'.format(' '.join(head for head in inputHeaders),
-                                                                  ' '.join(head for head in outputHeaders) if len(self.headers) >= self.config[0] + self.config[-1] else ''))
-
-            else:
-                FCLogger.debug('    Header:    [{} {} ... {} {}]\t[{}]'.format(inputHeaders[0], inputHeaders[1], inputHeaders[-2], inputHeaders[-1],
-                                                                               ' '.join(head for head in outputHeaders) if len(self.headers) >= self.config[0] + self.config[-1] else ''))
-
             if len(self._rawData) <= 10:
                 for vecNum, rawLine in enumerate(self._rawData):
-                    FCLogger.debug('    Vector #{}:'.format(vecNum))
                     classificationResults.append(
                         self.ClassificationResultForOneVector(rawLine[:self.config[0]] if not needFuzzy else self._rawDefuzData[vecNum][:self.config[0]],
-                                                              rawLine[len(rawLine) - self.config[-1]:] if not needFuzzy else self._rawDefuzData[vecNum][len(self._rawDefuzData[vecNum]) - self.config[-1]:], needFuzzy))
+                                                              rawLine[len(rawLine) - self.config[-1]:] if not needFuzzy else self._rawDefuzData[vecNum][len(self._rawDefuzData[vecNum]) - self.config[-1]:], needFuzzy, printLog=printLog))
 
             else:
-                FCLogger.debug('    Vector #0:')
                 classificationResults.append(
                     self.ClassificationResultForOneVector(self._rawData[0][:self.config[0]] if not needFuzzy else self._rawDefuzData[0][:self.config[0]],
-                                                          self._rawData[0][len(self._rawData[0]) - self.config[-1]:] if not needFuzzy else self._rawDefuzData[0][len(self._rawDefuzData[0]) - self.config[-1]:], needFuzzy))
-                FCLogger.debug('    Vector #1:')
+                                                          self._rawData[0][len(self._rawData[0]) - self.config[-1]:] if not needFuzzy else self._rawDefuzData[0][len(self._rawDefuzData[0]) - self.config[-1]:], needFuzzy, printLog=printLog))
                 classificationResults.append(
                     self.ClassificationResultForOneVector(self._rawData[1][:self.config[0]] if not needFuzzy else self._rawDefuzData[1][:self.config[0]],
-                                                          self._rawData[1][len(self._rawData[1]) - self.config[-1]:] if not needFuzzy else self._rawDefuzData[1][len(self._rawDefuzData[1]) - self.config[-1]:], needFuzzy))
-                FCLogger.debug('    ... skipped ...')
-                FCLogger.debug('    Vector #{}:'.format(len(self._rawData) - 2))
+                                                          self._rawData[1][len(self._rawData[1]) - self.config[-1]:] if not needFuzzy else self._rawDefuzData[1][len(self._rawDefuzData[1]) - self.config[-1]:], needFuzzy, printLog=printLog))
+                if printLog:
+                    FCLogger.debug('    ... skipped ...')
                 classificationResults.append(
                     self.ClassificationResultForOneVector(self._rawData[-2][:self.config[0]] if not needFuzzy else self._rawDefuzData[-2][:self.config[0]],
-                                                          self._rawData[-2][len(self._rawData[-2]) - self.config[-1]:] if not needFuzzy else self._rawDefuzData[-2][len(self._rawDefuzData[-2]) - self.config[-1]:], needFuzzy))
-                FCLogger.debug('    Vector #{}:'.format(len(self._rawData) - 1))
+                                                          self._rawData[-2][len(self._rawData[-2]) - self.config[-1]:] if not needFuzzy else self._rawDefuzData[-2][len(self._rawDefuzData[-2]) - self.config[-1]:], needFuzzy, printLog=printLog))
                 classificationResults.append(
                     self.ClassificationResultForOneVector(self._rawData[-1][:self.config[0]] if not needFuzzy else self._rawDefuzData[-1][:self.config[0]],
-                                                          self._rawData[-1][len(self._rawData[-1]) - self.config[-1]:] if not needFuzzy else self._rawDefuzData[-1][len(self._rawDefuzData[-1]) - self.config[-1]:], needFuzzy))
+                                                          self._rawData[-1][len(self._rawData[-1]) - self.config[-1]:] if not needFuzzy else self._rawDefuzData[-1][len(self._rawDefuzData[-1]) - self.config[-1]:], needFuzzy, printLog=printLog))
 
         return classificationResults
 
@@ -780,7 +796,7 @@ class FuzzyNeuroNetwork(object):
             if self._epochs > 0:
                 if self.trainer:
                     started = datetime.now()
-                    FCLogger.info('Max epochs: {}'.format(self._epochs))
+                    FCLogger.info('Max epochs: ' + str(self._epochs))
 
                     if os.path.exists(self.bestNetworkFile):
                         os.remove(self.bestNetworkFile)  # remove old best network before training
@@ -797,7 +813,7 @@ class FuzzyNeuroNetwork(object):
                         # Updating current error status:
                         if epoch == 0 or (epoch + 1) % self._epochsToUpdate == 0:
                             # Current results is the list of result vectors: [[defuzInput, outputVector, defuzExpectedVector, errorVector], ...]:
-                            currentResult = self.ClassificationResults(fullEval=True, needFuzzy=True, showExpectedVector=True)
+                            currentResult = self.ClassificationResults(fullEval=True, needFuzzy=False, showExpectedVector=True, printLog=False)
 
                             # Counting error as length of list with only vectors with euclidian norm between expected vector and current vector given error > self._epsilon:
                             vectorsWithErrors = [res[3] for res in currentResult if math.sqrt(sum([item * item for item in res[3]])) > self._epsilon]
@@ -806,7 +822,7 @@ class FuzzyNeuroNetwork(object):
                             errorString = '{:.1f}% ({} of {})'.format(self.currentFalsePercent,
                                                                       len(vectorsWithErrors),
                                                                       len(currentResult))
-                            FCLogger.info("    - false classificated of vectors: {}".format(errorString))
+                            FCLogger.info('    - false classificated of vectors: ' + errorString)
 
                         # Saving best network after first epoch only:
                         if epoch == 0:
@@ -818,19 +834,19 @@ class FuzzyNeuroNetwork(object):
                                 self.bestNetworkFalsePercent = self.currentFalsePercent
 
                                 FCLogger.info('Best network found:')
-                                FCLogger.info('    Config: {}'.format(self.config))
-                                FCLogger.info('    Epoch: {}'.format(epoch + 1))
-                                FCLogger.info("    Number of error vectors (Euclidian norm > epsilon): {}".format(errorString))
+                                FCLogger.info('    Config: ' + str(self.config))
+                                FCLogger.info('    Epoch: ' + str(epoch + 1))
+                                FCLogger.info('    Number of error vectors (Euclidian norm > epsilon): ' + errorString)
 
                                 with open(self.bestNetworkInfoFile, 'w') as fH:
                                     fH.write('Best network common results:\n')
-                                    fH.write('    Config: {}\n'.format(self.config))
-                                    fH.write('    Epoch: {}\n'.format(epoch + 1))
-                                    fH.write("    Number of error vectors (Euclidian norm > epsilon): {}\n".format(errorString))
+                                    fH.write('    Config: ' + str(self.config) + '\n')
+                                    fH.write('    Epoch: ' + str(epoch + 1) + '\n')
+                                    fH.write('    Number of error vectors (Euclidian norm > epsilon): ' + errorString + '\n')
 
                                 shutil.copyfile(self.networkFile, self.bestNetworkFile)
-                                FCLogger.info('Best network saved to file: {}'.format(os.path.abspath(self.bestNetworkFile)))
-                                FCLogger.info('Common information about best network saved to file: {}'.format(os.path.abspath(self.bestNetworkInfoFile)))
+                                FCLogger.info('Best network saved to file: ' + os.path.abspath(self.bestNetworkFile))
+                                FCLogger.info('Common information about best network saved to file: ' + os.path.abspath(self.bestNetworkInfoFile))
 
                         # Stop train if best netwok found:
                         if self.currentFalsePercent <= self._stop:
@@ -856,7 +872,7 @@ class FuzzyNeuroNetwork(object):
 
                         FCLogger.info('Current network replace with the best network.')
 
-                    FCLogger.info('Duration of learning: {}'.format(datetime.now() - started))
+                    FCLogger.info('Duration of learning: ' + str(datetime.now() - started))
 
                 else:
                     raise Exception('Trainer instance not created!')
@@ -904,7 +920,7 @@ class FuzzyNeuroNetwork(object):
                         fH.write('    Input: {}\tOutput: {}{}\n'.format(
                             result[0], result[1], '\tExpected: {}\tError: {}'.format(result[2], result[3]) if result[2] else ''))
 
-            FCLogger.info('Classificate Report File created: {}'.format(os.path.abspath(self.reportFile)))
+            FCLogger.info('Classificate Report File created: ' + os.path.abspath(self.reportFile))
 
         except:
             noReportCreationErrors = False
