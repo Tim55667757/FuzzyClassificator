@@ -59,7 +59,7 @@ reportDataFile = 'report.txt'  # Report file with classification analysis
 bestNetworkFile = 'best_nn.xml'  # best network
 bestNetworkInfoFile = 'best_nn.txt'  # information about best network
 
-epochsToUpdate = 1  # epochs between error status updated
+epochsToUpdate = 5  # epochs between error status updated
 
 ignoreColumns = []  # List of ignored columns in input files.
 ignoreRows = [1]  # List of ignored rows in input files.
