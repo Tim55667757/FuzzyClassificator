@@ -91,7 +91,7 @@ def ParseArgsMain():
     parser.add_argument('-sep', '--separator', type=str, help='Separator symbol in raw data files. SPACE and TAB are reserved, TAB used by default.')
     parser.add_argument('--no-fuzzy', action='store_true', help='Do not show fuzzy results, only real. False by default.')
     parser.add_argument('--reload', action='store_true', help='Reload network from file before usage, False by default.')
-    parser.add_argument('-u', '--epochs-to-update', type=int, help='Update error status after this epochs time, 5 by default. This parameter affected training speed.')
+    parser.add_argument('-u', '--update', type=int, help='Update error status after this epochs time, 5 by default. This parameter affected training speed.')
 
     parser.add_argument('--learn', type=str, nargs='+', help='Start program in learning mode with options (no space after comma): config=<inputs_num>,<layer1_num>,<layer2_num>,...,<outputs_num> epochs=<int_number> rate=<float_num> momentum=<float_num> epsilon=momentum=<float_num> stop=momentum=<float_num>')
     parser.add_argument('--classify', type=str, nargs='+', help='Start program in classificator mode with options (no space after comma): config=<inputs_num>,<layer1_num>,<layer2_num>,...,<outputs_num>')
@@ -584,8 +584,8 @@ if __name__ == "__main__":
         if args.reload:
             reloadNetworkFromFile = args.reload  # reload neural network from given file before usage
 
-        if args.epochs_to_update:
-            epochsToUpdate = args.epochs_to_update  # epochs before error status updating
+        if args.update:
+            epochsToUpdate = args.update  # epochs before error status updating
 
         if args.learn:
             exitCode = int(not(LearningMode(**dict(kw.split('=') for kw in args.learn))))  # Learning mode
