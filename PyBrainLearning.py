@@ -46,7 +46,7 @@
 import csv
 import os
 import shutil
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from pybrain.tools.shortcuts import buildNetwork
 from pybrain.datasets import SupervisedDataSet
@@ -796,6 +796,7 @@ class FuzzyNeuroNetwork(object):
             if self._epochs > 0:
                 if self.trainer:
                     started = datetime.now()
+
                     FCLogger.info('Max epochs: ' + str(self._epochs))
 
                     if os.path.exists(self.bestNetworkFile):
@@ -805,13 +806,25 @@ class FuzzyNeuroNetwork(object):
                         os.remove(self.bestNetworkInfoFile)  # remove best network info file before training
 
                     for epoch in range(self._epochs):
-                        self.progress = (epoch + 1) * 100 / self._epochs
-                        FCLogger.info('Progress: {:.2f}% (current epoch: {} in {})'.format(self.progress,
-                                                                                           self.trainer.epoch + 1,
-                                                                                           self._epochs))
 
-                        # Updating current error status:
-                        if epoch == 0 or (epoch + 1) % self._epochsToUpdate == 0:
+                        # --- Updating current progress:
+                        self.progress = (epoch + 1) * 100 / self._epochs
+
+                        if (0 < epoch < self._epochs - 1) and (epoch + 1) % self._epochsToUpdate == 0:
+                            totTime = round((datetime.now() - started).seconds)
+                            timeRemaining = round(totTime / self.progress * 100 - totTime)
+                            timeInfo = ', total time: ' + str(timedelta(seconds=totTime)) + ', time remaining: ' + str(timedelta(seconds=timeRemaining))
+
+                        else:
+                            timeInfo = ''
+
+                        FCLogger.info('Progress: {:.2f}% (epoch: {} in {}{})'.format(self.progress,
+                                                                                     self.trainer.epoch + 1,
+                                                                                     self._epochs,
+                                                                                     timeInfo))
+
+                        if (epoch + 1) % self._epochsToUpdate == 0:
+
                             # Current results is the list of result vectors: [[defuzInput, outputVector, defuzExpectedVector, errorVector], ...]:
                             currentResult = self.ClassificationResults(fullEval=True, needFuzzy=False, showExpectedVector=True, printLog=False)
 
@@ -824,11 +837,10 @@ class FuzzyNeuroNetwork(object):
                                                                       len(currentResult))
                             FCLogger.info('    - false classificated of vectors: ' + errorString)
 
-                        # Saving best network after first epoch only:
                         if epoch == 0:
-                            self.bestNetworkFalsePercent = self.currentFalsePercent
+                            self.bestNetworkFalsePercent = self.currentFalsePercent  # best percent after first epoch
 
-                        # Saving current best network:
+                        # --- Saving current best network:
                         if self.currentFalsePercent < self.bestNetworkFalsePercent:
                             if os.path.exists(self.networkFile):
                                 self.bestNetworkFalsePercent = self.currentFalsePercent
@@ -848,7 +860,7 @@ class FuzzyNeuroNetwork(object):
                                 FCLogger.info('Best network saved to file: ' + os.path.abspath(self.bestNetworkFile))
                                 FCLogger.info('Common information about best network saved to file: ' + os.path.abspath(self.bestNetworkInfoFile))
 
-                        # Stop train if best netwok found:
+                        # --- Stop train if best netwok found:
                         if self.currentFalsePercent <= self._stop:
                             FCLogger.info('Current percent of false classificated vectors is {:.1f}% less than stop value {:.1f}%.'.format(self.currentFalsePercent, self._stop))
                             break
@@ -856,12 +868,12 @@ class FuzzyNeuroNetwork(object):
                         self.trainer.train()  # training network
 
                         if epoch % 10 == 0:
-                            self.SaveNetwork()
+                            self.SaveNetwork()  # dump network every 10th time
 
                     if self._epochs > 1:
-                        self.SaveNetwork()
+                        self.SaveNetwork()  # save network at the end of learning
 
-                    # Replace last network with the best network:
+                    # --- Replace last network with the best network:
                     if os.path.exists(self.networkFile) and os.path.exists(self.bestNetworkFile):
 
                         os.remove(self.networkFile)
@@ -869,7 +881,7 @@ class FuzzyNeuroNetwork(object):
 
                         FCLogger.info('Current network replace with the best network.')
 
-                    FCLogger.info('Duration of learning: ' + str(datetime.now() - started))
+                    FCLogger.info('Duration of learning: ' + str(timedelta(seconds=(datetime.now() - started).seconds)))
 
                 else:
                     raise Exception('Trainer instance not created!')

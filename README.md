@@ -122,9 +122,9 @@ Classifying Mode:
 
 *Examples:*
 
-Start learning with user's ethalon data file and neuronet options Config=(3,[3,2],2), 10 epochs, 0.1 learning rate and 0.05 momentum, epsilon is 0.01 and stop learning if errors less than 5%:
+Start learning with user's ethalon data file and neuronet options Config=(3,[3,2],2), 10 epochs, 0.1 learning rate and 0.05 momentum, epsilon is 0.01 and stop learning if errors less than 5%, update information in log every 5 epochs:
 
-    python FuzzyClassificator.py --ethalons ethalons.dat --learn config=3,3,2,2 epochs=10 rate=0.1 momentum=0.05 epsilon=0.01 stop=5 --separator=TAB --debug-level=DEBUG
+    python FuzzyClassificator.py --ethalons ethalons.dat --learn config=3,3,2,2 epochs=10 rate=0.1 momentum=0.05 epsilon=0.01 stop=5 --separator=TAB --debug-level=DEBUG --update 5
 
 Classify all candidates from file candidates.dat and show result in report.txt:
 
