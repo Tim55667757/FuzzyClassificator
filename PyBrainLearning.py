@@ -854,7 +854,11 @@ class FuzzyNeuroNetwork(object):
                                     fH.write('Best network common results:\n')
                                     fH.write('    Config: ' + str(self.config) + '\n')
                                     fH.write('    Epoch: ' + str(epoch + 1) + '\n')
-                                    fH.write('    Number of error vectors (Euclidian norm > epsilon): ' + errorString + '\n')
+                                    fH.write('    Number of error vectors (Euclidian norm > epsilon): ' + errorString + '\n\n')
+
+                                    fH.write('All of learning parameters of FuzzyNeuroNetwork object:\n' + '-' * 80 + '\n')
+                                    for param in sorted(self.__dict__):
+                                        fH.write('    ' + param + ' = ' + str(self.__dict__[param]) + '\n\n')
 
                                 shutil.copyfile(self.networkFile, self.bestNetworkFile)
                                 FCLogger.info('Best network saved to file: ' + os.path.abspath(self.bestNetworkFile))
