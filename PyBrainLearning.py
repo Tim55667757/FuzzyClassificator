@@ -106,11 +106,11 @@ class FuzzyNeuroNetwork(object):
 
         try:
             for line in self.rawData:
-                # defuzzificating fuzzy values to real values:
-                defuzzyValues = []
+                defuzValues = []
 
                 for itemValue in line:
                     num = 0
+
                     try:
                         num = float(itemValue)
 
@@ -121,11 +121,11 @@ class FuzzyNeuroNetwork(object):
                             num = level['fSet'].Defuz()
 
                         else:
-                            FCLogger.warning('{} not correct real or fuzzy value! It is reset at 0.'.format(itemValue))
+                            FCLogger.warning(itemValue + ' - is not correct real or fuzzy value! It is reset at 0.')
 
-                    defuzzyValues.append(num)
+                    defuzValues.append(num)
 
-                defuzData.append(defuzzyValues)
+                defuzData.append(defuzValues)
 
         except:
             defuzData = []
@@ -616,97 +616,103 @@ class FuzzyNeuroNetwork(object):
     def ClassificationResultForOneVector(self, inputVector, expectedVector=None, needFuzzy=False, printLog=True):
         """
         Method use for receiving results after activating Neuronet with one input vector.
-        inputVector - is a defuzzyficated raw data of input vector.
-        If needFuzzy = True then appropriate output values converting into fuzzy values after activating, otherwise used real values.
-        If printLog = False then results not printing to log.
+        inputVector is the vector with real or fuzzy values.
+        If needFuzzy = True then appropriate output values converting into fuzzy values after activating, otherwise using real values.
+        If printLog = False then results of classifications not printing to log for increase train speed.
         """
         defuzInput = []
 
-        # defuzzyficating input values:
+        # --- defuzzyficating input values:
         for value in inputVector:
-            level = self.scale.GetLevelByName(levelName=str(value).capitalize())
+            try:
+                value = float(value)
 
-            if level:
-                defuzInput.append(level['fSet'].Defuz())
+            except:
+                if isinstance(value, str):
+                    level = self.scale.GetLevelByName(levelName=value.capitalize())
 
-            else:
-                defuzInput.append(value)
+                    if level:
+                        value = level['fSet'].Defuz()
 
-        outputVector = self.network.activate(defuzInput)
+                    else:
+                        FCLogger.warning(value + ' - is not fuzzy value! Using as is.')
+
+            defuzInput.append(value)
+
+        outputVector = self.network.activate(defuzInput)  # get result after NN activated with defuzInput values
 
         defuzExpectedVector = []
 
-        # defuzzyficate expected values:
+        # --- defuzzyficate expected values:
         if expectedVector:
             for value in expectedVector:
-                level = self.scale.GetLevelByName(levelName=str(value).capitalize())
+                try:
+                    value = float(value)
 
-                if level:
-                    defuzExpectedVector.append(level['fSet'].Defuz())
+                except:
+                    if isinstance(value, str):
+                        level = self.scale.GetLevelByName(levelName=value.capitalize())
 
-                else:
-                    defuzExpectedVector.append(value)
+                        if level:
+                            value = level['fSet'].Defuz()
 
-            errorVector = []
+                        else:
+                            FCLogger.warning(value + ' - is not fuzzy value! Using as is.')
 
-            for num, currentValue in enumerate(outputVector):
-                errorVector.append(float(defuzExpectedVector[num]) - currentValue)
+                defuzExpectedVector.append(value)
+
+            errorVector = [defuzExpectedVector[num] - currentValue for num, currentValue in enumerate(outputVector)]
 
         else:
             errorVector = None
 
+        # --- return output fuzzy or real values:
         if needFuzzy:
-            fuzzyOutputVector = []
+            fuzzyOutputVector = [self.scale.Fuzzy(value)['name'] for value in outputVector]
 
-            for value in outputVector:
-                fuzzyOutputVector.append(self.scale.Fuzzy(value)['name'])
+            if printLog:
+                if len(inputVector) <= 10:
+                    longStr = '        Input:' + str(inputVector) + '\tOutput: ' + str(fuzzyOutputVector)
 
-            if len(inputVector) <= 10:
-                longStr = '        Input:' + str(inputVector) + '\tOutput: ' + str(fuzzyOutputVector)
+                    if expectedVector:
+                        longStr += '\tExpected: ' + str(expectedVector)
 
-                if expectedVector:
-                    longStr += '\tExpected: ' + str(expectedVector)
-
-                if printLog:
                     FCLogger.debug(longStr)
 
-            else:
-                cutInputVectorStr = '[' + str(inputVector[0]) + ', ' + str(inputVector[1]) + ', ..., ' + str(inputVector[-2]) + ', ' + str(inputVector[-1]) + ']'
-                shortStr = '        Input: ' + cutInputVectorStr + '\tOutput: ' + str(fuzzyOutputVector)
+                else:
+                    cutInputVectorStr = '[' + str(inputVector[0]) + ', ' + str(inputVector[1]) + ', ..., ' + str(inputVector[-2]) + ', ' + str(inputVector[-1]) + ']'
+                    shortStr = '        Input: ' + cutInputVectorStr + '\tOutput: ' + str(fuzzyOutputVector)
 
-                if expectedVector:
-                    shortStr += '\tExpected: ' + str(expectedVector)
+                    if expectedVector:
+                        shortStr += '\tExpected: ' + str(expectedVector)
 
-                if printLog:
                     FCLogger.debug(shortStr)
 
-            return inputVector, fuzzyOutputVector, expectedVector, errorVector
+            return inputVector, fuzzyOutputVector, expectedVector, errorVector  # return fuzzy vector
 
         else:
-            if len(defuzInput) <= 10:
-                longDefuzStr = '        Input:' + str(defuzInput) + '\tOutput: ' + str(outputVector)
+            if printLog:
+                if len(defuzInput) <= 10:
+                    longDefuzStr = '        Input:' + str(defuzInput) + '\tOutput: ' + str(outputVector)
 
-                if expectedVector:
-                    longDefuzStr += '\tExpected: ' + str(defuzExpectedVector)
+                    if expectedVector:
+                        longDefuzStr += '\tExpected: ' + str(defuzExpectedVector)
 
-                if printLog:
                     FCLogger.debug(longDefuzStr)
 
-            else:
-                cutDefuzInputVectorStr = '[' + str(defuzInput[0]) + ', ' + str(defuzInput[1]) + ', ..., ' + str(defuzInput[-2]) + ', ' + str(defuzInput[-1]) + ']'
-                shortDefuzStr = '        Input: ' + cutDefuzInputVectorStr + '\tOutput: ' + str(outputVector)
+                else:
+                    cutDefuzInputVectorStr = '[' + str(defuzInput[0]) + ', ' + str(defuzInput[1]) + ', ..., ' + str(defuzInput[-2]) + ', ' + str(defuzInput[-1]) + ']'
+                    shortDefuzStr = '        Input: ' + cutDefuzInputVectorStr + '\tOutput: ' + str(outputVector)
 
-                if expectedVector and defuzExpectedVector and errorVector:
-                    shortDefuzStr += '\tExpected: ' + str(defuzExpectedVector)
+                    if expectedVector and defuzExpectedVector and errorVector:
+                        shortDefuzStr += '\tExpected: ' + str(defuzExpectedVector)
 
-                if printLog:
                     FCLogger.debug(shortDefuzStr)
 
-            if expectedVector and defuzExpectedVector and errorVector:
-                if printLog:
+                if expectedVector and defuzExpectedVector and errorVector:
                     FCLogger.debug('        Error: ' + str(errorVector))
 
-            return defuzInput, outputVector, defuzExpectedVector, errorVector
+            return defuzInput, outputVector, defuzExpectedVector, errorVector  # return real vector
 
     def ClassificationResults(self, fullEval=False, needFuzzy=False, showExpectedVector=True, printLog=True):
         """
@@ -724,41 +730,25 @@ class FuzzyNeuroNetwork(object):
         if printLog:
             FCLogger.debug('Classification results:')
 
-        if len(inputHeaders) <= 10:
-            shortHeaderStr = '    Header:    [' + ' '.join(head for head in inputHeaders) + ']\t[' + ' '.join(head for head in outputHeaders) + ']'
-
-            if printLog:
+            if len(inputHeaders) <= 10:
+                shortHeaderStr = '    Header:    [' + ' '.join(head for head in inputHeaders) + ']\t[' + ' '.join(head for head in outputHeaders) + ']'
                 FCLogger.debug(shortHeaderStr)
 
-        else:
-            longHeaderStr = '    Header:    [' + inputHeaders[0] + ' ' + inputHeaders[1] + ' ... ' + inputHeaders[-2] + ' ' + inputHeaders[-1] + ']\t[' + ' '.join(head for head in outputHeaders) + ']'
-
-            if printLog:
+            else:
+                longHeaderStr = '    Header:    [' + inputHeaders[0] + ' ' + inputHeaders[1] + ' ... ' + inputHeaders[-2] + ' ' + inputHeaders[-1] + ']\t[' + ' '.join(head for head in outputHeaders) + ']'
                 FCLogger.debug(longHeaderStr)
 
         if fullEval:
             if needFuzzy:
                 for vecNum, vector in enumerate(self._rawData):
                     inputVector = vector[:self.config[0]]
-
-                    if showExpectedVector:
-                        expectedVector = vector[len(vector) - self.config[-1]:]
-
-                    else:
-                        expectedVector = None
-
+                    expectedVector = vector[len(vector) - self.config[-1]:] if showExpectedVector else None
                     classificationResults.append(self.ClassificationResultForOneVector(inputVector, expectedVector, needFuzzy, printLog))
 
             else:
                 for vecNum, vector in enumerate(self._rawDefuzData):
                     inputVector = vector[:self.config[0]]
-
-                    if showExpectedVector:
-                        expectedVector = vector[len(vector) - self.config[-1]:]
-
-                    else:
-                        expectedVector = None
-
+                    expectedVector = vector[len(vector) - self.config[-1]:] if showExpectedVector else None
                     classificationResults.append(self.ClassificationResultForOneVector(inputVector, expectedVector, printLog=printLog))
 
         else:
