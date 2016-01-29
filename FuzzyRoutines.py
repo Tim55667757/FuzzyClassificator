@@ -658,6 +658,9 @@ class FuzzyScale():
                                           supportSet=(0., 1.),
                                           linguisticName='High')}]
 
+        self._levelsNames = self._GetLevelsNames()  # dictionary with only levels' names
+        self._levelsNamesUpper = self._GetLevelsNamesUpper()  # dictionary with only level's names in upper cases
+
     def __str__(self):
         # return view of fuzzy scale - name = {**levels} and levels interpreter. Example:
         # DefaultScale = {Min, Med, High}
@@ -713,10 +716,26 @@ class FuzzyScale():
                 else:
                     raise Exception("Level of fuzzy scale must be 2-dim dictionary looks like {'name': 'level_name', 'fSet': FuzzySet_instance}!")
 
-            self._levels = value
+            self._levels = value  # set up new list of fuzzy levels
+            self._levelsNames = self._GetLevelsNames()  # updating dictionary with only levels' names
+            self._levelsNamesUpper = self._GetLevelsNamesUpper()  # updating dictionary with only level's names in upper cases
 
         else:
             raise Exception('Fuzzy scale must contain at least one linguistic variable!')
+
+    def _GetLevelsNames(self):
+        """
+        Returns dictionary with only fuzzy levels' names and it's fuzzy set.
+        Example: {'Min': <fSet_Object>, 'Med': <fSet_Object>, 'High': <fSet_Object>}
+        """
+        return dict([(x['name'], self._levels[lvl]) for lvl, x in enumerate(self._levels)])
+
+    def _GetLevelsNamesUpper(self):
+        """
+        Returns dictionary with only fuzzy levels' names in upper cases and it's fuzzy set.
+        Example: {'MIN': <fSet_Object>, 'MED': <fSet_Object>, 'HIGH': <fSet_Object>}
+        """
+        return dict([(x['name'].upper(), self._levels[lvl]) for lvl, x in enumerate(self._levels)])
 
     def Fuzzy(self, realValue):
         """
@@ -737,16 +756,11 @@ class FuzzyScale():
             if True then levelName must be equal to level['name'],
             otherwise - level['name'] in uppercase must contains levelName in uppercase.
         """
-        fuzzyLevel = None
+        if exactMatching:
+            return self._levelsNames.get(levelName)
 
-        for level in self._levels:
-            scaleLevelName = level['name'] if exactMatching else level['name'].upper()
-
-            if (exactMatching and levelName == scaleLevelName) or (not exactMatching and levelName.upper() == scaleLevelName):
-                fuzzyLevel = level
-                break
-
-        return fuzzyLevel
+        else:
+            return self._levelsNamesUpper.get(levelName.upper())
 
 
 class UniversalFuzzyScale(FuzzyScale):
@@ -786,9 +800,20 @@ class UniversalFuzzyScale(FuzzyScale):
                                           supportSet=(0.77, 1.),
                                           linguisticName='Max')}]
 
+        self._levelsNames = self._GetLevelsNames()  # dictionary with only universal fuzzy scale levels' names
+        self._levelsNamesUpper = self._GetLevelsNamesUpper()  # dictionary with only level's names in upper cases
+
     @property
     def levels(self):
-        return self._levels  # only readable levels for Universal Fuzzy Scale
+        return self._levels  # only readable levels and it's fuzzy set for Universal Fuzzy Scale
+
+    @property
+    def levelsNames(self):
+        return self._levelsNames  # only levels' names of Universal Fuzzy Scale
+
+    @property
+    def levelsNamesUpper(self):
+        return self._levelsNamesUpper  # only levels' names of Universal Fuzzy Scale in upper cases
 
 
 if __name__ == "__main__":
