@@ -801,9 +801,10 @@ class FuzzyNeuroNetwork(object):
                         self.progress = (epoch + 1) * 100 / self._epochs
 
                         if (0 < epoch < self._epochs - 1) and (epoch + 1) % self._epochsToUpdate == 0:
-                            totTime = round((datetime.now() - started).seconds)
-                            timeRemaining = round(totTime / self.progress * 100 - totTime)
-                            timeInfo = ', total time: ' + str(timedelta(seconds=totTime)) + ', time remaining: ' + str(timedelta(seconds=timeRemaining))
+                            totTime = datetime.now() - started
+                            totTimeSeconds = totTime.total_seconds()
+                            timeRemainingSeconds = round(totTimeSeconds / self.progress * 100 - totTimeSeconds)
+                            timeInfo = ', total time: {}, time remaining: {}'.format(totTime, timedelta(seconds=timeRemainingSeconds))
 
                         else:
                             timeInfo = ''
