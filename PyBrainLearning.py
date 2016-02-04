@@ -876,7 +876,8 @@ class FuzzyNeuroNetwork(object):
 
                         FCLogger.info('Current network replace with the best network.')
 
-                    FCLogger.info('Duration of learning: ' + str(timedelta(seconds=(datetime.now() - started).seconds)))
+                    durationSeconds = round((datetime.now() - started).total_seconds())
+                    FCLogger.info('Duration of learning: {}'.format(timedelta(seconds=durationSeconds)))
 
                 else:
                     raise Exception('Trainer instance not created!')
