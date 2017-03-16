@@ -822,7 +822,7 @@ class FuzzyNeuroNetwork(object):
                                 FCLogger.info('Best network saved to file: ' + os.path.abspath(self.bestNetworkFile))
                                 FCLogger.info('Common information about best network saved to file: ' + os.path.abspath(self.bestNetworkInfoFile))
 
-                        # --- Stop train if best netwok found:
+                        # --- Stop train if the best network found:
                         if self.currentFalsePercent <= self._stop:
                             FCLogger.info('Current percent of false classificated vectors is {:.1f}% less than stop value {:.1f}%.'.format(self.currentFalsePercent, self._stop))
                             break
