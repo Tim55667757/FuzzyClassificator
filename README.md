@@ -1,7 +1,7 @@
 FuzzyClassificator
 ==================
 
-This program uses neural networks to solve classification problems, and uses fuzzy sets and fuzzy logic to interpreting results. FuzzyClassificator provided under a license GNU GPL v3.
+This program uses neural networks to solve classification problems, and uses fuzzy sets and fuzzy logic to interpreting results. FuzzyClassificator provided under the MIT License.
 
 
 How to use
