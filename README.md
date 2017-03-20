@@ -17,7 +17,7 @@ Work contains two steps:
 
 **Presets:**
 
-FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source computing environment, based on Python 3.3.2 and includes many scientific packages, e.g. PyBrain library, http://pybrain.org - neural network routines.
+The simplest way to use FuzziClassificator without some troubles is to install Pyzo + Anaconda interpreter, which contains all needable scientific libraries. [Pyzo](http://www.pyzo.org/start.html) is a cross-platform Python IDE focused on interactivity and introspection, which makes it very suitable for scientific computing. [Anaconda](https://www.continuum.io/downloads) is the open data science platform powered by Python. The open source version of Anaconda is a high performance distribution of Python and includes most of the popular Python packages for scientific calculation. In all the examples below, we used an Anaconda Python interpreter.
 
 
 **Usage:**
