@@ -1,7 +1,7 @@
 FuzzyClassificator
 ==================
 
-This program uses neural networks to solve classification problems, and uses fuzzy sets and fuzzy logic to interpreting results. FuzzyClassificator provided under a license GNU GPL v3.
+This program uses neural networks to solve classification problems, and uses fuzzy sets and fuzzy logic to interpreting results. FuzzyClassificator provided under the MIT License.
 
 
 How to use
@@ -17,12 +17,12 @@ Work contains two steps:
 
 **Presets:**
 
-FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source computing environment, based on Python 3.3.2 and includes many scientific packages, e.g. PyBrain library, http://pybrain.org - neural network routines.
+The simplest way to use FuzziClassificator without some troubles is to install Pyzo + Anaconda interpreter, which contains all needable scientific libraries. [Pyzo](http://www.pyzo.org/start.html) is a cross-platform Python IDE focused on interactivity and introspection, which makes it very suitable for scientific computing. [Anaconda](https://www.continuum.io/downloads) is the open data science platform powered by Python. The open source version of Anaconda is a high performance distribution of Python and includes most of the popular Python packages for scientific calculation. In all the examples below, we used an Anaconda Python interpreter.
 
 
 **Usage:**
 
-    python FuzzyClassificator.py [options] [--learn [Network_Options]] | [--classify [Network_Options]]
+    python FuzzyClassificator.py [options] [--learn]|[--classify] [Network_Options]
 
 
 *Optional arguments:*
@@ -30,34 +30,60 @@ FuzzyClassificator using Pyzo, http://www.pyzo.org - free and open-source comput
     -h, --help
         Show help message and exit.
 
-    -l <verbosity>, --debug-level <verbosity>
-        Use 1, 2, 3, 4, 5 or DEBUG, INFO, WARNING, ERROR, CRITICAL debug info verbosity, INFO (2) by default.
+    -l [verbosity], --debug-level=[verbosity]
+        Use 1, 2, 3, 4, 5 or DEBUG, INFO, WARNING, ERROR, CRITICAL debug info verbosity,
+        INFO (2) by default.
 
-    -e <ethalon_filename>, --ethalons <ethalon_filename>
+    -e [ethalon_filename], --ethalons=[ethalon_filename]
         File with ethalon data samples, ethalons.dat by default.
 
-    -c <candidates_filename>, --candidates <candidates_filename>
+    -c [candidates_filename], --candidates=[candidates_filename]
         File with candidates data samples, candidates.dat by default.
 
-    -n <network_filename>, --network <network_filename>
+    -n [network_filename], --network=[network_filename]
         File with Neuro Network configuration, network.xml by default.
 
-    -r <report_filename>, --report <report_filename>
+    -r [report_filename], --report=[report_filename]
         File with Neuro Network configuration, report.txt by default.
 
+    -bn [best_network_filename], --best-network=[best_network_filename]
+        Copy best network to this file, best_nn.xml by default.
+
+    -bni [best_network_info_filename], --best-network-info=[best_network_info_filename]
+        File with information about best network, best_nn.txt by default.
+
+    -ic [indexes], --ignore-col=[indexes]
+        Columns in input files that should be ignored.
+        Use only dash and comma as separator numbers, other symbols are ignored.
+        Example (no space after comma): 1,2,5-11
+
+    -ir [indexes], --ignore-row=[indexes]
+        Rows in input files that should be ignored.
+        Use only dash and comma as separator numbers, other symbols are ignored.
+        1st header row always set as ignored.
+        Example (no space after comma): 2,4-7
+
+    -sep [TAB|SPACE|separator_char], --separator=[TAB|SPACE|separator_char]
+        Column's separator in raw data files.
+        It can be TAB or SPACE abbreviation, comma, dot, semicolon or other char.
+        TAB symbol by default.
+
     --no-fuzzy
-        Do not show fuzzy results, only real. False by default.
+        Add key if You doesn't want show fuzzy results, only real. Not set by default.
 
     --reload
-        Reload network from file before usage, False by default.
+        Add key if You want reload network from file before usage. Not set by default.
 
+    -u [epochs], --update=[epochs]
+        Update error status after this epochs time, 5 by default.
+        This parameter affected training speed.
 
 *Work modes:*
 
 Learning Mode:
     
     --learn [Network_Options]
-        Start program in learning mode with options parameters, where Network_Options is a dictionary:
+        Start program in learning mode, where Network_Options is a dictionary:
         
         {
         config=inputs,layer1,layer2,...,outputs
@@ -65,20 +91,26 @@ Learning Mode:
             layer1..N are number of neurons in hidden layers,
             and outputs is number of neurons in output layer
 
-        epochs=<int_num>
+        epochs=[int_num]
             this is a positive integer number, greater than 0, means the number of training cycles
 
-        rate=<float_num>
-            this is parameter of rate of learning, float number in [0, 1]
+        rate=[float_num]
+            this is parameter of rate of learning, float number in (0, 1]
 
-        momentum=<float_num>
-            this is parameter of momentum of learning, float number in [0, 1]
+        momentum=[float_num]
+            this is parameter of momentum of learning, float number in (0, 1]
+
+        epsilon=[float_num]
+            this parameter used to compare the distance between the two vectors, float number in (0, 1]
+
+        stop=[float_num]
+            this is stop parameter of learning (percent of errors), float number in [0, 100]
         }
 
 Classifying Mode:
 
     --classify [Network_Options]
-        Start program in classificator mode with options parameters, where Network_Options is a dictionary:
+        Start program in classificator mode, where Network_Options is a dictionary:
 
         {
         config=inputs,layer1,layer2,...,outputs
@@ -90,22 +122,22 @@ Classifying Mode:
 
 *Examples:*
 
-Start learning with user's ethalon data file and neuronet options Config=<3,[3,2],2>, 10 epochs, 0.1 learning rate and 0.05 momentum:
+Start learning with user's ethalon data file and neuronet options Config=(3,[3,2],2), 10 epochs, 0.1 learning rate and 0.05 momentum, epsilon is 0.01 and stop learning if errors less than 5%, update information in log every 5 epochs:
 
-    python FuzzyClassificator.py --ethalons user_ethalons.dat --learn config=3,3,2,2 epochs=10 rate=0.1 momentum=0.05
+    python FuzzyClassificator.py --ethalons ethalons.dat --learn config=3,3,2,2 epochs=10 rate=0.1 momentum=0.05 epsilon=0.01 stop=5 --separator=TAB --debug-level=DEBUG --update 5
 
-Classify all candidates from file user_candidates.dat and show result in user_report.txt:
+Classify all candidates from file candidates.dat and show result in report.txt:
 
-    python FuzzyClassificator.py --candidates user_candidates.dat --network user_network.xml --report user_report.txt --classify config=3,3,2,2
+    python FuzzyClassificator.py --candidates candidates.dat --network network.xml --report report.txt --classify config=3,3,2,2 --separator=TAB --debug-level=DEBUG
 
-Where 'python' is Pyzo Python 3.3.2 interpreter.
+Where 'python' is full path to Pyzo Python 3.3.2 interpreter.
 
 Preparing data
 --------------
 
 **ethalons.dat**
 
-This is default file with ethalon data set. This file contains tab-delimited data that looks like this:
+This is default file with ethalon data set. This file contains tab-delimited data (by default) that looks like this:
 
     <first header line with column names> 
     and then some strings contains real or fuzzy values:
@@ -124,7 +156,7 @@ For each input vector level of membership in the class characterized by the outp
     0.5     0.6     High    Max               Min
     0.6     0.7     Max     Max               Min
 
-For training on this data use --learn key with config parameter, for example:
+For training on this data set use --learn key with config parameter, for example:
 
     --learn config=3,3,2,2 
 
@@ -134,7 +166,7 @@ dimension of output vector is 2, and the middle "3,2" parameters means that neur
 
 **candidates.dat**
 
-This is default file with data set for classifying. This file contains tab-delimited data that looks like this:
+This is default file with data set for classifying. This file contains tab-delimited data (by default) that looks like this:
 
     <first header line with column names>
     and then some strings contains real or fuzzy values:
@@ -150,17 +182,17 @@ This is default file with data set for classifying. This file contains tab-delim
     0.65    0.68    High
     0.76    0.79    Max
 
-To classify each of input vectors using --classify key. All columns are used as values of input vectors.
+To classify each of input vectors You must to use --classify key. All columns are used as values of input vectors.
 
-If we train Neuronet with command:
+If You train Neuronet with command:
 
     python FuzzyClassificator.py --ethalons ethalons.dat --learn config=3,3,2,2 epochs=1000 rate=0.1 momentum=0.05
 
-And then trying to classificate candidates vectors with command:
+And then classificate candidates vectors with command:
 
     python FuzzyClassificator.py --candidates candidates.dat --network network.xml --report report.txt --classify config=3,3,2,2
 
-Then we get *report.text* file with information that looks like this:
+Then You'll get *report.text* file with information that looks like this:
 
     Neuronet: C:\work\projects\FuzzyClassificator\network.xml
 
@@ -173,6 +205,8 @@ Then we get *report.text* file with information that looks like this:
 
     Classification results for candidates vectors:
 
+        Header: [input1 input2 input3]	[1st_class_output 2nd_class_output]
+        ----------------------------------------------------------------------
         Input: ['0.12', '0.32', 'Min']	Output: ['Min', 'Max']
         Input: ['0.32', '0.35', 'Low']	Output: ['Low', 'High']
         Input: ['0.54', '0.57', 'Med']	Output: ['Max', 'Min']
@@ -337,11 +371,15 @@ Change scale levels:
 
 *Work with Universal Fuzzy Scale.*
 
-Iniversal fuzzy scales S_f = {Min, Low, Med, High, Max} pre-defined in UniversalFuzzyScale() class.
+Universal fuzzy scales S_f = {Min, Low, Med, High, Max} pre-defined in UniversalFuzzyScale() class.
 
     uniFScale = UniversalFuzzyScale()
     print('Levels of Universal Fuzzy Scale:', uniFScale.levels)
     print('Printing scale:', uniFScale)
+
+    print('Defuz() of all Universal Fuzzy Scale levels:')
+    for item in uniFScale.levels:
+        print('Defuz({}) = {:1.2f}'.format(item['name'], item['fSet'].Defuz()))
 
 Use Fuzzy() function to looking for level on Fuzzy Scale:
 
@@ -438,95 +476,123 @@ Calculates result of S-coNorm operations for N numbers, N > 2:
 
 If you run code above - you'll see next console output:
 
-    Printing Membership function parameters:  Trapezium(x, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8})
-    Trapezium(0.0, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8}) = 0.0000
-    Trapezium(0.1, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8}) = 0.0000
-    Trapezium(0.2, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8}) = 0.2750
-    Trapezium(0.3, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8}) = 0.5525
-    Trapezium(0.4, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8}) = 0.8302
-    Trapezium(0.5, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8}) = 1.0000
-    Trapezium(0.7, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8}) = 1.0000
-    Trapezium(0.8, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8}) = 1.0000
-    Trapezium(0.9, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8}) = 0.6173
-    Trapezium(1.0, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8}) = 0.0617
-    Trapezium(1.1, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8}) = 0.0000
-    Printing fuzzy set after init and before changes: FuzzySet = <Trapezium(x, {'b': 1, 'c': 0.5, 'a': 0.1, 'd': 0.8}), [0.0, 1.0]>
+    Printing Membership function with parameters:  Trapezium(x, {"a": 0.1, "b": 1, "c": 0.5, "d": 0.8})
+    Trapezium(x, {"a": 0.1, "b": 1, "c": 0.5, "d": 0.8}) = 0.0000
+    Trapezium(x, {"a": 0.1, "b": 1, "c": 0.5, "d": 0.8}) = 0.0000
+    Trapezium(x, {"a": 0.1, "b": 1, "c": 0.5, "d": 0.8}) = 0.2750
+    Trapezium(x, {"a": 0.1, "b": 1, "c": 0.5, "d": 0.8}) = 0.5525
+    Trapezium(x, {"a": 0.1, "b": 1, "c": 0.5, "d": 0.8}) = 0.8302
+    Trapezium(x, {"a": 0.1, "b": 1, "c": 0.5, "d": 0.8}) = 1.0000
+    Trapezium(x, {"a": 0.1, "b": 1, "c": 0.5, "d": 0.8}) = 1.0000
+    Trapezium(x, {"a": 0.1, "b": 1, "c": 0.5, "d": 0.8}) = 1.0000
+    Trapezium(x, {"a": 0.1, "b": 1, "c": 0.5, "d": 0.8}) = 0.6173
+    Trapezium(x, {"a": 0.1, "b": 1, "c": 0.5, "d": 0.8}) = 0.0617
+    Trapezium(x, {"a": 0.1, "b": 1, "c": 0.5, "d": 0.8}) = 0.0000
+
+    Printing fuzzy set after init and before changes: FuzzySet = <Trapezium(x, {"a": 0.1, "b": 1, "c": 0.5, "d": 0.8}), [0.0, 1.0]>
     Defuz(FuzzySet) = 0.59
-    New membership function parameters:  {'b': 1, 'c': 0.5, 'a': 0, 'd': 0.8}
+
+    New membership function with parameters:  Trapezium(x, {"a": 0, "b": 1, "c": 0.5, "d": 0.8})
     New support set:  (0.5, 1)
     New value of Defuz(Changed fuzzy set) = 0.70
-    Printing fuzzy set after changes: Changed fuzzy set = <Trapezium(x, {'b': 1, 'c': 0.5, 'a': 0, 'd': 0.8}), [0.5, 1]>
+
+    Printing fuzzy set after changes: Changed fuzzy set = <Trapezium(x, {"a": 0, "b": 1, "c": 0.5, "d": 0.8}), [0.5, 1]>
     Printing default fuzzy scale in human-readable: DefaultScale = {Min, Med, High}
-        Minimum = <Hyperbolic(x, {'b': 4, 'c': 0, 'a': 7}), [0.0, 1.0]>
-        Medium = <Bell(x, {'b': 0.5, 'c': 0.6, 'a': 0.35}), [0.0, 1.0]>
-        High = <Triangle(x, {'b': 1, 'c': 1, 'a': 0.7}), [0.0, 1.0]>
+        Minimum = <Hyperbolic(x, {"a": 7, "b": 4, "c": 0}), [0.0, 1.0]>
+        Medium = <Bell(x, {"a": 0.35, "b": 0.5, "c": 0.6}), [0.0, 1.0]>
+        High = <Triangle(x, {"a": 0.7, "b": 1, "c": 1}), [0.0, 1.0]>
+
     Defuz() of all default levels:
     Defuz(Min) = 0.10
     Defuz(Med) = 0.55
     Defuz(High) = 0.90
+
     Define some new levels:
-    Printing Level 1 in human-readable: min = <Hyperbolic(x, {'b': 20, 'c': 0, 'a': 2}), [0.0, 0.5]>
-    Printing Level 2 in human-readable: med = <Bell(x, {'b': 0.55, 'c': 0.7, 'a': 0.4}), [0.25, 0.75]>
-    Printing Level 3 in human-readable: max = <Triangle(x, {'b': 1, 'c': 1, 'a': 0.65}), [0.7, 1.0]>
-    Changed List of levels as objects: [{'name': 'min', 'fSet': <__main__.FuzzySet object at 0x0000000002B67FD0>}, {'name': 'med', 'fSet': <__main__.FuzzySet object at 0x0000000002B86080>}, {'name': 'max', 'fSet': <__main__.FuzzySet object at 0x0000000002B860F0>}]
+    Printing Level 1 in human-readable: min = <Hyperbolic(x, {"a": 2, "b": 20, "c": 0}), [0.0, 0.5]>
+    Printing Level 2 in human-readable: med = <Bell(x, {"a": 0.4, "b": 0.55, "c": 0.7}), [0.25, 0.75]>
+    Printing Level 3 in human-readable: max = <Triangle(x, {"a": 0.65, "b": 1, "c": 1}), [0.7, 1.0]>
+
+    Changed List of levels as objects: [{'name': 'min', 'fSet': <__main__.FuzzySet object at 0x00000000027B1208>}, {'name': 'med', 'fSet': <__main__.FuzzySet object at 0x00000000027B1278>}, {'name': 'max', 'fSet': <__main__.FuzzySet object at 0x00000000027B1320>}]
+
     Printing changed fuzzy scale in human-readable: New Scale = {min, med, max}
-        min = <Hyperbolic(x, {'b': 20, 'c': 0, 'a': 2}), [0.0, 0.5]>
-        med = <Bell(x, {'b': 0.55, 'c': 0.7, 'a': 0.4}), [0.25, 0.75]>
-        max = <Triangle(x, {'b': 1, 'c': 1, 'a': 0.65}), [0.7, 1.0]>
+        min = <Hyperbolic(x, {"a": 2, "b": 20, "c": 0}), [0.0, 0.5]>
+        med = <Bell(x, {"a": 0.4, "b": 0.55, "c": 0.7}), [0.25, 0.75]>
+        max = <Triangle(x, {"a": 0.65, "b": 1, "c": 1}), [0.7, 1.0]>
+
     Defuz() of all New Scale levels:
     Defuz(min) = 0.24
     Defuz(med) = 0.61
     Defuz(max) = 0.89
-    Levels of Universal Fuzzy Scale: [{'name': 'Min', 'fSet': <__main__.FuzzySet object at 0x0000000002B86278>}, {'name': 'Low', 'fSet': <__main__.FuzzySet object at 0x0000000002B862E8>}, {'name': 'Med', 'fSet': <__main__.FuzzySet object at 0x0000000002B86358>}, {'name': 'High', 'fSet': <__main__.FuzzySet object at 0x0000000002B863C8>}, {'name': 'Max', 'fSet': <__main__.FuzzySet object at 0x0000000002B86438>}]
+
+    Levels of Universal Fuzzy Scale: [{'name': 'Min', 'fSet': <__main__.FuzzySet object at 0x00000000027B14A8>}, {'name': 'Low', 'fSet': <__main__.FuzzySet object at 0x00000000027B1518>}, {'name': 'Med', 'fSet': <__main__.FuzzySet object at 0x00000000027B1588>}, {'name': 'High', 'fSet': <__main__.FuzzySet object at 0x00000000027B15F8>}, {'name': 'Max', 'fSet': <__main__.FuzzySet object at 0x00000000027B1668>}]
     Printing scale: FuzzyScale = {Min, Low, Med, High, Max}
-        Min = <Hyperbolic(x, {'b': 20, 'c': 0, 'a': 8}), [0.0, 0.23]>
-        Low = <Bell(x, {'b': 0.23, 'c': 0.34, 'a': 0.17}), [0.17, 0.4]>
-        Med = <Bell(x, {'b': 0.4, 'c': 0.6, 'a': 0.34}), [0.34, 0.66]>
-        High = <Bell(x, {'b': 0.66, 'c': 0.77, 'a': 0.6}), [0.6, 0.83]>
-        Max = <Parabolic(x, {'b': 0.95, 'a': 0.77}), [0.77, 1.0]>
-    Fuzzy(0.0, FuzzyScale) = Min, Min = <Hyperbolic(x, {'b': 20, 'c': 0, 'a': 8}), [0.0, 0.23]>
-    Fuzzy(0.1, FuzzyScale) = Min, Min = <Hyperbolic(x, {'b': 20, 'c': 0, 'a': 8}), [0.0, 0.23]>
-    Fuzzy(0.2, FuzzyScale) = Low, Low = <Bell(x, {'b': 0.23, 'c': 0.34, 'a': 0.17}), [0.17, 0.4]>
-    Fuzzy(0.3, FuzzyScale) = Low, Low = <Bell(x, {'b': 0.23, 'c': 0.34, 'a': 0.17}), [0.17, 0.4]>
-    Fuzzy(0.4, FuzzyScale) = Med, Med = <Bell(x, {'b': 0.4, 'c': 0.6, 'a': 0.34}), [0.34, 0.66]>
-    Fuzzy(0.5, FuzzyScale) = Med, Med = <Bell(x, {'b': 0.4, 'c': 0.6, 'a': 0.34}), [0.34, 0.66]>
-    Fuzzy(0.7, FuzzyScale) = High, High = <Bell(x, {'b': 0.66, 'c': 0.77, 'a': 0.6}), [0.6, 0.83]>
-    Fuzzy(0.8, FuzzyScale) = High, High = <Bell(x, {'b': 0.66, 'c': 0.77, 'a': 0.6}), [0.6, 0.83]>
-    Fuzzy(0.9, FuzzyScale) = Max, Max = <Parabolic(x, {'b': 0.95, 'a': 0.77}), [0.77, 1.0]>
-    Fuzzy(1.0, FuzzyScale) = Max, Max = <Parabolic(x, {'b': 0.95, 'a': 0.77}), [0.77, 1.0]>
+        Min = <Hyperbolic(x, {"a": 8, "b": 20, "c": 0}), [0.0, 0.23]>
+        Low = <Bell(x, {"a": 0.17, "b": 0.23, "c": 0.34}), [0.17, 0.4]>
+        Med = <Bell(x, {"a": 0.34, "b": 0.4, "c": 0.6}), [0.34, 0.66]>
+        High = <Bell(x, {"a": 0.6, "b": 0.66, "c": 0.77}), [0.6, 0.83]>
+        Max = <Parabolic(x, {"a": 0.77, "b": 0.95}), [0.77, 1.0]>
+
+    Defuz() of all Universal Fuzzy Scale levels:
+    Defuz(Min) = 0.06
+    Defuz(Low) = 0.29
+    Defuz(Med) = 0.50
+    Defuz(High) = 0.71
+    Defuz(Max) = 0.93
+
+    Fuzzy(0.0, FuzzyScale) = Min, Min = <Hyperbolic(x, {"a": 8, "b": 20, "c": 0}), [0.0, 0.23]>
+    Fuzzy(0.1, FuzzyScale) = Min, Min = <Hyperbolic(x, {"a": 8, "b": 20, "c": 0}), [0.0, 0.23]>
+    Fuzzy(0.2, FuzzyScale) = Low, Low = <Bell(x, {"a": 0.17, "b": 0.23, "c": 0.34}), [0.17, 0.4]>
+    Fuzzy(0.3, FuzzyScale) = Low, Low = <Bell(x, {"a": 0.17, "b": 0.23, "c": 0.34}), [0.17, 0.4]>
+    Fuzzy(0.4, FuzzyScale) = Med, Med = <Bell(x, {"a": 0.34, "b": 0.4, "c": 0.6}), [0.34, 0.66]>
+    Fuzzy(0.5, FuzzyScale) = Med, Med = <Bell(x, {"a": 0.34, "b": 0.4, "c": 0.6}), [0.34, 0.66]>
+    Fuzzy(0.7, FuzzyScale) = High, High = <Bell(x, {"a": 0.6, "b": 0.66, "c": 0.77}), [0.6, 0.83]>
+    Fuzzy(0.8, FuzzyScale) = High, High = <Bell(x, {"a": 0.6, "b": 0.66, "c": 0.77}), [0.6, 0.83]>
+    Fuzzy(0.9, FuzzyScale) = Max, Max = <Parabolic(x, {"a": 0.77, "b": 0.95}), [0.77, 1.0]>
+    Fuzzy(1.0, FuzzyScale) = Max, Max = <Parabolic(x, {"a": 0.77, "b": 0.95}), [0.77, 1.0]>
+
     Finding level by name with exact matching:
-    GetLevelByName(Min, FuzzyScale) = Min, Min = <Hyperbolic(x, {'b': 20, 'c': 0, 'a': 8}), [0.0, 0.23]>
-    GetLevelByName(High, FuzzyScale) = High, High = <Bell(x, {'b': 0.66, 'c': 0.77, 'a': 0.6}), [0.6, 0.83]>
+    GetLevelByName(Min, FuzzyScale) = Min, Min = <Hyperbolic(x, {"a": 8, "b": 20, "c": 0}), [0.0, 0.23]>
+    GetLevelByName(High, FuzzyScale) = High, High = <Bell(x, {"a": 0.6, "b": 0.66, "c": 0.77}), [0.6, 0.83]>
     GetLevelByName(max, FuzzyScale) = None, None
+
     Finding level by name without exact matching:
-    GetLevelByName('mIn', FuzzyScale) = Min, Min = <Hyperbolic(x, {'b': 20, 'c': 0, 'a': 8}), [0.0, 0.23]>
-    GetLevelByName('max', FuzzyScale) = Max, Max = <Parabolic(x, {'b': 0.95, 'a': 0.77}), [0.77, 1.0]>
-    GetLevelByName('Hig', FuzzyScale) = High, High = <Bell(x, {'b': 0.66, 'c': 0.77, 'a': 0.6}), [0.6, 0.83]>
-    GetLevelByName('LOw', FuzzyScale) = Low, Low = <Bell(x, {'b': 0.23, 'c': 0.34, 'a': 0.17}), [0.17, 0.4]>
-    GetLevelByName('eD', FuzzyScale) = Med, Med = <Bell(x, {'b': 0.4, 'c': 0.6, 'a': 0.34}), [0.34, 0.66]>
+    GetLevelByName('mIn', FuzzyScale) = Min, Min = <Hyperbolic(x, {"a": 8, "b": 20, "c": 0}), [0.0, 0.23]>
+    GetLevelByName('max', FuzzyScale) = Max, Max = <Parabolic(x, {"a": 0.77, "b": 0.95}), [0.77, 1.0]>
+    GetLevelByName('Hig', FuzzyScale) = High, High = <Bell(x, {"a": 0.6, "b": 0.66, "c": 0.77}), [0.6, 0.83]>
+    GetLevelByName('LOw', FuzzyScale) = Low, Low = <Bell(x, {"a": 0.17, "b": 0.23, "c": 0.34}), [0.17, 0.4]>
+    GetLevelByName('eD', FuzzyScale) = Med, Med = <Bell(x, {"a": 0.34, "b": 0.4, "c": 0.6}), [0.34, 0.66]>
     GetLevelByName('Highest', FuzzyScale) = None, None
+
     IsCorrectFuzzyNumberValue(0.5) = True
     IsCorrectFuzzyNumberValue(1.1) = False
+
     FNOT(0.25) = 0.75
     FNOT(0.25, alpha=0.25) = 0.25
+
     FNOT(0.25, alpha=0.75) = 0.9166666666666666
     FNOT(0.25, alpha=1) = 1.0
+
     FNOTParabolic(0.25, alpha=0.25) = 0.25000000000000017
     FNOTParabolic(0.25, alpha=0.75) = 0.9820000000000008
+
     FuzzyAND(0.25, 0.5) = 0.25
     FuzzyOR(0.25, 0.5) = 0.5
+
     TNorm(0.25, 0.5, 'logic') = 0.25
     TNorm(0.25, 0.5, 'algebraic') = 0.125
     TNorm(0.25, 0.5, 'boundary') = 1
     TNorm(0.25, 0.5, 'drastic') = 0
+
     SCoNorm(0.25, 0.5, 'logic') = 0.5
     SCoNorm(0.25, 0.5, 'algebraic') = 0.625
     SCoNorm(0.25, 0.5, 'boundary') = 0.75
     SCoNorm(0.25, 0.5, 'drastic') = 1
+
     TNormCompose(0.25, 0.5, 0.75, 'logic') = 0.25
     TNormCompose(0.25, 0.5, 0.75, 'algebraic') = 0.09375
     TNormCompose(0.25, 0.5, 0.75, 'boundary') = 0.75
     TNormCompose(0.25, 0.5, 0.75, 'drastic') = 0
+
     SCoNormCompose(0.25, 0.5, 0.75, 'logic') = 0.75
     SCoNormCompose(0.25, 0.5, 0.75, 'algebraic') = 0.90625
     SCoNormCompose(0.25, 0.5, 0.75, 'boundary') = 0

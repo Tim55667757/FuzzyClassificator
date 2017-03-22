@@ -3,41 +3,8 @@
 
 # FuzzyClassificator - this program uses neural networks to solve classification problems,
 # and uses fuzzy sets and fuzzy logic to interpreting results.
-# Copyright (C) 2014, Timur Gilmullin
+# Copyright (C) 2017, Timur Gilmullin
 # e-mail: tim55667757@gmail.com
-
-
-# License: GNU GPL v3
-
-# This file is part of FuzzyClassificator program.
-
-# FuzzyClassificator is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-
-# FuzzyClassificator program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.
-# See the GNU General Public License for more details.
-
-# You should have received a copy of the GNU General Public License along with Foobar.
-# If not, see <http:#www.gnu.org/licenses/>.
-
-# Этот файл - часть программы FuzzyClassificator.
-
-# FuzzyClassificator - свободная программа: вы можете перераспространять ее и/или
-# изменять ее на условиях Стандартной общественной лицензии GNU в том виде,
-# в каком она была опубликована Фондом свободного программного обеспечения;
-# либо версии 3 лицензии, либо (по вашему выбору) любой более поздней версии.
-
-# Программа FuzzyClassificator распространяется в надежде, что она будет полезной,
-# но БЕЗО ВСЯКИХ ГАРАНТИЙ; даже без неявной гарантии ТОВАРНОГО ВИДА
-# или ПРИГОДНОСТИ ДЛЯ ОПРЕДЕЛЕННЫХ ЦЕЛЕЙ.
-# Подробнее см. в Стандартной общественной лицензии GNU.
-
-# Вы должны были получить копию Стандартной общественной лицензии GNU
-# вместе с этой программой. Если это не так, см. <http://www.gnu.org/licenses/>.)
 
 
 # Library contains some routines for work with fuzzy logic operators, fuzzy datasets and fuzzy scales.
@@ -50,16 +17,40 @@ import traceback
 from FCLogger import FCLogger
 
 
+def DiapasonParser(diapason):
+    """
+    Parse input with diapason string and return sorted list of full and unique indexes in that diapason.
+    Examples:
+        String "1,5" converted to: [1, 5]
+        String "1-5" converted to: [1, 2, 3, 4, 5]
+        String "8-10, 1-5, 6" converted to: [1, 2, 3, 4, 5, 6, 8, 9, 10]
+        String "11, 11, 12, 12, 1-5, 3-7" converted to: [1, 2, 3, 4, 5, 6, 7, 11, 12]
+    """
+    fullDiapason = []
+
+    try:
+        for element in diapason.split(','):
+            fullDiapason += [x for x in range(int(element.split('-')[0]), int(element.split('-')[-1]) + 1)]
+
+    except:
+        FCLogger.error('"{}" is not correct diapason string!'.format(diapason))
+        fullDiapason = []
+
+    finally:
+        return sorted(list(set(fullDiapason)))
+
+
 def IsCorrectFuzzyNumberValue(value):
     """
     All operations in fuzzy logic are executed with numbers in interval [0, 1].
     """
     correctNumberFlag = True
+
     try:
         correctNumberFlag = (0 <= value <= 1)
 
     except:
-        FCLogger.error('{} is number not in [0, 1]!')
+        FCLogger.error('{} is number not in [0, 1]!'.format(value))
         correctNumberFlag = False
 
     finally:
@@ -264,8 +255,10 @@ class MFunction():
         return self.mju.__name__  # membership function method name
 
     def __str__(self):
-        # return view of function: Function_name(**parameters). Example: Bell(x,a,b)
-        funcView = '{}({})'.format(self.name, 'y' if self.name == 'Desirability' else 'x, {}'.format(self._parameters))
+        # return view of function: Function_name(**parameters). Example: Bell(x, {"a": 0.6, "b": 0.66, "c": 0.77}
+        funcView = '{}({})'.format(self.name, 'y' if self.name == 'Desirability' else 'x, {}'.format(
+            '{' + ', '.join('"{}": {}'.format(*val) for val in [(k, self._parameters[k])
+                                                                for k in sorted(self._parameters)]) + '}'))
         return funcView
 
     @property
@@ -285,6 +278,7 @@ class MFunction():
         This is hyperbolic membership function with real inputs x and parameters a, b, c.
         """
         a, b, c, result = 0, 0, 0, 0
+
         try:
             a = self._parameters['a']
             b = self._parameters['b']
@@ -310,6 +304,7 @@ class MFunction():
         This is bell membership function with real inputs x and parameters a, b, c.
         """
         a, b, c, result = 0, 0, 0, 0
+
         try:
             a = self._parameters['a']
             b = self._parameters['b']
@@ -347,6 +342,7 @@ class MFunction():
         This is parabolic membership function with real inputs x and parameters a, b.
         """
         a, b, result = 0, 0, 0
+
         try:
             a = self._parameters['a']
             b = self._parameters['b']
@@ -377,6 +373,7 @@ class MFunction():
         This is triangle membership function with real inputs x and parameters a, b, c.
         """
         a, b, c, result = 0, 0, 0, 0
+
         try:
             a = self._parameters['a']
             b = self._parameters['b']
@@ -408,6 +405,7 @@ class MFunction():
         This is trapezium membership function with real inputs x and parameters a, b, c, d.
         """
         a, b, c, d, result = 0, 0, 0, 0, 0
+
         try:
             a = self._parameters['a']
             b = self._parameters['b']
@@ -443,6 +441,7 @@ class MFunction():
         This is exponential membership function with real inputs x and parameters a, b.
         """
         a, b, result = 0, 0, 0
+
         try:
             a = self._parameters['a']
             b = self._parameters['b']
@@ -464,6 +463,7 @@ class MFunction():
         This is sigmoidal membership function with real inputs x and parameters a, b.
         """
         a, b, result = 0, 0, 0
+
         try:
             a = self._parameters['a']
             b = self._parameters['b']
@@ -484,6 +484,7 @@ class MFunction():
         This is Harrington's desirability membership function with real input y without any parameters.
         """
         result = 0
+
         try:
             result = math.exp(-math.exp(-y))
 
@@ -521,6 +522,8 @@ class FuzzySet():
 
         else:
             raise Exception('Support Set must be 2-dim tuple (a, b) with real a, b parameters, a < b!')
+
+        self._defuzValue = self._Defuz()  # initiating defuzzy value of current fuzzy set
 
     def __str__(self):
         # return view of fuzzy set - name = <mju(x|y, params), supportSet>. Example: FuzzySet = <Bell(x, a, b), [0, 1]>
@@ -563,7 +566,11 @@ class FuzzySet():
         else:
             raise Exception('Support Set must be 2-dim tuple (a, b) with real a, b parameters, a < b!')
 
-    def Defuz(self):
+    @property
+    def defuzValue(self):
+        return self._defuzValue
+
+    def _Defuz(self):
         """
         Defuzzyfication function returns real value in support set of given fuzzy set using "center of gravity method".
         Integrals in this method calculated from left to right border of support set of membership function.
@@ -585,6 +592,12 @@ class FuzzySet():
 
         return numeratorIntegral / denominatorIntegral
 
+    def Defuz(self):
+        """
+        This function now used for backward compatibility.
+        """
+        return self._defuzValue
+
 
 class FuzzyScale():
     """
@@ -597,7 +610,7 @@ class FuzzyScale():
     """
 
     def __init__(self):
-        self._name = 'DefaultScale'  # default scale contains 3 level, DefaultScale = {Min, Med, High}:
+        self._name = 'DefaultScale'  # default scale contains 3 levels, DefaultScale = {Min, Med, High}:
 
         self._levels = [{'name': 'Min',
                          'fSet': FuzzySet(membershipFunction=MFunction('hyperbolic', **{'a': 7, 'b': 4, 'c': 0}),
@@ -612,12 +625,15 @@ class FuzzyScale():
                                           supportSet=(0., 1.),
                                           linguisticName='High')}]
 
+        self._levelsNames = self._GetLevelsNames()  # dictionary with only levels' names
+        self._levelsNamesUpper = self._GetLevelsNamesUpper()  # dictionary with only level's names in upper cases
+
     def __str__(self):
         # return view of fuzzy scale - name = {**levels} and levels interpreter. Example:
         # DefaultScale = {Min, Med, High}
-        #     Minimum = <Hyperbolic(x, {'a': 7, 'c': 0, 'b': 4}), [0.0, 1.0]>
-        #     Medium = <Bell(x, {'a': 0.35, 'c': 0.6, 'b': 0.5}), [0.0, 1.0]>
-        #     High = <Triangle(x, {'a': 0.7, 'c': 1, 'b': 1}), [0.0, 1.0]>
+        #     Minimum = <Hyperbolic(x, {"a": 7, "b": 4, "c": 0}), [0.0, 1.0]>
+        #     Medium = <Bell(x, {"a": 0.35, "b": 0.5, "c": 0.6}), [0.0, 1.0]>
+        #     High = <Triangle(x, {"a": 0.7, "b": 1, "c": 1}), [0.0, 1.0]>
         allLevelsName = self._levels[0]['name']
         allLevels = '\n    {}'.format(self._levels[0]['fSet'].__str__())
         
@@ -667,10 +683,26 @@ class FuzzyScale():
                 else:
                     raise Exception("Level of fuzzy scale must be 2-dim dictionary looks like {'name': 'level_name', 'fSet': FuzzySet_instance}!")
 
-            self._levels = value
+            self._levels = value  # set up new list of fuzzy levels
+            self._levelsNames = self._GetLevelsNames()  # updating dictionary with only levels' names
+            self._levelsNamesUpper = self._GetLevelsNamesUpper()  # updating dictionary with only level's names in upper cases
 
         else:
             raise Exception('Fuzzy scale must contain at least one linguistic variable!')
+
+    def _GetLevelsNames(self):
+        """
+        Returns dictionary with only fuzzy levels' names and it's fuzzy set.
+        Example: {'Min': <fSet_Object>, 'Med': <fSet_Object>, 'High': <fSet_Object>}
+        """
+        return dict([(x['name'], self._levels[lvl]) for lvl, x in enumerate(self._levels)])
+
+    def _GetLevelsNamesUpper(self):
+        """
+        Returns dictionary with only fuzzy levels' names in upper cases and it's fuzzy set.
+        Example: {'MIN': <fSet_Object>, 'MED': <fSet_Object>, 'HIGH': <fSet_Object>}
+        """
+        return dict([(x['name'].upper(), self._levels[lvl]) for lvl, x in enumerate(self._levels)])
 
     def Fuzzy(self, realValue):
         """
@@ -691,37 +723,28 @@ class FuzzyScale():
             if True then levelName must be equal to level['name'],
             otherwise - level['name'] in uppercase must contains levelName in uppercase.
         """
-        fuzzyLevel = None
+        if exactMatching:
+            return self._levelsNames.get(levelName)
 
-        for level in self._levels:
-            scaleLevelName = level['name']
-
-            if not exactMatching:
-                levelName = levelName.upper()
-                scaleLevelName = scaleLevelName.upper()
-
-                if levelName in scaleLevelName:
-                    fuzzyLevel = level
-
-            else:
-                if levelName == scaleLevelName:
-                    fuzzyLevel = level
-
-            if fuzzyLevel:
-                break
-
-        return fuzzyLevel
+        else:
+            return self._levelsNamesUpper.get(levelName.upper())
 
 
 class UniversalFuzzyScale(FuzzyScale):
     """
-    Iniversal fuzzy scale S_f = {Min, Low, Med, High, Max}.
+    Iniversal fuzzy scale S_f = {Min, Low, Med, High, Max}. Example view:
+    FuzzyScale = {Min, Low, Med, High, Max}
+        Min = <Hyperbolic(x, {"a": 8, "b": 20, "c": 0}), [0.0, 0.23]>
+        Low = <Bell(x, {"a": 0.17, "b": 0.23, "c": 0.34}), [0.17, 0.4]>
+        Med = <Bell(x, {"a": 0.34, "b": 0.4, "c": 0.6}), [0.34, 0.66]>
+        High = <Bell(x, {"a": 0.6, "b": 0.66, "c": 0.77}), [0.6, 0.83]>
+        Max = <Parabolic(x, {"a": 0.77, "b": 0.95}), [0.77, 1.0]>
     """
 
     def __init__(self):
         super().__init__()
 
-        self._name = 'FuzzyScale'  # default scale contains 3 level, FuzzyScale = {Min, Med, High}:
+        self._name = 'FuzzyScale'  # default universal fuzzy scale contains 5 levels, FuzzyScale = {Min, Low, Med, High, Max}:
 
         self._levels = [{'name': 'Min',
                          'fSet': FuzzySet(membershipFunction=MFunction('hyperbolic', **{'a': 8, 'b': 20, 'c': 0}),
@@ -744,9 +767,20 @@ class UniversalFuzzyScale(FuzzyScale):
                                           supportSet=(0.77, 1.),
                                           linguisticName='Max')}]
 
+        self._levelsNames = self._GetLevelsNames()  # dictionary with only universal fuzzy scale levels' names
+        self._levelsNamesUpper = self._GetLevelsNamesUpper()  # dictionary with only level's names in upper cases
+
     @property
     def levels(self):
-        return self._levels  # only read levels for Universal Fuzzy Scale
+        return self._levels  # only readable levels and it's fuzzy set for Universal Fuzzy Scale
+
+    @property
+    def levelsNames(self):
+        return self._levelsNames  # only levels' names of Universal Fuzzy Scale
+
+    @property
+    def levelsNamesUpper(self):
+        return self._levelsNamesUpper  # only levels' names of Universal Fuzzy Scale in upper cases
 
 
 if __name__ == "__main__":
@@ -777,7 +811,7 @@ if __name__ == "__main__":
 
     #funct = MFunction(userFunc='desirability')  # creating instance of desirability function without parameters
 
-    print('Printing Membership function parameters: ', funct)
+    print('Printing Membership function with parameters: ', funct)
 
     ## --- Calculating some function's values in [0, 1]:
 
@@ -785,7 +819,7 @@ if __name__ == "__main__":
     for i in range(0, 11, 1):
         xPar = (xPar + i) / 10
         res = funct.mju(xPar)  # calculate one value of MF with given parameters
-        print('{}({:1.1f}, {}) = {:1.4f}'.format(funct.name, xPar, funct.parameters, res))
+        print('{} = {:1.4f}'.format(funct, res))
 
     ## --- Work with fuzzy set:
 
@@ -802,7 +836,7 @@ if __name__ == "__main__":
     fuzzySet.mFunction.parameters = changedMjuPars
     fuzzySet.supportSet = changedSupportSet
 
-    print('New membership function parameters: ', fuzzySet.mFunction.parameters)
+    print('New membership function with parameters: ', fuzzySet.mFunction)
     print('New support set: ', fuzzySet.supportSet)
     print('New value of Defuz({}) = {:1.2f}'.format(fuzzySet.name, fuzzySet.Defuz()))
     print('Printing fuzzy set after changes:', fuzzySet)
@@ -847,11 +881,15 @@ if __name__ == "__main__":
         print('Defuz({}) = {:1.2f}'.format(item['name'], item['fSet'].Defuz()))
 
     ## --- Work with Universal Fuzzy Scale:
-    ## Iniversal fuzzy scales S_f = {Min, Low, Med, High, Max} pre-defined in UniversalFuzzyScale() class.
+    ## Universal fuzzy scales S_f = {Min, Low, Med, High, Max} pre-defined in UniversalFuzzyScale() class.
 
     uniFScale = UniversalFuzzyScale()
     print('Levels of Universal Fuzzy Scale:', uniFScale.levels)
     print('Printing scale:', uniFScale)
+
+    print('Defuz() of all Universal Fuzzy Scale levels:')
+    for item in uniFScale.levels:
+        print('Defuz({}) = {:1.2f}'.format(item['name'], item['fSet'].Defuz()))
 
     ## Use Fuzzy() function to looking for level on Fuzzy Scale:
 
@@ -943,3 +981,10 @@ if __name__ == "__main__":
     print("SCoNormCompose(0.25, 0.5, 0.75, 'algebraic') =", SCoNormCompose(0.25, 0.5, 0.75, normType='algebraic'))
     print("SCoNormCompose(0.25, 0.5, 0.75, 'boundary') =", SCoNormCompose(0.25, 0.5, 0.75, normType='boundary'))
     print("SCoNormCompose(0.25, 0.5, 0.75, 'drastic') =", SCoNormCompose(0.25, 0.5, 0.75, normType='drastic'))
+
+    ## --- Work with other methods:
+    print("Converting some strings to range of sorted unique numbers:")
+    print('String "1,5" converted to:', DiapasonParser("1,5"))
+    print('String "1-5" converted to:', DiapasonParser("1-5"))
+    print('String "8-10, 1-5, 6" converted to:', DiapasonParser("8-10, 1-5, 6"))
+    print('String "11, 11, 12, 12, 1-5, 3-7" converted to:', DiapasonParser("11, 12, 1-5, 3-7"))
