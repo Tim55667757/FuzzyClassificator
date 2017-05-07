@@ -3,6 +3,16 @@ FuzzyClassificator
 
 This program uses neural networks to solve classification problems, and uses fuzzy sets and fuzzy logic to interpreting results. FuzzyClassificator provided under the MIT License.
 
+**[WARNING]** The development is frozen here and moved to the Open DevOps community: [https://github.com/devopshq/FuzzyClassificator](https://github.com/devopshq/FuzzyClassificator)
+
+You can see detailed user manual here: 
+[https://devopshq.github.io/FuzzyClassificator/](https://devopshq.github.io/FuzzyClassificator/)
+
+**Please report all new bugs or the required functionality in new tasks in Open DevOps community.**
+
+See article about math in FuzzyClassificator (russian):
+[http://math-n-algo.blogspot.ru/2014/08/FuzzyClassificator.html](http://math-n-algo.blogspot.ru/2014/08/FuzzyClassificator.html)
+
 
 How to use
 --------------
